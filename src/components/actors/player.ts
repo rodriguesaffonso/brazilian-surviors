@@ -20,8 +20,10 @@ export class Player extends AbstractObject {
 
     public draw(): void {
         this.weapons.forEach(w => w.draw());
+        
+        const relativePosition = this.center.sub(this.camera.getCanvasLimits().minP);
         this.ctx.fillStyle = this.backgroundColor;
-        this.ctx.fillRect(this.center.x - this.width / 2, this.center.y - this.height / 2, this.width, this.height);
+        this.ctx.fillRect(relativePosition.x - this.width / 2, relativePosition.y - this.height / 2, this.width, this.height);
 
         this.ctx.font = "24px serif";
         this.ctx.fillText(`HP: ${this.hp} / ${this.maxHp}`, 10, 30);

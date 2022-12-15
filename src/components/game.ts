@@ -44,7 +44,7 @@ export class Game {
             vx = keyStates['a'] ? -1 : keyStates['d'] ? 1 : 0;
             this.player.velocity = new Vector2D(vx, vy).unit().multiply(this.player.speed);
         }
-        this.player.addWeapon(new Gun(this.ctx, this.player.center, 0));
+        this.player.addWeapon(new Gun(this.ctx, this.player.center, this.camera, 0));
 
         this.isRunning = true;
         this.startTimestamp = undefined;
@@ -68,7 +68,6 @@ export class Game {
         this.ctx.canvas.height = 0;
         this.ctx.canvas.width = 0;
 
-        // alert('Game Over');
         this.inputHandler.release();
         window.cancelAnimationFrame(this.animationRequestId);
 
@@ -153,7 +152,7 @@ export class Game {
         const r = Math.max(this.camera.canvasWidth, this.camera.canvasHeight) / 2;
         const x = Math.cos(theta) * r + this.player.center.x;
         const y = Math.sin(theta) * r + this.player.center.y;
-        return new Triangle(this.ctx, new Vector2D(x, y), this.player, timestamp);
+        return new Triangle(this.ctx, new Vector2D(x, y), this.player, this.camera, timestamp);
     }
 
     private isGameEnded(): boolean {

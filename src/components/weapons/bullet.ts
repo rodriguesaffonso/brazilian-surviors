@@ -1,8 +1,10 @@
+import { Camera } from "../camera";
 import { AbstractObject, Vector2D } from "../interfaces";
 
 export class Bullet extends AbstractObject {
     public ctx: CanvasRenderingContext2D;
     public enemy: AbstractObject;
+    public camera: Camera;
 
     public backgroundColor = "white";
     public radius = 2;
@@ -13,8 +15,9 @@ export class Bullet extends AbstractObject {
 
     public travelling = false;
 
-    constructor(ctx: CanvasRenderingContext2D, center: Vector2D, t: number) {
+    constructor(ctx: CanvasRenderingContext2D, center: Vector2D, camera: Camera, t: number) {
         super(ctx, center, t);
+        this.camera = camera;
     }
 
     public beforeMove(): void {
@@ -32,9 +35,10 @@ export class Bullet extends AbstractObject {
     }
 
     public draw(): void {
+        const relativePosition = this.center.sub(this.camera.getCanvasLimits().minP);
         this.ctx.fillStyle = this.backgroundColor;
         this.ctx.beginPath()
-        this.ctx.arc(this.center.x, this.center.y, this.radius, 0, Math.PI * 2)
+        this.ctx.arc(relativePosition.x, relativePosition.y, this.radius, 0, Math.PI * 2)
         this.ctx.fill();
     }
 

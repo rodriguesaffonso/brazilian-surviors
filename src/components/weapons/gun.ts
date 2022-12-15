@@ -1,15 +1,16 @@
+import { Camera } from "../camera";
 import { AbstractObject, Vector2D } from "../interfaces";
 import { Bullet } from "./bullet";
 
 export class Gun extends AbstractObject {
     public ctx: CanvasRenderingContext2D
     public weapons: Bullet[];
-    constructor(ctx: CanvasRenderingContext2D, center: Vector2D, t: number) {
+    constructor(ctx: CanvasRenderingContext2D, center: Vector2D, camera: Camera, t: number) {
         super(ctx, center, t);
 
         this.speed = 0;
         this.damage = 0;
-        this.weapons = [new Bullet(ctx, center, t)];
+        this.weapons = [new Bullet(ctx, center, camera, t)];
     }
 
     public canAttack(enemy: AbstractObject): boolean {

@@ -4,8 +4,6 @@ import { AbstractObject, Vector2D } from "./interfaces";
 const MAX_GRID_SIZE = 1e6;
 
 export class World extends AbstractObject {
-    public width: number;
-    public height: number;
     public backGroundColor = "#201A23";
     public ctx: CanvasRenderingContext2D;
     public tileSize = 50;
@@ -24,14 +22,15 @@ export class World extends AbstractObject {
     }
 
     private drawTileGrid(): void {
-        const { minX, maxX, minY, maxY } = this.camera.getCanvasLimits();
+        const { minP, maxP } = this.camera.getCanvasLimits();
         this.ctx.fillStyle = 'black';
-        for (let i = minX; i < maxX; i++) {
+
+        for (let i = minP.x; i < maxP.x; i++) {
             if (i % this.tileSize !== 0) continue;
-            for (let j = minY; j < maxY; j++) {
+            for (let j = minP.y; j < maxP.y; j++) {
                 if (j % this.tileSize !== 0) continue;
-                const canvasX = i % this.width;
-                const canvasY = j % this.height;
+                const canvasX = (i - minP.x) % this.camera.canvasWidth;
+                const canvasY = (j - minP.y) % this.camera.canvasHeight;
 
                 this.ctx.beginPath()
                 this.ctx.arc(canvasX, canvasY, 2, 0, Math.PI * 2);
