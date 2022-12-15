@@ -11,7 +11,7 @@ export class Player extends AbstractObject {
     constructor(ctx: CanvasRenderingContext2D, camera: Camera, t: number) {
         super(ctx, camera.center, t)
         this.camera = camera;
-
+        
         this.maxHp = 100;
         this.hp = 100;
         this.damage = 0;

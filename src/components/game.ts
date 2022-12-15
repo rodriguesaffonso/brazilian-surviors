@@ -4,13 +4,15 @@ import { Triangle } from "./actors/triangle";
 import { Gun } from "./weapons/gun";
 import { World } from "./world";
 import { InputHandler } from "./input-handler";
+import { Camera } from "./camera";
 
 export class Game {
-    public ctx: any;
-    public inputHandler: InputHandler;
+    public ctx: CanvasRenderingContext2D;
+    public inputHandler: InputHandler = new InputHandler();;
 
-    public world: World;
     public player: Player;
+    public camera: Camera;
+    public world: World;
 
     public isRunning: boolean = true;
     public startTimestamp: number;
@@ -22,13 +24,26 @@ export class Game {
 
     public animationRequestId: number;
 
-    constructor(ctx: any) {
+    constructor(ctx: CanvasRenderingContext2D) {
         this.ctx = ctx;
     }
 
     public startGame(): void {
-        this.world = new World(this.ctx, 0);
-        this.player = new Player(this.ctx, this.world, 0);
+        this.camera = new Camera(this.ctx, 0);
+        this.camera.beforeMove = () => {
+            this.camera.center = this.player.center;
+        }
+
+        this.world = new World(this.ctx, this.camera, 0);
+
+        this.player = new Player(this.ctx, this.camera, 0);
+        this.player.beforeMove = () => {
+            const keyStates = this.inputHandler.keyStates;
+            let vx: number, vy: number;
+            vy = keyStates['w'] ? -1 : keyStates['s'] ? 1 : 0;
+            vx = keyStates['a'] ? -1 : keyStates['d'] ? 1 : 0;
+            this.player.velocity = new Vector2D(vx, vy).unit().multiply(this.player.speed);
+        }
         this.player.addWeapon(new Gun(this.ctx, this.player.center, 0));
 
         this.isRunning = true;
@@ -39,10 +54,10 @@ export class Game {
         this.newObjectFrequency = 1 // 1 new obj per second
         this.kills = 0;
 
-        this.ctx.canvas.height = this.world.height;
-        this.ctx.canvas.width = this.world.width;
+        this.ctx.canvas.height = this.camera.canvasHeight;
+        this.ctx.canvas.width = this.camera.canvasWidth;
 
-        this.inputHandler = new InputHandler(this.player);
+        this.inputHandler.clear();
         this.inputHandler.attach();
 
         this.animationRequestId = window.requestAnimationFrame(this.renderLoop.bind(this));
@@ -87,9 +102,7 @@ export class Game {
     private gameLoop(timestamp: number): void {
         // Move player
         this.player.move();
-
-        // Center canvas on player
-        this.centerCanvasOnPlayer();
+        this.camera.move();
 
         // Player attacks, Enemy attacks, enemy move
         this.objects.forEach((enemy, index) => {
@@ -137,7 +150,7 @@ export class Game {
 
     private createNewObject(timestamp: number): AbstractObject {
         const theta = Math.random() * 2 * Math.PI;
-        const r = Math.max(this.world.width, this.world.height) / 2;
+        const r = Math.max(this.camera.canvasWidth, this.camera.canvasHeight) / 2;
         const x = Math.cos(theta) * r + this.player.center.x;
         const y = Math.sin(theta) * r + this.player.center.y;
         return new Triangle(this.ctx, new Vector2D(x, y), this.player, timestamp);
@@ -146,13 +159,6 @@ export class Game {
     private isGameEnded(): boolean {
         return this.kills === 10
             || !this.player.isAlive();
-    }
-
-    private centerCanvasOnPlayer(): void {
-        const translationVector = this.world.center.sub(this.player.center);
-
-        this.player.translate(translationVector);
-        this.objects.forEach(obj => obj.translate(translationVector));
     }
 
     private drawTime(): void {
