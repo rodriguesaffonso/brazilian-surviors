@@ -1,7 +1,7 @@
 import { AbstractObject, Vector2D } from "../interfaces";
 
 export class Bullet extends AbstractObject {
-    public ctx: any;
+    public ctx: CanvasRenderingContext2D;
     public enemy: AbstractObject;
 
     public backgroundColor = "white";
@@ -13,9 +13,8 @@ export class Bullet extends AbstractObject {
 
     public travelling = false;
 
-    constructor(ctx: any, center: Vector2D, t: number) {
-        super(center, t);
-        this.ctx = ctx;
+    constructor(ctx: CanvasRenderingContext2D, center: Vector2D, t: number) {
+        super(ctx, center, t);
     }
 
     public beforeMove(): void {

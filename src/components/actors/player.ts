@@ -1,17 +1,16 @@
-import { AbstractObject, Vector2D } from "../interfaces";
-import { World } from "../world";
+import { Camera } from "../camera";
+import { AbstractObject } from "../interfaces";
 
 export class Player extends AbstractObject {
     public width = 10;
     public height = 10;
     public backgroundColor = "#8DAA9D";
-    public ctx: any;
-    public map: World;
+    public ctx: CanvasRenderingContext2D;
+    public camera: Camera;
 
-    constructor(ctx: any, map: World, t: number) {
-        super(map.center, t)
-        this.ctx = ctx;
-        this.map = map;
+    constructor(ctx: CanvasRenderingContext2D, camera: Camera, t: number) {
+        super(ctx, camera.center, t)
+        this.camera = camera;
 
         this.maxHp = 100;
         this.hp = 100;

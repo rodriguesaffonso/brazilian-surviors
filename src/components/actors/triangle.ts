@@ -2,7 +2,7 @@ import { AbstractObject, Vector2D } from "../interfaces";
 import { Player } from "./player";
 
 export class Triangle extends AbstractObject {
-    public ctx: any;
+    public ctx: CanvasRenderingContext2D;
     public player: Player;
     
     public edgeLength: number = 10;
@@ -15,8 +15,8 @@ export class Triangle extends AbstractObject {
 
     public distToAttack = 10;
 
-    constructor(ctx: any, center: Vector2D, player: Player, t: number) {
-        super(center, t);
+    constructor(ctx: CanvasRenderingContext2D, center: Vector2D, player: Player, t: number) {
+        super(ctx, center, t);
         this.ctx = ctx;
         this.player = player;
     }
