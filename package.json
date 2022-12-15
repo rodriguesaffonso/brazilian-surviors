@@ -1,9 +1,24 @@
 {
   "name": "2d-game",
   "version": "1.0.0",
-  "main": "index.js",
+  "private": true,
   "license": "MIT",
-  "dependencies": {
-    "canvas": "^2.10.2"
+  "dependencies": {},
+  "devDependencies": {
+    "npm-watch": "^0.11.0",
+    "ts-loader": "^9.4.2",
+    "typescript": "^4.9.4",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1"
+  },
+  "watch": {
+    "dev": {
+      "patterns": ["src"],
+      "extensions": "ts"
+    }
+  },
+  "scripts": {
+    "dev": "npx webpack",
+    "watch": "npm-watch dev"
   }
 }
