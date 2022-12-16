@@ -3,12 +3,11 @@ import { Player } from "./actors/player";
 import { Triangle } from "./actors/triangle";
 import { Gun } from "./weapons/gun";
 import { World } from "./world";
-import { InputHandler } from "./input-handler";
 import { Camera } from "./camera";
+import { PlayerInputComponent } from "./input-component";
 
 export class Game {
     public ctx: CanvasRenderingContext2D;
-    public inputHandler: InputHandler = new InputHandler();;
 
     public player: Player;
     public camera: Camera;
@@ -36,30 +35,21 @@ export class Game {
 
         this.world = new World(this.ctx, this.camera, 0);
 
-        this.player = new Player(this.ctx, this.camera, 0);
-        this.player.beforeMove = () => {
-            const keyStates = this.inputHandler.keyStates;
-            let vx: number, vy: number;
-            vy = keyStates['w'] ? -1 : keyStates['s'] ? 1 : 0;
-            vx = keyStates['a'] ? -1 : keyStates['d'] ? 1 : 0;
-            this.player.velocity = new Vector2D(vx, vy).unit().multiply(this.player.speed);
-        }
-        this.player.addWeapon(new Gun(this.ctx, this.player.center, this.camera, 0));
+        this.player = createPlayer(this.ctx, this.camera);
 
         this.isRunning = true;
         this.startTimestamp = undefined;
         this.lastTimestamp = undefined;
         this.objects = [];
         this.totalNumberObjects = 0;
-        this.newObjectFrequency = 1 // 1 new obj per second
+        this.newObjectFrequency = 1;
         this.kills = 0;
 
         this.ctx.canvas.height = this.camera.canvasHeight;
         this.ctx.canvas.width = this.camera.canvasWidth;
 
-        this.inputHandler.clear();
-        this.inputHandler.attach();
-
+        this.lastTimestamp = Date.now();
+        this.startTimestamp = this.lastTimestamp;
         this.animationRequestId = window.requestAnimationFrame(this.renderLoop.bind(this));
     }
 
@@ -68,7 +58,7 @@ export class Game {
         this.ctx.canvas.height = 0;
         this.ctx.canvas.width = 0;
 
-        this.inputHandler.release();
+        this.player.inputComponent.stop();
         window.cancelAnimationFrame(this.animationRequestId);
 
         console.log({
@@ -78,28 +68,29 @@ export class Game {
     }
 
     private renderLoop(timestamp: number): void {
-        if (!this.lastTimestamp) {
-            this.startTimestamp = timestamp;
-            this.lastTimestamp = timestamp;
-            this.gameLoop(timestamp);
-        }
-
-        const elapsed = timestamp - this.lastTimestamp;
+        const currentTime = Date.now();
+        const elapsed = currentTime - this.lastTimestamp;
+        
         if (elapsed >= 10) {
-            this.gameLoop(timestamp);
-            this.lastTimestamp = timestamp;
+            this.gameLoop(currentTime);
 
             if (this.isGameEnded()) {
                 this.stopGame();
                 return;
             }
+
+            this.lastTimestamp = currentTime;
+            this.render();
         }
 
         this.animationRequestId = window.requestAnimationFrame(this.renderLoop.bind(this));
     }
 
     private gameLoop(timestamp: number): void {
+        this.tryCreateNewObjects(timestamp);
+
         // Move player
+        this.player.update();
         this.player.move();
         this.camera.move();
 
@@ -129,14 +120,13 @@ export class Game {
             // Enemy move
             enemy.move();
         });
+    }
 
-        // Draw map, player, objects
+    private render(): void {
         this.world.draw();
         this.objects.forEach(enemy => enemy.draw());
         this.player.draw();
         this.drawTime();
-
-        this.tryCreateNewObjects(timestamp);
     }
 
     private tryCreateNewObjects(timestamp: number): void {
@@ -162,10 +152,16 @@ export class Game {
 
     private drawTime(): void {
         const elapsedMs = this.lastTimestamp - this.startTimestamp;
+        
         const min = Math.floor(elapsedMs / 1000 / 60);
         const sec = Math.floor(elapsedMs / 1000 - min * 60);
 
         this.ctx.font = "24px serif";
         this.ctx.fillText(`${min < 10 ? "0" : ""}${min}:${sec < 10 ? "0" : ""}${sec}`, 10, 60);
     }
+}
+
+function createPlayer(ctx: CanvasRenderingContext2D, camera: Camera): Player {
+    return new Player(ctx, camera, 0, new PlayerInputComponent())
+        .addWeapon(new Gun(ctx, camera.center, camera, 0));
 }

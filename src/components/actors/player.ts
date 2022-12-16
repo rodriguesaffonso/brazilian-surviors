@@ -1,4 +1,5 @@
 import { Camera } from "../camera";
+import { InputComponent } from "../input-component";
 import { AbstractObject } from "../interfaces";
 
 export class Player extends AbstractObject {
@@ -8,7 +9,9 @@ export class Player extends AbstractObject {
     public ctx: CanvasRenderingContext2D;
     public camera: Camera;
 
-    constructor(ctx: CanvasRenderingContext2D, camera: Camera, t: number) {
+    public inputComponent: InputComponent;
+
+    constructor(ctx: CanvasRenderingContext2D, camera: Camera, t: number, input: InputComponent) {
         super(ctx, camera.center, t)
         this.camera = camera;
         
@@ -16,6 +19,9 @@ export class Player extends AbstractObject {
         this.hp = 100;
         this.damage = 0;
         this.speed = 2;
+
+        this.inputComponent = input;
+        input.start();
     }
 
     public draw(): void {
@@ -33,7 +39,12 @@ export class Player extends AbstractObject {
         return this.weapons.length > 0;
     }
 
-    public addWeapon(w: AbstractObject): void {
+    public addWeapon(w: AbstractObject): Player {
         this.weapons.push(w);
+        return this;
+    }
+
+    public update(): void {
+        this.inputComponent.update(this);
     }
 }
