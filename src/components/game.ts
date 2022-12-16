@@ -4,8 +4,10 @@ import { Triangle } from "./actors/triangle";
 import { Gun } from "./weapons/gun";
 import { World } from "./world";
 import { Camera } from "./camera";
-import { PlayerInputComponent } from "./input-component";
-import { PlayerPhysicsComponent } from "./physics-components";
+import { PlayerInputComponent } from "./input-components";
+import { PlayerPhysicsComponent, TrianglePhysicsComponent } from "./physics-components";
+import { PlayerGraphicComponent, TriangleGraphicComponent, WorldGraphicComponent } from "./graphic-components";
+import { TriangleActionComponent } from "./action-components";
 
 export class Game {
     public ctx: CanvasRenderingContext2D;
@@ -21,6 +23,7 @@ export class Game {
     public totalNumberObjects: number = 0;
     public newObjectFrequency: number = 1;
     public kills: number = 0;
+    public gameObjects: AbstractObject[] = [];
 
     public animationRequestId: number;
 
@@ -29,14 +32,15 @@ export class Game {
     }
 
     public startGame(): void {
-        this.camera = new Camera(this.ctx, 0);
-        this.camera.beforeMove = () => {
-            this.camera.center = this.player.center;
-        }
-
-        this.world = new World(this.ctx, this.camera, 0);
-
+        this.camera = createCamera();
+        this.world = createWorld(this.ctx, this.camera);
         this.player = createPlayer(this.ctx, this.camera);
+
+        this.gameObjects.push(...[
+            this.world, 
+            this.camera, 
+            this.player
+        ]);
 
         this.isRunning = true;
         this.startTimestamp = undefined;
@@ -60,6 +64,7 @@ export class Game {
         this.ctx.canvas.width = 0;
 
         this.player.inputComponent.stop();
+        this.camera.inputComponent.stop();
         window.cancelAnimationFrame(this.animationRequestId);
 
         console.log({
@@ -90,9 +95,9 @@ export class Game {
     private gameLoop(timestamp: number): void {
         this.tryCreateNewObjects(timestamp);
 
-        // Move player
-        this.player.update();
-        this.camera.move();
+        for (const obj of this.gameObjects) {
+            obj.update();
+        }
 
         // Player attacks, Enemy attacks, enemy move
         this.objects.forEach((enemy, index) => {
@@ -100,40 +105,32 @@ export class Game {
                 return;
             }
 
-            // Player attacks
+            // Player attacks 
             if (this.player.attack(enemy)) {
                 if (!enemy.isAlive()) {
                     this.kills++;
                     this.objects.splice(index, 1);
+                    this.gameObjects.splice(this.gameObjects.indexOf(enemy), 1);
                     return;
                 }
             }
-
-            // Enemy attacks
-            if (enemy.attack(this.player)) {
-                if (!this.player.isAlive()) {
-                    return;
-                }
-                return;
-            }
-
-            // Enemy move
-            enemy.move();
         });
     }
 
     private render(): void {
-        this.world.draw();
-        this.objects.forEach(enemy => enemy.draw());
-        this.player.draw();
         this.drawTime();
     }
 
     private tryCreateNewObjects(timestamp: number): void {
         const totalElapsedSec = (timestamp - this.startTimestamp) / 1000;
         while (this.totalNumberObjects < totalElapsedSec) {
-            this.objects.push(this.createNewObject(timestamp));
+            const enemy = this.createNewObject(timestamp);
+            this.objects.push(enemy);
             this.totalNumberObjects++;
+            
+            this.world.addObject(enemy);
+            this.gameObjects.push(enemy);
+            console.log(this.gameObjects);
         }
     }
 
@@ -142,7 +139,7 @@ export class Game {
         const r = Math.max(this.camera.canvasWidth, this.camera.canvasHeight) / 2;
         const x = Math.cos(theta) * r + this.player.center.x;
         const y = Math.sin(theta) * r + this.player.center.y;
-        return new Triangle(this.ctx, new Vector2D(x, y), this.player, this.camera, timestamp);
+        return new Triangle(this.ctx, new Vector2D(x, y), this.player, this.camera, timestamp, new TriangleGraphicComponent(this.ctx), new TrianglePhysicsComponent(), new TriangleActionComponent(this.world)); // TODO: add components option in one object to constructor
     }
 
     private isGameEnded(): boolean {
@@ -161,8 +158,17 @@ export class Game {
     }
 }
 
+function createCamera(): Camera {
+    const physicsComponent = new PlayerPhysicsComponent();
+    return new Camera(undefined, 0, new PlayerInputComponent(physicsComponent), physicsComponent)
+}
+
 function createPlayer(ctx: CanvasRenderingContext2D, camera: Camera): Player {
     const physicsComponent = new PlayerPhysicsComponent();
-    return new Player(ctx, camera, 0, new PlayerInputComponent(physicsComponent), physicsComponent)
+    return new Player(ctx, camera, 0, new PlayerInputComponent(physicsComponent), physicsComponent, new PlayerGraphicComponent(ctx))
         .addWeapon(new Gun(ctx, camera.center, camera, 0));
+}
+
+function createWorld(ctx: CanvasRenderingContext2D, camera: Camera): World {
+    return new World(ctx, camera, 0, new WorldGraphicComponent(ctx, camera));
 }

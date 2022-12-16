@@ -1,41 +1,28 @@
 import { Camera } from "../camera";
-import { InputComponent } from "../input-component";
+import { GraphicComponent } from "../graphic-components";
+import { InputComponent } from "../input-components";
 import { AbstractObject } from "../interfaces";
 import { PhysicsComponent } from "../physics-components";
 
 export class Player extends AbstractObject {
-    public width = 10;
-    public height = 10;
-    public backgroundColor = "#8DAA9D";
-    public ctx: CanvasRenderingContext2D;
     public camera: Camera;
-
     public inputComponent: InputComponent;
     public physicsComponent: PhysicsComponent;
+    public graphicComponent: GraphicComponent;
 
-    constructor(ctx: CanvasRenderingContext2D, camera: Camera, t: number, input: InputComponent, physics: PhysicsComponent) {
-        super(ctx, camera.center, t)
+    constructor(ctx: CanvasRenderingContext2D, camera: Camera, t: number, input: InputComponent, physics: PhysicsComponent, graphic: GraphicComponent) {
+        super(ctx, camera.center, t);
         this.camera = camera;
         
         this.maxHp = 100;
         this.hp = 100;
         this.damage = 0;
-        this.speed = 2;
-
-        this.inputComponent = input;
-        input.start();
-        this.physicsComponent = physics;
-    }
-
-    public draw(): void {
-        this.weapons.forEach(w => w.draw());
         
-        const relativePosition = this.center.sub(this.camera.getCanvasLimits().minP);
-        this.ctx.fillStyle = this.backgroundColor;
-        this.ctx.fillRect(relativePosition.x - this.width / 2, relativePosition.y - this.height / 2, this.width, this.height);
+        this.inputComponent = input;
+        this.physicsComponent = physics;
+        this.graphicComponent = graphic;
 
-        this.ctx.font = "24px serif";
-        this.ctx.fillText(`HP: ${this.hp} / ${this.maxHp}`, 10, 30);
+        input.start();
     }
 
     public canAttack(enemy: AbstractObject): boolean {
@@ -50,5 +37,6 @@ export class Player extends AbstractObject {
     public update(): void {
         this.inputComponent.update(this);
         this.physicsComponent.update(this);
+        this.graphicComponent.update(this);
     }
 }

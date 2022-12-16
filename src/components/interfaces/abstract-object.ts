@@ -64,4 +64,6 @@ export class AbstractObject {
         this.center = this.center.add(v);
         this.weapons.forEach(w => w.translate(v));
     }
+
+    public update(): void {}
 }

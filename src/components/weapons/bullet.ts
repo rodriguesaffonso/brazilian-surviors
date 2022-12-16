@@ -9,7 +9,7 @@ export class Bullet extends AbstractObject {
     public backgroundColor = "white";
     public radius = 2;
 
-    public speed = 2;
+    public speed = 3;
     public damage = 20;
     public distToAttack = 50;
 
