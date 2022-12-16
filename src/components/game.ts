@@ -5,6 +5,7 @@ import { Gun } from "./weapons/gun";
 import { World } from "./world";
 import { Camera } from "./camera";
 import { PlayerInputComponent } from "./input-component";
+import { PlayerPhysicsComponent } from "./physics-components";
 
 export class Game {
     public ctx: CanvasRenderingContext2D;
@@ -91,7 +92,6 @@ export class Game {
 
         // Move player
         this.player.update();
-        this.player.move();
         this.camera.move();
 
         // Player attacks, Enemy attacks, enemy move
@@ -162,6 +162,7 @@ export class Game {
 }
 
 function createPlayer(ctx: CanvasRenderingContext2D, camera: Camera): Player {
-    return new Player(ctx, camera, 0, new PlayerInputComponent())
+    const physicsComponent = new PlayerPhysicsComponent();
+    return new Player(ctx, camera, 0, new PlayerInputComponent(physicsComponent), physicsComponent)
         .addWeapon(new Gun(ctx, camera.center, camera, 0));
 }

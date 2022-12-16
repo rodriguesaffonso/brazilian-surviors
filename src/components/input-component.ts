@@ -1,20 +1,26 @@
 import { Player } from "./actors";
 import { AbstractObject, Vector2D } from "./interfaces";
+import { PlayerPhysicsComponent } from "./physics-components";
 
 export interface InputComponent {
-    update(obj: AbstractObject): void;
+    update(obj?: AbstractObject): void;
     start(): void;
     stop(): void
 }
 
 export class PlayerInputComponent implements InputComponent {
     private keyStates: Record<string, boolean> = {};
+    private physicsComponent: PlayerPhysicsComponent;
+
+    constructor(physics: PlayerPhysicsComponent) {
+        this.physicsComponent = physics;
+    }
 
     public update(player: Player): void {
         let vx: number, vy: number;
         vy = this.keyStates['w'] ? -1 : this.keyStates['s'] ? 1 : 0;
         vx = this.keyStates['a'] ? -1 : this.keyStates['d'] ? 1 : 0;
-        player.velocity = new Vector2D(vx, vy).unit().multiply(player.speed);
+        this.physicsComponent.setVelocityDirection(new Vector2D(vx, vy));
     }
 
     public onKeyEvent(event: KeyboardEvent): void {

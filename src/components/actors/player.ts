@@ -1,6 +1,7 @@
 import { Camera } from "../camera";
 import { InputComponent } from "../input-component";
 import { AbstractObject } from "../interfaces";
+import { PhysicsComponent } from "../physics-components";
 
 export class Player extends AbstractObject {
     public width = 10;
@@ -10,8 +11,9 @@ export class Player extends AbstractObject {
     public camera: Camera;
 
     public inputComponent: InputComponent;
+    public physicsComponent: PhysicsComponent;
 
-    constructor(ctx: CanvasRenderingContext2D, camera: Camera, t: number, input: InputComponent) {
+    constructor(ctx: CanvasRenderingContext2D, camera: Camera, t: number, input: InputComponent, physics: PhysicsComponent) {
         super(ctx, camera.center, t)
         this.camera = camera;
         
@@ -22,6 +24,7 @@ export class Player extends AbstractObject {
 
         this.inputComponent = input;
         input.start();
+        this.physicsComponent = physics;
     }
 
     public draw(): void {
@@ -46,5 +49,6 @@ export class Player extends AbstractObject {
 
     public update(): void {
         this.inputComponent.update(this);
+        this.physicsComponent.update(this);
     }
 }
