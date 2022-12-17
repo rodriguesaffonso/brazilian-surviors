@@ -1,8 +1,8 @@
-import { Camera } from "../camera";
-import { GraphicComponent } from "../graphic-components";
-import { InputComponent } from "../input-components";
+import { Camera } from "../camera/camera";
+import { GraphicComponent } from "../../components/graphic-components";
 import { AbstractObject } from "../interfaces";
-import { PhysicsComponent } from "../physics-components";
+import { PhysicsComponent } from "../../components/physics-components";
+import { InputComponent } from "../../components/input-components";
 
 export class Player extends AbstractObject {
     public camera: Camera;
@@ -23,10 +23,6 @@ export class Player extends AbstractObject {
         this.graphicComponent = graphic;
 
         input.start();
-    }
-
-    public canAttack(enemy: AbstractObject): boolean {
-        return this.weapons.length > 0;
     }
 
     public addWeapon(w: AbstractObject): Player {

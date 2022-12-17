@@ -1,13 +1,17 @@
-import { AbstractObject, Vector2D } from "./interfaces";
-import { Player } from "./actors/player";
-import { Triangle } from "./actors/triangle";
-import { Gun } from "./weapons/gun";
-import { World } from "./world";
-import { Camera } from "./camera";
-import { PlayerInputComponent } from "./input-components";
-import { PlayerPhysicsComponent, TrianglePhysicsComponent } from "./physics-components";
-import { PlayerGraphicComponent, TriangleGraphicComponent, WorldGraphicComponent } from "./graphic-components";
-import { TriangleActionComponent } from "./action-components";
+import { AbstractObject, Vector2D } from "./game-objects/interfaces";
+import { Player } from "./game-objects/player/player";
+import { Triangle } from "./game-objects/triangle/triangle";
+import { Gun } from "./game-objects/gun/gun";
+import { World } from "./game-objects/world/world";
+import { Camera } from "./game-objects/camera/camera";
+import { PlayerInputComponent } from "./game-objects/player/input-components";
+import { PlayerPhysicsComponent } from "./game-objects/player/physics-components";
+import { TrianglePhysicsComponent } from "./game-objects/triangle/physics-components";
+import { GunActionCompoment } from "./game-objects/gun/action-components";
+import { TriangleActionComponent } from "./game-objects/bullet/action-components";
+import { TriangleGraphicComponent } from "./game-objects/triangle/graphic-components";
+import { PlayerGraphicComponent } from "./game-objects/player/graphic-components";
+import { WorldGraphicComponent } from "./game-objects/world/graphic-components";
 
 export class Game {
     public ctx: CanvasRenderingContext2D;
@@ -36,10 +40,15 @@ export class Game {
         this.world = createWorld(this.ctx, this.camera);
         this.player = createPlayer(this.ctx, this.camera);
 
+        const playerGun = new Gun(this.ctx, this.camera.center, this.camera, this.world, 0, new GunActionCompoment());
+        this.player.addWeapon(playerGun);
+
         this.gameObjects.push(...[
             this.world, 
             this.camera, 
-            this.player
+            this.player,
+            playerGun,
+            ...playerGun.weapons
         ]);
 
         this.isRunning = true;
@@ -95,24 +104,11 @@ export class Game {
     private gameLoop(timestamp: number): void {
         this.tryCreateNewObjects(timestamp);
 
-        for (const obj of this.gameObjects) {
+        this.gameObjects.forEach((obj, index) => {
             obj.update();
-        }
 
-        // Player attacks, Enemy attacks, enemy move
-        this.objects.forEach((enemy, index) => {
-            if (!this.player.isAlive()) {
-                return;
-            }
-
-            // Player attacks 
-            if (this.player.attack(enemy)) {
-                if (!enemy.isAlive()) {
-                    this.kills++;
-                    this.objects.splice(index, 1);
-                    this.gameObjects.splice(this.gameObjects.indexOf(enemy), 1);
-                    return;
-                }
+            if (obj != this.player && obj.dead) {
+                this.gameObjects.splice(index, 1);
             }
         });
     }
@@ -128,9 +124,8 @@ export class Game {
             this.objects.push(enemy);
             this.totalNumberObjects++;
             
-            this.world.addObject(enemy);
+            this.world.addEnemy(enemy);
             this.gameObjects.push(enemy);
-            console.log(this.gameObjects);
         }
     }
 
@@ -165,8 +160,7 @@ function createCamera(): Camera {
 
 function createPlayer(ctx: CanvasRenderingContext2D, camera: Camera): Player {
     const physicsComponent = new PlayerPhysicsComponent();
-    return new Player(ctx, camera, 0, new PlayerInputComponent(physicsComponent), physicsComponent, new PlayerGraphicComponent(ctx))
-        .addWeapon(new Gun(ctx, camera.center, camera, 0));
+    return new Player(ctx, camera, 0, new PlayerInputComponent(physicsComponent), physicsComponent, new PlayerGraphicComponent(ctx));
 }
 
 function createWorld(ctx: CanvasRenderingContext2D, camera: Camera): World {

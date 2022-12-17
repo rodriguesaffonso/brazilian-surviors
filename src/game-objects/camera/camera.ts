@@ -1,6 +1,6 @@
-import { InputComponent } from "./input-components";
-import { AbstractObject, Vector2D } from "./interfaces";
-import { PhysicsComponent } from "./physics-components";
+import { AbstractObject, Vector2D } from "../interfaces";
+import { PhysicsComponent } from "../../components/physics-components";
+import { InputComponent } from "../../components/input-components";
 
 const CANVAS_SIZE = 800;
 
@@ -12,6 +12,7 @@ export class Camera extends AbstractObject {
 
     constructor(ctx: CanvasRenderingContext2D, t: number, input: InputComponent, physics: PhysicsComponent) {
         super(ctx, new Vector2D(CANVAS_SIZE / 2, CANVAS_SIZE / 2), t);
+        
         this.inputComponent = input;
         this.physicsComponent = physics;
 

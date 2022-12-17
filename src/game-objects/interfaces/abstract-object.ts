@@ -65,5 +65,7 @@ export class AbstractObject {
         this.weapons.forEach(w => w.translate(v));
     }
 
-    public update(): void {}
+    public update(): void {
+        throw Error(`Should implement update`);
+    }
 }

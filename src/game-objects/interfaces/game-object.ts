@@ -1,5 +1,6 @@
-import { InputComponent } from "../input-components";
-import { PhysicsComponent } from "../physics-components";
+
+import { InputComponent } from "../../components/input-components";
+import { PhysicsComponent } from "../../components/physics-components";
 
 export abstract class GameObject {
     public inputComponent: InputComponent;

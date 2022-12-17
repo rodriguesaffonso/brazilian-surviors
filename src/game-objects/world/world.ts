@@ -1,19 +1,21 @@
-import { Player } from "./actors";
-import { Camera } from "./camera";
-import { GraphicComponent, WorldGraphicComponent } from "./graphic-components";
-import { AbstractObject, Vector2D } from "./interfaces";
+
+import { GraphicComponent } from "../../components/graphic-components";
+import { Camera } from "../camera/camera";
+import { AbstractObject, Vector2D } from "../interfaces";
+import { WorldGraphicComponent } from "./graphic-components";
 
 const MAX_GRID_SIZE = 1e6;
 
 export class World extends AbstractObject {
     public camera: Camera;
-    public objects: AbstractObject[];
+    public enemies: AbstractObject[] = [];
+    
     public graphicComponent: GraphicComponent;
 
     constructor(ctx: CanvasRenderingContext2D, camera: Camera, t: number, graphic: WorldGraphicComponent) {
         super(ctx, Vector2D.zero(), t);
         this.camera = camera;
-        this.objects = [];
+        this.enemies = [];
 
         this.graphicComponent = graphic;
     }
@@ -24,18 +26,14 @@ export class World extends AbstractObject {
         this.removeDeadObjects();
     }
 
-    public addObject(obj: AbstractObject): void {
-        this.objects.push(obj);
-    }
-
-    public getPlayer(): Player {
-        return this.objects[0] as Player;
+    public addEnemy(enemy: AbstractObject): void {
+        this.enemies.push(enemy);
     }
 
     private removeDeadObjects(): void {
-        this.objects.forEach((obj, index) => {
-            if (obj.dead) {
-                this.objects.splice(index, 1);
+        this.enemies.forEach((enemy, index) => {
+            if (enemy.dead) {
+                this.enemies.splice(index, 1);
             }
         });
     }

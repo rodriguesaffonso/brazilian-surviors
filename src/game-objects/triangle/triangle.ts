@@ -1,23 +1,17 @@
-import { ActionComponent, TriangleActionComponent } from "../action-components";
-import { Camera } from "../camera";
-import { GraphicComponent, TriangleGraphicComponent } from "../graphic-components";
+import { Camera } from "../camera/camera";
 import { AbstractObject, Vector2D } from "../interfaces";
-import { PhysicsComponent } from "../physics-components";
-import { Player } from "./player";
+import { PhysicsComponent } from "../../components/physics-components";
+import { Player } from "../player/player";
+import { ActionComponent } from "../../components/action-components";
+import { TriangleActionComponent } from "../bullet/action-components";
+import { GraphicComponent } from "../../components/graphic-components";
+import { TriangleGraphicComponent } from "./graphic-components";
 
 export class Triangle extends AbstractObject {
     public ctx: CanvasRenderingContext2D;
     public player: Player;
     public camera: Camera;
     
-    public edgeLength: number = 10;
-    
-    public maxHp = 10;
-    public hp = 10;
-    public damage = 8;
-
-    public distToAttack = 10;
-
     public graphicComponent: GraphicComponent;
     public physicsComponent: PhysicsComponent;
     public actionComponent: ActionComponent;
