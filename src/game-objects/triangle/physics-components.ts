@@ -1,6 +1,6 @@
 
 import { PhysicsComponent } from "../../components/physics-components";
-import { Vector2D } from "../interfaces";
+import { Vector2D } from "../../interfaces";
 import { Triangle } from "./triangle";
 
 export class TrianglePhysicsComponent implements PhysicsComponent {

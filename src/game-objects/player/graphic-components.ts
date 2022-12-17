@@ -12,8 +12,6 @@ export class PlayerGraphicComponent implements GraphicComponent {
     }
 
     public update(player: Player): void {
-        player.weapons.forEach(w => w.move()); // TODO: add bullet components
-        
         const relativePosition = player.center.sub(player.camera.getCanvasLimits().minP);
         this.ctx.fillStyle = this.backgroundColor;
         this.ctx.fillRect(relativePosition.x - this.width / 2, relativePosition.y - this.height / 2, this.width, this.height);

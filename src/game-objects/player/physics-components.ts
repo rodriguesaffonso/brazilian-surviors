@@ -1,6 +1,6 @@
-import { PhysicsComponent } from "../../components/physics-components";
-import { Vector2D } from "../interfaces";
-import { Player } from "./player";
+import { PhysicsComponent } from "../../components";
+import { Vector2D } from "../../interfaces";
+import { Player } from "../player";
 
 export class PlayerPhysicsComponent implements PhysicsComponent {
     public position: Vector2D;

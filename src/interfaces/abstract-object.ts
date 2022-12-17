@@ -1,6 +1,7 @@
+import { GameObject } from "./game-object";
 import { Vector2D } from "./vector2D";
 
-export class AbstractObject {
+export class AbstractObject extends GameObject {
     public readonly createdTime: number;
     public ctx: CanvasRenderingContext2D;
     public center: Vector2D;
@@ -17,6 +18,7 @@ export class AbstractObject {
     public readonly onKilledCbs: (() => void)[] = [];
 
     constructor(ctx: CanvasRenderingContext2D, center: Vector2D, timestamp: number) {
+        super({});
         this.createdTime = timestamp;
         this.ctx = ctx;
         this.center = center.copy();

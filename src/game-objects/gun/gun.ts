@@ -1,11 +1,9 @@
-import { Camera } from "../camera/camera";
-import { AbstractObject, Vector2D } from "../interfaces";
-import { World } from "../world/world";
-import { Bullet } from "../bullet/bullet";
-import { BulletPhysicsComponent } from "../bullet/physics-components";
-import { GunActionCompoment } from "./action-components";
-import { BulletActionComponent } from "../triangle/action-components";
-import { BulletGraphicComponent } from "../bullet/graphic-components";
+import { AbstractObject, Vector2D } from "../../interfaces";
+import { Bullet, BulletActionComponent, BulletGraphicComponent, BulletPhysicsComponent } from "../bullet";
+import { Camera } from "../camera";
+import { GunActionCompoment } from "../gun";
+import { World } from "../world";
+
 
 export class Gun extends AbstractObject {
     public ctx: CanvasRenderingContext2D

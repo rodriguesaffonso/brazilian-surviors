@@ -1,5 +1,5 @@
-import { AbstractObject } from "../game-objects/interfaces";
+import { GameObject } from "../interfaces";
 
 export interface PhysicsComponent {
-    update(obj?: AbstractObject): void;
+    update(obj?: GameObject): void;
 }

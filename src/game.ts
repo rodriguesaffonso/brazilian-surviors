@@ -1,17 +1,9 @@
-import { AbstractObject, Vector2D } from "./game-objects/interfaces";
-import { Player } from "./game-objects/player/player";
-import { Triangle } from "./game-objects/triangle/triangle";
-import { Gun } from "./game-objects/gun/gun";
-import { World } from "./game-objects/world/world";
-import { Camera } from "./game-objects/camera/camera";
-import { PlayerInputComponent } from "./game-objects/player/input-components";
-import { PlayerPhysicsComponent } from "./game-objects/player/physics-components";
-import { TrianglePhysicsComponent } from "./game-objects/triangle/physics-components";
-import { GunActionCompoment } from "./game-objects/gun/action-components";
-import { TriangleActionComponent } from "./game-objects/bullet/action-components";
-import { TriangleGraphicComponent } from "./game-objects/triangle/graphic-components";
-import { PlayerGraphicComponent } from "./game-objects/player/graphic-components";
-import { WorldGraphicComponent } from "./game-objects/world/graphic-components";
+import { Camera } from "./game-objects/camera";
+import { Gun, GunActionCompoment } from "./game-objects/gun";
+import { Player, PlayerGraphicComponent, PlayerInputComponent, PlayerPhysicsComponent } from "./game-objects/player";
+import { Triangle, TriangleActionComponent, TriangleGraphicComponent, TrianglePhysicsComponent } from "./game-objects/triangle";
+import { World, WorldGraphicComponent } from "./game-objects/world";
+import { AbstractObject, Vector2D } from "./interfaces";
 
 export class Game {
     public ctx: CanvasRenderingContext2D;

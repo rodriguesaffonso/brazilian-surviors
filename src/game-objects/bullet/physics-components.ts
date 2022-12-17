@@ -1,5 +1,5 @@
-import { PhysicsComponent } from "../../components/physics-components";
-import { Vector2D } from "../interfaces";
+import { PhysicsComponent } from "../../components";
+import { Vector2D } from "../../interfaces";
 import { Bullet } from "./bullet";
 
 export class BulletPhysicsComponent implements PhysicsComponent {

@@ -1,7 +1,7 @@
-import { AbstractObject } from "../game-objects/interfaces";
+import { GameObject } from "../interfaces";
 
 export interface InputComponent {
-    update(obj?: AbstractObject): void;
+    update(obj?: GameObject): void;
     start(): void;
     stop(): void
 }

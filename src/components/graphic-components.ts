@@ -1,6 +1,6 @@
-import { AbstractObject } from "../game-objects/interfaces";
+import { GameObject } from "../interfaces";
 
 export interface GraphicComponent {
-    update(obj?: AbstractObject): void;
+    update(obj?: GameObject): void;
 }
 

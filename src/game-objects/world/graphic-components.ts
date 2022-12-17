@@ -1,5 +1,5 @@
-import { GraphicComponent } from "../../components/graphic-components";
-import { Camera } from "../camera/camera";
+import { GraphicComponent } from "../../components";
+import { Camera } from "../camera";
 
 export class WorldGraphicComponent implements GraphicComponent {
     public ctx: CanvasRenderingContext2D;

@@ -1,6 +1,6 @@
-import { AbstractObject } from "../game-objects/interfaces";
-import { World } from "../game-objects/world/world";
+import { World } from "../game-objects/world";
+import { GameObject } from "../interfaces";
 
 export interface ActionComponent {
-    update(obj: AbstractObject, world?: World): void;
+    update(obj: GameObject, world?: World): void;
 }

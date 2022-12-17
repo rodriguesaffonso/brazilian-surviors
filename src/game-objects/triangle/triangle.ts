@@ -1,11 +1,8 @@
-import { Camera } from "../camera/camera";
-import { AbstractObject, Vector2D } from "../interfaces";
-import { PhysicsComponent } from "../../components/physics-components";
-import { Player } from "../player/player";
-import { ActionComponent } from "../../components/action-components";
-import { TriangleActionComponent } from "../bullet/action-components";
-import { GraphicComponent } from "../../components/graphic-components";
-import { TriangleGraphicComponent } from "./graphic-components";
+import { ActionComponent, GraphicComponent, PhysicsComponent } from "../../components";
+import { AbstractObject, Vector2D } from "../../interfaces";
+import { Camera } from "../camera";
+import { Player } from "../player";
+import { TriangleGraphicComponent, TriangleActionComponent } from "../triangle";
 
 export class Triangle extends AbstractObject {
     public ctx: CanvasRenderingContext2D;

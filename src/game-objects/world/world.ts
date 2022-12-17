@@ -1,10 +1,7 @@
-
-import { GraphicComponent } from "../../components/graphic-components";
-import { Camera } from "../camera/camera";
-import { AbstractObject, Vector2D } from "../interfaces";
-import { WorldGraphicComponent } from "./graphic-components";
-
-const MAX_GRID_SIZE = 1e6;
+import { GraphicComponent } from "../../components";
+import { AbstractObject, Vector2D } from "../../interfaces";
+import { Camera } from "../camera";
+import { WorldGraphicComponent } from "../world";
 
 export class World extends AbstractObject {
     public camera: Camera;

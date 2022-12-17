@@ -1,14 +1,15 @@
-import { AbstractObject, Vector2D } from "../interfaces";
-import { PhysicsComponent } from "../../components/physics-components";
-import { InputComponent } from "../../components/input-components";
+import { InputComponent, PhysicsComponent } from "../../components";
+import { AbstractObject, Vector2D } from "../../interfaces";
+
 
 const CANVAS_SIZE = 800;
 
 export class Camera extends AbstractObject {
     public readonly canvasWidth = CANVAS_SIZE;
     public readonly canvasHeight = CANVAS_SIZE;
-    public inputComponent: InputComponent;
-    public physicsComponent: PhysicsComponent;
+    
+    public inputComponent: InputComponent; // Player input component
+    public physicsComponent: PhysicsComponent; // Player physics component
 
     constructor(ctx: CanvasRenderingContext2D, t: number, input: InputComponent, physics: PhysicsComponent) {
         super(ctx, new Vector2D(CANVAS_SIZE / 2, CANVAS_SIZE / 2), t);

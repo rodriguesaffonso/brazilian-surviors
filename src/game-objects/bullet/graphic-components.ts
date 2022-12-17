@@ -1,4 +1,4 @@
-import { GraphicComponent } from "../../components/graphic-components";
+import { GraphicComponent } from "../../components";
 import { Bullet } from "./bullet";
 
 export class BulletGraphicComponent implements GraphicComponent {
