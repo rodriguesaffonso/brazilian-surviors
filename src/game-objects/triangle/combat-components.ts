@@ -1,10 +1,11 @@
-import { ActionComponent } from "../../components/action-components";
+import { CombatComponent } from "../../components";
 import { Player } from "../player/player";
 import { World } from "../world/world";
 import { Triangle } from "./triangle";
 
 
-export class TriangleActionComponent implements ActionComponent {
+export class TriangleCombatComponent extends CombatComponent {
+    
     public distToAttack: number = 10;
     public damage = 8;
     public maxHp = 10;
@@ -16,6 +17,7 @@ export class TriangleActionComponent implements ActionComponent {
     private attackCooldownMs: number = 100;
 
     constructor(world: World) {
+        super({ hp: 10, damage: 8 });
         this.world = world;
     }
 

@@ -1,7 +1,7 @@
 import { AbstractObject, Vector2D } from "../../interfaces";
 import { Camera } from "../camera";
 import { World } from "../world";
-import { BulletGraphicComponent, BulletPhysicsComponent, BulletActionComponent } from "../bullet";
+import { BulletGraphicComponent, BulletPhysicsComponent, BulletCombatComponent } from "../bullet";
 
 
 export class Bullet extends AbstractObject {
@@ -12,7 +12,7 @@ export class Bullet extends AbstractObject {
 
     public graphicComponent: BulletGraphicComponent;
     public physicsComponent: BulletPhysicsComponent;
-    public actionComponent: BulletActionComponent;
+    public combatComponent: BulletCombatComponent;
 
     public speed = 3;
     public damage = 20;
@@ -20,19 +20,19 @@ export class Bullet extends AbstractObject {
 
     public travelling = false;
 
-    constructor(ctx: CanvasRenderingContext2D, center: Vector2D, camera: Camera, world: World, t: number, graphic: BulletGraphicComponent, physics: BulletPhysicsComponent, action: BulletActionComponent) {
+    constructor(ctx: CanvasRenderingContext2D, center: Vector2D, camera: Camera, world: World, t: number, graphic: BulletGraphicComponent, physics: BulletPhysicsComponent, action: BulletCombatComponent) {
         super(ctx, center, t);
         this.camera = camera;
         this.world = world;
 
         this.graphicComponent = graphic;
         this.physicsComponent = physics;
-        this.actionComponent = action;
+        this.combatComponent = action;
     }
 
     public update(): void {
         this.physicsComponent.update(this);
-        this.actionComponent.update(this, this.world);
+        this.combatComponent.update(this, this.world);
         this.graphicComponent.update(this);
     }
 }

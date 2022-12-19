@@ -1,12 +1,16 @@
-import { ActionComponent } from "../../components";
+import { CombatComponent, CombatComponentParams } from "../../components";
 import { AbstractObject } from "../../interfaces";
 import { World } from "../world";
-import { Bullet } from "../bullet";
+import { Bullet } from ".";
 
 
-export class BulletActionComponent implements ActionComponent {
+export class BulletCombatComponent extends CombatComponent {
     public damage: number = 20;
     public distToAttack: number = 5;
+
+    constructor(params: CombatComponentParams) {
+        super({ damage: 20 });
+    }
 
     public update(bullet: Bullet, world: World): void {
         if (bullet.enemy) {

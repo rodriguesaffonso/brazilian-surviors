@@ -1,7 +1,7 @@
 import { Camera } from "./game-objects/camera";
-import { Gun, GunActionCompoment } from "./game-objects/gun";
+import { Gun, GunCombatComponent } from "./game-objects/gun";
 import { Player, PlayerGraphicComponent, PlayerInputComponent, PlayerPhysicsComponent } from "./game-objects/player";
-import { Triangle, TriangleActionComponent, TriangleGraphicComponent, TrianglePhysicsComponent } from "./game-objects/triangle";
+import { Triangle, TriangleCombatComponent, TriangleGraphicComponent, TrianglePhysicsComponent } from "./game-objects/triangle";
 import { World, WorldGraphicComponent } from "./game-objects/world";
 import { AbstractObject, Vector2D } from "./interfaces";
 
@@ -32,7 +32,7 @@ export class Game {
         this.world = createWorld(this.ctx, this.camera);
         this.player = createPlayer(this.ctx, this.camera);
 
-        const playerGun = new Gun(this.ctx, this.camera.center, this.camera, this.world, 0, new GunActionCompoment());
+        const playerGun = new Gun(this.ctx, this.camera.center, this.camera, this.world, 0, new GunCombatComponent({}));
         this.player.addWeapon(playerGun);
 
         this.gameObjects.push(...[
@@ -126,7 +126,7 @@ export class Game {
         const r = Math.max(this.camera.canvasWidth, this.camera.canvasHeight) / 2;
         const x = Math.cos(theta) * r + this.player.center.x;
         const y = Math.sin(theta) * r + this.player.center.y;
-        return new Triangle(this.ctx, new Vector2D(x, y), this.player, this.camera, timestamp, new TriangleGraphicComponent(this.ctx), new TrianglePhysicsComponent(), new TriangleActionComponent(this.world)); // TODO: add components option in one object to constructor
+        return new Triangle(this.ctx, new Vector2D(x, y), this.player, this.camera, timestamp, new TriangleGraphicComponent(this.ctx), new TrianglePhysicsComponent(), new TriangleCombatComponent(this.world)); // TODO: add components option in one object to constructor
     }
 
     private isGameEnded(): boolean {

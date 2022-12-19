@@ -24,34 +24,6 @@ export class AbstractObject extends GameObject {
         this.center = center.copy();
     }
 
-    public draw(): void { throw Error('Should implement draw'); }
-    public canAttack(obj: AbstractObject): boolean { throw Error('Should implement canAttack'); }
-    public attack(obj: AbstractObject): boolean {
-        if (!obj.isAlive() || !this.canAttack(obj)) {
-            return false;
-        }
-        obj.takeHit(this.damage);
-        this.weapons.forEach(w => w.attack(obj));
-        return true;
-    }
-    public hit(obj: AbstractObject): void { throw Error('Should implement hit by object'); }
-    public move(): void {
-        this.beforeMove();
-        this.center = this.center.add(this.velocity);
-        this.weapons.forEach(w => w.move());
-    }
-    public beforeMove(): void { }
-
-    public takeHit(damage: number): void {
-        if (this.dead) { return; }
-        this.hp -= damage
-        if (this.hp < 0) {
-            this.hp = 0;
-            this.dead = true;
-            this.onKilled();
-        }
-    }
-
     public onKilled(): void {
         this.onKilledCbs.forEach(cb => cb());
     }
