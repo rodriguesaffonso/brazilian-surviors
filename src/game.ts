@@ -3,7 +3,7 @@ import { Gun, GunCombatComponent } from "./game-objects/gun";
 import { Player, PlayerGraphicComponent, PlayerInputComponent, PlayerPhysicsComponent } from "./game-objects/player";
 import { Triangle, TriangleCombatComponent, TriangleGraphicComponent, TrianglePhysicsComponent } from "./game-objects/triangle";
 import { World, WorldGraphicComponent } from "./game-objects/world";
-import { AbstractObject, Vector2D } from "./interfaces";
+import { GameObject, GameObjectKind, Vector2D } from "./interfaces";
 
 export class Game {
     public ctx: CanvasRenderingContext2D;
@@ -15,11 +15,11 @@ export class Game {
     public isRunning: boolean = true;
     public startTimestamp: number;
     public lastTimestamp: number;
-    public objects: AbstractObject[] = [];
+    public objects: GameObject[] = [];
     public totalNumberObjects: number = 0;
     public newObjectFrequency: number = 1;
     public kills: number = 0;
-    public gameObjects: AbstractObject[] = [];
+    public gameObjects: GameObject[] = [];
 
     public animationRequestId: number;
 
@@ -32,12 +32,12 @@ export class Game {
         this.world = createWorld(this.ctx, this.camera);
         this.player = createPlayer(this.ctx, this.camera);
 
-        const playerGun = new Gun(this.ctx, this.camera.center, this.camera, this.world, 0, new GunCombatComponent({}));
+        const playerGun = new Gun(this.ctx, this.camera, this.world, 0, new GunCombatComponent({}));
         this.player.addWeapon(playerGun);
 
         this.gameObjects.push(...[
-            this.world, 
-            this.camera, 
+            this.world,
+            this.camera,
             this.player,
             playerGun,
             ...playerGun.weapons
@@ -77,7 +77,7 @@ export class Game {
     private renderLoop(timestamp: number): void {
         const currentTime = Date.now();
         const elapsed = currentTime - this.lastTimestamp;
-        
+
         if (elapsed >= 10) {
             this.gameLoop(currentTime);
 
@@ -99,7 +99,7 @@ export class Game {
         this.gameObjects.forEach((obj, index) => {
             obj.update();
 
-            if (obj != this.player && obj.dead) {
+            if (obj.kind === GameObjectKind.Triangle && obj.combatComponent.dead) {
                 this.gameObjects.splice(index, 1);
             }
         });
@@ -115,28 +115,27 @@ export class Game {
             const enemy = this.createNewObject(timestamp);
             this.objects.push(enemy);
             this.totalNumberObjects++;
-            
+
             this.world.addEnemy(enemy);
             this.gameObjects.push(enemy);
         }
     }
 
-    private createNewObject(timestamp: number): AbstractObject {
+    private createNewObject(timestamp: number): GameObject {
         const theta = Math.random() * 2 * Math.PI;
         const r = Math.max(this.camera.canvasWidth, this.camera.canvasHeight) / 2;
-        const x = Math.cos(theta) * r + this.player.center.x;
-        const y = Math.sin(theta) * r + this.player.center.y;
-        return new Triangle(this.ctx, new Vector2D(x, y), this.player, this.camera, timestamp, new TriangleGraphicComponent(this.ctx), new TrianglePhysicsComponent(), new TriangleCombatComponent(this.world)); // TODO: add components option in one object to constructor
+        const x = Math.cos(theta) * r + this.player.physicsComponent.position.x;
+        const y = Math.sin(theta) * r + this.player.physicsComponent.position.y;
+        return new Triangle(this.ctx, new Vector2D(x, y), this.player, this.camera, timestamp, new TriangleGraphicComponent(this.ctx), new TrianglePhysicsComponent(new Vector2D(x, y)), new TriangleCombatComponent(this.world)); // TODO: add components option in one object to constructor
     }
 
     private isGameEnded(): boolean {
-        return this.kills === 10
-            || !this.player.isAlive();
+        return this.kills === 10 || this.player.combatComponent.dead;
     }
 
     private drawTime(): void {
         const elapsedMs = this.lastTimestamp - this.startTimestamp;
-        
+
         const min = Math.floor(elapsedMs / 1000 / 60);
         const sec = Math.floor(elapsedMs / 1000 - min * 60);
 
@@ -156,5 +155,7 @@ function createPlayer(ctx: CanvasRenderingContext2D, camera: Camera): Player {
 }
 
 function createWorld(ctx: CanvasRenderingContext2D, camera: Camera): World {
-    return new World(ctx, camera, 0, new WorldGraphicComponent(ctx, camera));
+    return new World({ 
+        graphic: new WorldGraphicComponent(ctx, camera) 
+    });
 }

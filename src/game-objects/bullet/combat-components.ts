@@ -1,5 +1,5 @@
-import { CombatComponent, CombatComponentParams } from "../../components";
-import { AbstractObject } from "../../interfaces";
+import { CombatComponent } from "../../components";
+import { CombatComponentParams, GameObject } from "../../interfaces";
 import { World } from "../world";
 import { Bullet } from ".";
 
@@ -15,16 +15,17 @@ export class BulletCombatComponent extends CombatComponent {
     public update(bullet: Bullet, world: World): void {
         if (bullet.enemy) {
             const enemy = bullet.enemy;
-            if (enemy.dead) {
+            if (enemy.combatComponent.dead) {
                 return;
             }
 
             if (this.canAttack(bullet, enemy)) {                
-                enemy.takeHit(bullet.damage);
+                enemy.combatComponent.takeHit(bullet.combatComponent.damage);
 
-                if (enemy.dead) {
+                if (enemy.combatComponent.dead) {
                     bullet.enemy = undefined;
                 }
+                console.log(enemy.kind, enemy);
             }
         } else {
             if (world.enemies.length > 0) {
@@ -33,7 +34,7 @@ export class BulletCombatComponent extends CombatComponent {
         }
     }
 
-    private canAttack(bullet: Bullet, enemy: AbstractObject): boolean {
-        return enemy.center.sub(bullet.center).modulo() < this.distToAttack;
+    private canAttack(bullet: Bullet, enemy: GameObject): boolean {
+        return enemy.physicsComponent.position.sub(bullet.physicsComponent.position).modulo() < this.distToAttack;
     }
 }

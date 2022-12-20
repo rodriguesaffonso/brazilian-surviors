@@ -8,16 +8,20 @@ export class TrianglePhysicsComponent implements PhysicsComponent {
     public velocity: Vector2D = Vector2D.zero();
     public speed: number = 1;
 
+    constructor(position: Vector2D) {
+        this.position = position ?? Vector2D.zero();
+    }
+
     public update(enemy: Triangle): void {
         if (!enemy.player) {
             return;
         }
-        const vectorToPlayer = enemy.player.center.sub(enemy.center);
+        const vectorToPlayer = enemy.player.physicsComponent.position.sub(enemy.physicsComponent.position);
         if (vectorToPlayer.modulo() < this.speed) {
             return;
         }
 
         this.velocity = vectorToPlayer.unit().multiply(this.speed);
-        enemy.center = enemy.center.add(this.velocity);
+        enemy.physicsComponent.position = enemy.physicsComponent.position.add(this.velocity);
     }
 }

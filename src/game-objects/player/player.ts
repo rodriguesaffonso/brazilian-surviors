@@ -1,30 +1,25 @@
 import { GraphicComponent, InputComponent, PhysicsComponent } from "../../components";
-import { AbstractObject } from "../../interfaces";
+import { GameObject, GameObjectKind } from "../../interfaces";
 import { Camera } from "../camera";
+import { PlayerCombatComponent } from "./combat-component";
 
-
-export class Player extends AbstractObject {
+export class Player extends GameObject {
+    public weapons: GameObject[];
     public camera: Camera;
-    public inputComponent: InputComponent;
-    public physicsComponent: PhysicsComponent;
-    public graphicComponent: GraphicComponent;
-
     constructor(ctx: CanvasRenderingContext2D, camera: Camera, t: number, input: InputComponent, physics: PhysicsComponent, graphic: GraphicComponent) {
-        super(ctx, camera.center, t);
+        super({
+            input,
+            physics,
+            combat: new PlayerCombatComponent({ hp: 100, maxHp: 100, damage: 0 }),
+            graphic
+        }, GameObjectKind.Player);
+
         this.camera = camera;
-
-        this.maxHp = 100;
-        this.hp = 100;
-        this.damage = 0;
-
-        this.inputComponent = input;
-        this.physicsComponent = physics;
-        this.graphicComponent = graphic;
-
+        this.weapons = [];
         input.start();
     }
 
-    public addWeapon(w: AbstractObject): Player {
+    public addWeapon(w: GameObject): Player {
         this.weapons.push(w);
         return this;
     }
@@ -32,6 +27,7 @@ export class Player extends AbstractObject {
     public update(): void {
         this.inputComponent.update(this);
         this.physicsComponent.update(this);
+        this.combatComponent.update(this);
         this.graphicComponent.update(this);
     }
 }

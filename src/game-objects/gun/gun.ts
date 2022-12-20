@@ -1,23 +1,19 @@
-import { AbstractObject, Vector2D } from "../../interfaces";
+import { GameObject, GameObjectKind } from "../../interfaces";
 import { Bullet, BulletCombatComponent, BulletGraphicComponent, BulletPhysicsComponent } from "../bullet";
 import { Camera } from "../camera";
 import { GunCombatComponent } from "../gun";
 import { World } from "../world";
 
 
-export class Gun extends AbstractObject {
+export class Gun extends GameObject {
     public ctx: CanvasRenderingContext2D
     public weapons: Bullet[];
 
     public CombatComponent: GunCombatComponent;
-    constructor(ctx: CanvasRenderingContext2D, center: Vector2D, camera: Camera, world: World, t: number, combat: GunCombatComponent) {
-        super(ctx, center, t);
+    constructor(ctx: CanvasRenderingContext2D, camera: Camera, world: World, t: number, combat: GunCombatComponent) {
+        super({ combat }, GameObjectKind.Gun);
 
-        this.speed = 0;
-        this.damage = 0;
-        this.weapons = [new Bullet(ctx, center, camera, world, t, new BulletGraphicComponent(ctx), new BulletPhysicsComponent(), new BulletCombatComponent({}))];
-
-        this.combatComponent = combat;
+        this.weapons = [new Bullet(ctx, camera, world, t, new BulletGraphicComponent(ctx), new BulletPhysicsComponent(), new BulletCombatComponent({}))];
     }
 
     public update(): void {

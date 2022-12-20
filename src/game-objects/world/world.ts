@@ -1,35 +1,25 @@
-import { GraphicComponent } from "../../components";
-import { AbstractObject, Vector2D } from "../../interfaces";
-import { Camera } from "../camera";
-import { WorldGraphicComponent } from "../world";
+import { GameObject, GameObjectKind, ObjectComponents } from "../../interfaces";
 
-export class World extends AbstractObject {
-    public camera: Camera;
-    public enemies: AbstractObject[] = [];
-    
-    public graphicComponent: GraphicComponent;
+export class World extends GameObject {
+    public enemies: GameObject[] = [];
 
-    constructor(ctx: CanvasRenderingContext2D, camera: Camera, t: number, graphic: WorldGraphicComponent) {
-        super(ctx, Vector2D.zero(), t);
-        this.camera = camera;
+    constructor(components: ObjectComponents) {
+        super({ graphic: components.graphic }, GameObjectKind.World);
         this.enemies = [];
-
-        this.graphicComponent = graphic;
     }
 
     public update(): void {
         this.graphicComponent.update();
-
         this.removeDeadObjects();
     }
 
-    public addEnemy(enemy: AbstractObject): void {
+    public addEnemy(enemy: GameObject): void {
         this.enemies.push(enemy);
     }
 
     private removeDeadObjects(): void {
         this.enemies.forEach((enemy, index) => {
-            if (enemy.dead) {
+            if (enemy.combatComponent.dead) {
                 this.enemies.splice(index, 1);
             }
         });

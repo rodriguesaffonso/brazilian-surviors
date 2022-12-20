@@ -1,12 +1,5 @@
 import { World } from "../game-objects/world";
-import { GameObject } from "../interfaces";
-
-export interface CombatComponentParams {
-    dead?: boolean,
-    damage?: number,
-    hp?: number,
-    maxHp?: number,
-}
+import { CombatComponentParams, GameObject } from "../interfaces";
 
 export abstract class CombatComponent implements CombatComponentParams {
     public dead: boolean = false;
@@ -15,7 +8,7 @@ export abstract class CombatComponent implements CombatComponentParams {
     public damage: number;
 
     constructor(params: CombatComponentParams) {
-        this.dead = params.dead;
+        this.dead = params.dead ?? false;
         this.hp = params.hp ?? 100;
         this.maxHp = params.maxHp ?? this.hp;
     }
@@ -25,11 +18,9 @@ export abstract class CombatComponent implements CombatComponentParams {
     }
 
     public takeHit(damage: number): void {
-        console.log(damage);
-        
         if (this.dead) { return; }
         this.hp -= damage
-        if (this.hp < 0) {
+        if (this.hp <= 0) {
             this.hp = 0;
             this.dead = true;
         }
