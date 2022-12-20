@@ -32,8 +32,7 @@ export interface ObjectComponents {
 
 export abstract class GameObject {
     public kind: GameObjectKind;
-    public center: Vector2D; // TODO: Move center to pyshicsComponent
-
+    
     public inputComponent: InputComponent;
     public combatComponent: CombatComponent;
     public physicsComponent: PhysicsComponent;
@@ -45,6 +44,10 @@ export abstract class GameObject {
         this.combatComponent = components.combat;
         this.physicsComponent = components.physics;
         this.graphicComponent = components.graphic;
+
+        if (components.input) {
+            components.input.start();
+        }
     }
 
     public update(): void {
@@ -52,5 +55,12 @@ export abstract class GameObject {
         this.combatComponent?.update(this);
         this.physicsComponent?.update(this);
         this.graphicComponent?.update(this);
+    }
+
+    public getPosition(): Vector2D {
+        if (!this.physicsComponent) {
+            throw Error(`Missing physics component in ${this.kind}`);
+        }
+        return this.physicsComponent.position;
     }
 }

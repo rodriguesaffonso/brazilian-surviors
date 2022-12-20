@@ -32,7 +32,7 @@ export class Game {
         this.world = createWorld(this.ctx, this.camera);
         this.player = createPlayer(this.ctx, this.camera);
 
-        const playerGun = new Gun(this.ctx, this.camera, this.world, 0, new GunCombatComponent({}));
+        const playerGun = new Gun(this.ctx, this.camera, this.world, { combat: new GunCombatComponent({}) });
         this.player.addWeapon(playerGun);
 
         this.gameObjects.push(...[
@@ -124,9 +124,13 @@ export class Game {
     private createNewObject(timestamp: number): GameObject {
         const theta = Math.random() * 2 * Math.PI;
         const r = Math.max(this.camera.canvasWidth, this.camera.canvasHeight) / 2;
-        const x = Math.cos(theta) * r + this.player.physicsComponent.position.x;
-        const y = Math.sin(theta) * r + this.player.physicsComponent.position.y;
-        return new Triangle(this.ctx, new Vector2D(x, y), this.player, this.camera, timestamp, new TriangleGraphicComponent(this.ctx), new TrianglePhysicsComponent(new Vector2D(x, y)), new TriangleCombatComponent(this.world)); // TODO: add components option in one object to constructor
+        const x = Math.cos(theta) * r + this.player.getPosition().x;
+        const y = Math.sin(theta) * r + this.player.getPosition().y;
+        return new Triangle(this.player, this.camera, {
+            graphic: new TriangleGraphicComponent(this.ctx),
+            physics: new TrianglePhysicsComponent(new Vector2D(x, y)),
+            combat: new TriangleCombatComponent(this.world),
+        });
     }
 
     private isGameEnded(): boolean {
@@ -146,16 +150,23 @@ export class Game {
 
 function createCamera(): Camera {
     const physicsComponent = new PlayerPhysicsComponent();
-    return new Camera(undefined, 0, new PlayerInputComponent(physicsComponent), physicsComponent)
+    return new Camera({
+        input: new PlayerInputComponent(physicsComponent),
+        physics: physicsComponent
+    });
 }
 
 function createPlayer(ctx: CanvasRenderingContext2D, camera: Camera): Player {
     const physicsComponent = new PlayerPhysicsComponent();
-    return new Player(ctx, camera, 0, new PlayerInputComponent(physicsComponent), physicsComponent, new PlayerGraphicComponent(ctx));
+    return new Player(camera, {
+        input: new PlayerInputComponent(physicsComponent),
+        physics: physicsComponent,
+        graphic: new PlayerGraphicComponent(ctx)
+    });
 }
 
 function createWorld(ctx: CanvasRenderingContext2D, camera: Camera): World {
-    return new World({ 
-        graphic: new WorldGraphicComponent(ctx, camera) 
+    return new World({
+        graphic: new WorldGraphicComponent(ctx, camera)
     });
 }

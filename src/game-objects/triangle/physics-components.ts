@@ -16,12 +16,16 @@ export class TrianglePhysicsComponent implements PhysicsComponent {
         if (!enemy.player) {
             return;
         }
-        const vectorToPlayer = enemy.player.physicsComponent.position.sub(enemy.physicsComponent.position);
+        const vectorToPlayer = enemy.player.getPosition().sub(enemy.getPosition());
         if (vectorToPlayer.modulo() < this.speed) {
             return;
         }
 
         this.velocity = vectorToPlayer.unit().multiply(this.speed);
-        enemy.physicsComponent.position = enemy.physicsComponent.position.add(this.velocity);
+        this.move();
+    }
+
+    private move(): void {
+        this.position = this.position.add(this.velocity);
     }
 }

@@ -25,7 +25,6 @@ export class BulletCombatComponent extends CombatComponent {
                 if (enemy.combatComponent.dead) {
                     bullet.enemy = undefined;
                 }
-                console.log(enemy.kind, enemy);
             }
         } else {
             if (world.enemies.length > 0) {
@@ -35,6 +34,6 @@ export class BulletCombatComponent extends CombatComponent {
     }
 
     private canAttack(bullet: Bullet, enemy: GameObject): boolean {
-        return enemy.physicsComponent.position.sub(bullet.physicsComponent.position).modulo() < this.distToAttack;
+        return enemy.getPosition().sub(bullet.getPosition()).modulo() < this.distToAttack;
     }
 }

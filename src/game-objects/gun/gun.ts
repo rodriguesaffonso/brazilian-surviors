@@ -1,4 +1,4 @@
-import { GameObject, GameObjectKind } from "../../interfaces";
+import { GameObject, GameObjectKind, ObjectComponents } from "../../interfaces";
 import { Bullet, BulletCombatComponent, BulletGraphicComponent, BulletPhysicsComponent } from "../bullet";
 import { Camera } from "../camera";
 import { GunCombatComponent } from "../gun";
@@ -10,13 +10,16 @@ export class Gun extends GameObject {
     public weapons: Bullet[];
 
     public CombatComponent: GunCombatComponent;
-    constructor(ctx: CanvasRenderingContext2D, camera: Camera, world: World, t: number, combat: GunCombatComponent) {
-        super({ combat }, GameObjectKind.Gun);
+    
+    constructor(ctx: CanvasRenderingContext2D, camera: Camera, world: World, components: ObjectComponents) {
+        super({ 
+            combat: components.combat 
+        }, GameObjectKind.Gun);
 
-        this.weapons = [new Bullet(ctx, camera, world, t, new BulletGraphicComponent(ctx), new BulletPhysicsComponent(), new BulletCombatComponent({}))];
-    }
-
-    public update(): void {
-        this.combatComponent.update(this);
+        this.weapons = [new Bullet(camera, world, {
+            physics: new BulletPhysicsComponent(), 
+            combat: new BulletCombatComponent({}),
+            graphic: new BulletGraphicComponent(ctx), 
+        })];
     }
 }

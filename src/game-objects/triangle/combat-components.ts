@@ -27,7 +27,7 @@ export class TriangleCombatComponent extends CombatComponent {
             return;
         }
 
-        if (player.physicsComponent.position.sub(enemy.player.physicsComponent.position).modulo() < this.distToAttack) {
+        if (player.getPosition().sub(enemy.player.getPosition()).modulo() < this.distToAttack) {
             const currentTime = Date.now(); // TODO: pass time from game loop
             if (!this.lastAttackTime) {
                 this.lastAttackTime = currentTime;
@@ -46,8 +46,8 @@ export class TriangleCombatComponent extends CombatComponent {
     }
 
     private canAttack(enemy: Triangle, player: Player): boolean {
-        const p = player.physicsComponent.position;
-        const e = enemy.physicsComponent.position;
+        const p = player.getPosition();
+        const e = enemy.getPosition();
         return e.sub(p).modulo() < this.distToAttack;
     }
 }

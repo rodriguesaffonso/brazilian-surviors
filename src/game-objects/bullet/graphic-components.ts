@@ -11,7 +11,7 @@ export class BulletGraphicComponent implements GraphicComponent {
     }
 
     public update(bullet: Bullet): void {
-        const relativePosition = bullet.physicsComponent.position.sub(bullet.camera.getCanvasLimits().minP);
+        const relativePosition = bullet.getPosition().sub(bullet.camera.getCanvasLimits().minP);
         this.ctx.fillStyle = this.backgroundColor;
         this.ctx.beginPath()
         this.ctx.arc(relativePosition.x, relativePosition.y, this.radius, 0, Math.PI * 2)

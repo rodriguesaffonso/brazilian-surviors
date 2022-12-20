@@ -12,7 +12,7 @@ export class PlayerGraphicComponent implements GraphicComponent {
     }
 
     public update(player: Player): void {
-        const relativePosition = player.physicsComponent.position.sub(player.camera.getCanvasLimits().minP);
+        const relativePosition = player.getPosition().sub(player.camera.getCanvasLimits().minP);
         this.ctx.fillStyle = this.backgroundColor;
         this.ctx.fillRect(relativePosition.x - this.width / 2, relativePosition.y - this.height / 2, this.width, this.height);
 
