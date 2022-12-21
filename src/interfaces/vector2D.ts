@@ -37,4 +37,16 @@ export class Vector2D {
     public sub(v: Vector2D): Vector2D {
         return this.add(v.multiply(-1));
     }
+
+    public equals(v: Vector2D): boolean {
+        return this.x === v.x && this.y === v.y;
+    }
+
+    public equalsDirection(v: Vector2D): boolean {
+        return this.unit().equals(v.unit());
+    }
+
+    public isZero(): boolean {
+        return this.equals(Vector2D.zero());
+    }
 }
