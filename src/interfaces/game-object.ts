@@ -18,6 +18,7 @@ export interface CombatComponentParams {
     damage?: number,
     hp?: number,
     maxHp?: number,
+    coldown?: number
 }
 
 export interface ObjectComponents {

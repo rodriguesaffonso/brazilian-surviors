@@ -4,14 +4,23 @@ import { Bullet } from ".";
 
 
 export class BulletCombatComponent extends CombatComponent {
-    public damage: number = 20;
     public distToAttack: number = 5;
+    public cooldownTimeout: number;
+    public readyToAttack: boolean;
 
     constructor(params: CombatComponentParams) {
-        super({ damage: 20 });
+        super({ damage: params.damage ?? 20, coldown: params.coldown ?? 1000 });
+        this.cooldownTimeout = 0;
+        this.readyToAttack = false;
     }
 
     public update(bullet: Bullet, params: CommandParms): void {
+        this.cooldownTimeout -= params.elapsedMs;
+        if (this.cooldownTimeout <= 0) {
+            this.cooldownTimeout = 0;
+            this.readyToAttack = true;
+        }
+
         if (bullet.enemy) {
             const enemy = bullet.enemy;
             if (enemy.combatComponent.dead) {
@@ -24,6 +33,8 @@ export class BulletCombatComponent extends CombatComponent {
                 if (enemy.combatComponent.dead) {
                     bullet.enemy = undefined;
                 }
+
+                this.readyToAttack = false;
             }
         } else {
             const { world } = params;
@@ -33,9 +44,16 @@ export class BulletCombatComponent extends CombatComponent {
                 bullet.enemy = world.enemies[0];
             }
         }
+        this.resetCooldown();
     }
 
     private canAttack(bullet: Bullet, enemy: GameObject): boolean {
-        return enemy.getPosition().sub(bullet.getPosition()).modulo() < this.distToAttack;
+        return this.readyToAttack && enemy.getPosition().sub(bullet.getPosition()).modulo() < this.distToAttack;
+    }
+
+    private resetCooldown(): void {
+        if (this.cooldownTimeout <= 0) {
+            this.cooldownTimeout = this.cooldown;
+        }
     }
 }
