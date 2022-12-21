@@ -7,19 +7,23 @@ export class BulletCombatComponent extends CombatComponent {
     public distToAttack: number = 5;
     public cooldownTimeout: number;
     public readyToAttack: boolean;
+    public durationTimeout: number;
 
     constructor(params: CombatComponentParams) {
-        super({ damage: params.damage ?? 20, coldown: params.coldown ?? 1000 });
+        super({ 
+            damage: params.damage ?? 20,
+            coldown: params.coldown ?? 500,
+            duration: params.duration ?? 5000
+        });
         this.cooldownTimeout = 0;
         this.readyToAttack = false;
+        this.durationTimeout = this.duration;
     }
 
     public update(bullet: Bullet, params: CommandParms): void {
-        this.cooldownTimeout -= params.elapsedMs;
-        if (this.cooldownTimeout <= 0) {
-            this.cooldownTimeout = 0;
-            this.readyToAttack = true;
-        }
+        if (this.dead) return;
+        this.decreaseCooldownTimeout(params);
+        this.updateDurationTimeout(params);
 
         if (bullet.enemy) {
             const enemy = bullet.enemy;
@@ -49,6 +53,22 @@ export class BulletCombatComponent extends CombatComponent {
 
     private canAttack(bullet: Bullet, enemy: GameObject): boolean {
         return this.readyToAttack && enemy.getPosition().sub(bullet.getPosition()).modulo() < this.distToAttack;
+    }
+
+    private decreaseCooldownTimeout(params: CommandParms): void {
+        this.cooldownTimeout -= params.elapsedMs;
+        if (this.cooldownTimeout <= 0) {
+            this.cooldownTimeout = 0;
+            this.readyToAttack = true;
+        }
+    }
+
+    private updateDurationTimeout(params: CommandParms): void {
+        this.durationTimeout -= params.elapsedMs;
+        if (this.durationTimeout <= 0) {
+            this.durationTimeout = 0;
+            this.dead = true;
+        }
     }
 
     private resetCooldown(): void {

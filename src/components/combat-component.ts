@@ -7,6 +7,7 @@ export abstract class CombatComponent implements CombatComponentParams {
     public maxHp?: number;
     public damage: number;
     public cooldown: number;
+    public duration: number;
 
     constructor(params: CombatComponentParams) {
         this.dead = params.dead ?? false;
@@ -14,6 +15,7 @@ export abstract class CombatComponent implements CombatComponentParams {
         this.maxHp = params.maxHp ?? this.hp;
         this.damage = params.damage ?? 10;
         this.cooldown = params.coldown ?? 1000;
+        this.duration = params.duration;
     }
 
     public update(obj: GameObject, params: CommandParms): void {

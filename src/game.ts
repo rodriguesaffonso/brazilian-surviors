@@ -101,8 +101,12 @@ export class Game {
             obj.update({ elapsedMs, world: this.world });
 
             // Remove dead enemies from the game
-            if (obj.kind === GameObjectKind.Triangle && obj.combatComponent.dead) {
+            if (obj.combatComponent?.dead) {
                 this.gameObjects.splice(index, 1);
+
+                if (obj.kind === GameObjectKind.Triangle) {
+                    this.kills++;
+                }
             }
         });
     }
