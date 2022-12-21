@@ -2,14 +2,12 @@ import { GraphicComponent } from "../../components/graphic-components";
 import { Triangle } from "./triangle";
 
 
-export class TriangleGraphicComponent implements GraphicComponent {
+export class TriangleGraphicComponent extends GraphicComponent {
     public edgeLength: number = 10;
     public backgroundColor: string = "#8DAA9D";
 
-    public ctx: CanvasRenderingContext2D;
-
     constructor(ctx: CanvasRenderingContext2D) {
-        this.ctx = ctx;
+        super(ctx);
     }
 
     public update(obj: Triangle): void {

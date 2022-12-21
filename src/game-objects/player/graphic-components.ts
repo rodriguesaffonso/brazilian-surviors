@@ -1,14 +1,13 @@
 import { GraphicComponent } from "../../components/graphic-components";
 import { Player } from "./player";
 
-export class PlayerGraphicComponent implements GraphicComponent {
+export class PlayerGraphicComponent extends GraphicComponent {
     public width = 10;
     public height = 10;
     public backgroundColor = "#8DAA9D";
-    public ctx: CanvasRenderingContext2D;
-
+    
     constructor(ctx: CanvasRenderingContext2D) {
-        this.ctx = ctx;
+        super(ctx);
     }
 
     public update(player: Player): void {
