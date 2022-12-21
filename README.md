@@ -13,3 +13,4 @@ DONE
 - getPosition in GameObject class
 - move method in physics component
 - add direction vector in physics component
+- create world horion limit: delete enemies far beyond the far limit

@@ -1,8 +1,14 @@
 import { GameObject } from "../interfaces";
 import { CommandParms } from "./params";
 
-export interface InputComponent {
-    update(obj?: GameObject, params?: CommandParms): void;
-    start(): void;
-    stop(): void
+export abstract class InputComponent {
+    public update(obj?: GameObject, params?: CommandParms): void {
+        throw Error('NYI');
+    }
+    public start(): void {
+        throw Error('NYI');
+    }
+    public stop(): void {
+        throw Error('NYI');
+    }
 }

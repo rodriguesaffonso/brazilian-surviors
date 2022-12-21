@@ -2,11 +2,12 @@ import { InputComponent } from "../../components";
 import { Vector2D } from "../../interfaces";
 import { PlayerPhysicsComponent, Player } from "../player";
 
-export class PlayerInputComponent implements InputComponent {
+export class PlayerInputComponent extends InputComponent {
     private keyStates: Record<string, boolean> = {};
     private physicsComponent: PlayerPhysicsComponent;
 
     constructor(physics: PlayerPhysicsComponent) {
+        super();
         this.physicsComponent = physics;
     }
 
