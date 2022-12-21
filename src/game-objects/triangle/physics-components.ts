@@ -1,18 +1,15 @@
 
+import { CommandParms } from "../../components";
 import { PhysicsComponent } from "../../components/physics-components";
 import { Vector2D } from "../../interfaces";
 import { Triangle } from "./triangle";
 
-export class TrianglePhysicsComponent implements PhysicsComponent {
-    public position: Vector2D;
-    public velocity: Vector2D = Vector2D.zero();
-    public speed: number = 1;
-
+export class TrianglePhysicsComponent extends PhysicsComponent {
     constructor(position: Vector2D) {
-        this.position = position ?? Vector2D.zero();
+        super({ position, speed: 1 });
     }
 
-    public update(enemy: Triangle): void {
+    public update(enemy: Triangle, params: CommandParms): void {
         if (!enemy.player) {
             return;
         }
@@ -22,10 +19,6 @@ export class TrianglePhysicsComponent implements PhysicsComponent {
         }
 
         this.velocity = vectorToPlayer.unit().multiply(this.speed);
-        this.move();
-    }
-
-    private move(): void {
-        this.position = this.position.add(this.velocity);
+        super.update(enemy, params);
     }
 }

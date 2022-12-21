@@ -2,13 +2,9 @@ import { PhysicsComponent } from "../../components";
 import { Vector2D } from "../../interfaces";
 import { Player } from "../player";
 
-export class PlayerPhysicsComponent implements PhysicsComponent {
-    public position: Vector2D = Vector2D.zero();
-    public velocity: Vector2D = Vector2D.zero();
-    public speed: number = 2;
-
-    public update(player: Player): void {
-        this.position = this.position.add(this.velocity);
+export class PlayerPhysicsComponent extends PhysicsComponent {
+    constructor() {
+        super({ speed: 2 });
     }
 
     public setVelocityDirection(direction: Vector2D): void {

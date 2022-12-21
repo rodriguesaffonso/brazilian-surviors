@@ -1,7 +1,6 @@
 import { GameObject, GameObjectKind, ObjectComponents } from "../../interfaces";
 import { Bullet, BulletCombatComponent, BulletGraphicComponent, BulletPhysicsComponent } from "../bullet";
 import { Camera } from "../camera";
-import { GunCombatComponent } from "../gun";
 import { World } from "../world";
 
 
