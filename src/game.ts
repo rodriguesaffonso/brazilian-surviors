@@ -32,15 +32,13 @@ export class Game {
         this.world = createWorld(this.ctx, this.camera);
         this.player = createPlayer(this.ctx, this.camera);
 
-        const playerGun = new Gun(this.ctx, this.camera, this.world, { combat: new GunCombatComponent({}) });
-        this.player.addWeapon(playerGun);
+        const playerGun = createGun(this.ctx, this.camera, this.world, this.player, this.addToGameObjectsArray.bind(this));
 
         this.gameObjects.push(...[
             this.world,
             this.camera,
             this.player,
             playerGun,
-            ...playerGun.weapons
         ]);
 
         this.isRunning = true;
@@ -109,6 +107,8 @@ export class Game {
                 }
             }
         });
+
+        this.gameObjects.sort((a, b) => a.kind - b.kind);
     }
 
     private render(): void {
@@ -156,6 +156,10 @@ export class Game {
     private getElapsedLoopTime(currentTime: number): number {
         return currentTime - this.lastTimestamp;
     }
+
+    private addToGameObjectsArray(obj: GameObject): void {
+        this.gameObjects.push(obj);
+    }
 }
 
 function createCamera(): Camera {
@@ -179,4 +183,12 @@ function createWorld(ctx: CanvasRenderingContext2D, camera: Camera): World {
     return new World({
         graphic: new WorldGraphicComponent(ctx, camera)
     });
+}
+
+function createGun(ctx: CanvasRenderingContext2D, camera: Camera, world: World, player: Player, cb: (obj: GameObject) => void): Gun {
+    const gun = new Gun(ctx, camera, world, { combat: new GunCombatComponent(ctx, camera, {}) });
+    gun.setAddBulletToGameObjectArray(cb);
+
+    player.addWeapon(gun);
+    return gun;
 }

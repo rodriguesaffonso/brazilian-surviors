@@ -1,5 +1,5 @@
-import { ObjectDirection } from "../../components";
 import { GraphicComponent } from "../../components/graphic-components";
+import { ObjectDirection } from "../../interfaces";
 import { Player } from "./player";
 
 export class PlayerGraphicComponent extends GraphicComponent {

@@ -10,7 +10,7 @@ export class BulletCombatComponent extends CombatComponent {
     public durationTimeout: number;
 
     constructor(params: CombatComponentParams) {
-        super({ 
+        super({
             damage: params.damage ?? 20,
             coldown: params.coldown ?? 500,
             duration: params.duration ?? 5000
@@ -31,11 +31,12 @@ export class BulletCombatComponent extends CombatComponent {
                 return;
             }
 
-            if (this.canAttack(bullet, enemy)) {                
+            if (this.canAttack(bullet, enemy)) {
                 enemy.combatComponent.takeHit(bullet.combatComponent.damage);
 
                 if (enemy.combatComponent.dead) {
                     bullet.enemy = undefined;
+                    bullet.gun.trackingEnemies.delete(enemy);
                 }
 
                 this.readyToAttack = false;
@@ -45,7 +46,13 @@ export class BulletCombatComponent extends CombatComponent {
             if (!world) throw Error(`Missing world in update params of bullet class`);
 
             if (world.enemies.length > 0) {
-                bullet.enemy = world.enemies[0];
+                const { gun } = bullet;
+                for (const enemy of world.enemies) {
+                    if (!gun.trackingEnemies.has(enemy)) {
+                        bullet.enemy = enemy;
+                        gun.trackingEnemies.add(enemy);
+                    }
+                }
             }
         }
         this.resetCooldown();
@@ -56,10 +63,18 @@ export class BulletCombatComponent extends CombatComponent {
     }
 
     private decreaseCooldownTimeout(params: CommandParms): void {
-        this.cooldownTimeout -= params.elapsedMs;
-        if (this.cooldownTimeout <= 0) {
-            this.cooldownTimeout = 0;
-            this.readyToAttack = true;
+        if (!this.readyToAttack) {
+            this.cooldownTimeout -= params.elapsedMs;
+            if (this.cooldownTimeout <= 0) {
+                this.cooldownTimeout = 0;
+                this.readyToAttack = true;
+            }
+        }
+    }
+
+    private resetCooldown(): void {
+        if (!this.readyToAttack && this.cooldownTimeout <= 0) {
+            this.cooldownTimeout = this.cooldown;
         }
     }
 
@@ -68,12 +83,6 @@ export class BulletCombatComponent extends CombatComponent {
         if (this.durationTimeout <= 0) {
             this.durationTimeout = 0;
             this.dead = true;
-        }
-    }
-
-    private resetCooldown(): void {
-        if (this.cooldownTimeout <= 0) {
-            this.cooldownTimeout = this.cooldown;
         }
     }
 }

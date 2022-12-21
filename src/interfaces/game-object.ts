@@ -3,13 +3,18 @@ import { CombatComponent, CommandParms, GraphicComponent, InputComponent, Physic
 import { Vector2D } from "./vector2D";
 
 export enum GameObjectKind {
-    Game = 'game',
-    World = 'world',
-    Player = 'player',
-    Camera = 'camera',
-    Triangle = 'triangle',
-    Gun = 'gun',
-    Bullet = 'bullet'
+    Game = 0,
+    World = 1,
+    Camera = 2,
+    Player = 3,
+    Gun = 4,
+    Bullet = 5,
+    Triangle = 6,
+}
+
+export enum ObjectDirection {
+    Left = 0,
+    Right = 1
 }
 
 export interface CombatComponentParams {
@@ -22,6 +27,12 @@ export interface CombatComponentParams {
     duration?: number
 }
 
+export interface PhysicsComponentParams {
+    position?: Vector2D;
+    velocity?: Vector2D;
+    speed?: number;
+    direction?: ObjectDirection;
+}
 export interface ObjectComponents {
     input?: InputComponent;
     combat?: CombatComponent;

@@ -1,17 +1,5 @@
-import { GameObject, Vector2D } from "../interfaces";
+import { GameObject, ObjectDirection, PhysicsComponentParams, Vector2D } from "../interfaces";
 import { CommandParms } from "./params";
-
-export enum ObjectDirection {
-    Left = 0,
-    Right = 1
-}
-
-export interface PhysicsComponentParams {
-    position?: Vector2D;
-    velocity?: Vector2D;
-    speed?: number;
-    direction?: ObjectDirection;
-}
 
 export abstract class PhysicsComponent {
     public position: Vector2D;          // Position of the object

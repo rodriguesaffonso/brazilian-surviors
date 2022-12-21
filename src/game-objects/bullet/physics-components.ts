@@ -1,13 +1,16 @@
 import { CommandParms, PhysicsComponent } from "../../components";
-import { Vector2D } from "../../interfaces";
+import { PhysicsComponentParams, Vector2D } from "../../interfaces";
 import { Bullet } from "./bullet";
 
 export class BulletPhysicsComponent extends PhysicsComponent {
-    public speed: number = 3;
-    public velocity: Vector2D = Vector2D.zero();
-    public position: Vector2D = Vector2D.zero();
+    constructor(params: PhysicsComponentParams) { 
+        super({ 
+            speed: params.speed ?? 3,
+            position: params.position 
+        });
 
-    constructor() { super({ speed: 3 }); }
+        this.velocity = Vector2D.zero();
+    }
 
     public update(bullet: Bullet, params: CommandParms): void {
         if (bullet.enemy) {                       

@@ -6,16 +6,19 @@ import { World } from "../world";
 
 export class Gun extends GameObject {
     public weapons: Bullet[];
+    public addBulletToGameObjectArray: (bullet: Bullet) => void;
+    public trackingEnemies: Set<GameObject>;
 
     constructor(ctx: CanvasRenderingContext2D, camera: Camera, world: World, components: ObjectComponents) {
         super({ 
             combat: components.combat 
         }, GameObjectKind.Gun);
 
-        this.weapons = [new Bullet(camera, world, { // TODO: make gun automatically shoots new bullets over time
-            physics: new BulletPhysicsComponent(), 
-            combat: new BulletCombatComponent({}),
-            graphic: new BulletGraphicComponent(ctx), 
-        })];
+        this.weapons = [];
+        this.trackingEnemies = new Set();
+    }
+
+    public setAddBulletToGameObjectArray(cb: (bullet: Bullet) => void): void {
+        this.addBulletToGameObjectArray = cb;
     }
 }
