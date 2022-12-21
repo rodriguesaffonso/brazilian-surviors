@@ -1,3 +1,4 @@
+import { CommandParms } from "../../components";
 import { GameObject, GameObjectKind, ObjectComponents } from "../../interfaces";
 
 export class World extends GameObject {
@@ -8,8 +9,8 @@ export class World extends GameObject {
         this.enemies = [];
     }
 
-    public update(): void {
-        this.graphicComponent.update();
+    public update(params: CommandParms): void {
+        super.update(params);
         this.removeDeadObjects();
     }
 

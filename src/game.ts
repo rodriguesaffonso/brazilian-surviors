@@ -74,9 +74,9 @@ export class Game {
         });
     }
 
-    private renderLoop(timestamp: number): void {
+    private renderLoop(): void {
         const currentTime = Date.now();
-        const elapsed = currentTime - this.lastTimestamp;
+        const elapsed = this.getElapsedLoopTime(currentTime);
 
         if (elapsed >= 10) {
             this.gameLoop(currentTime);
@@ -94,11 +94,13 @@ export class Game {
     }
 
     private gameLoop(timestamp: number): void {
+        const elapsedMs = this.getElapsedLoopTime(timestamp);
         this.tryCreateNewObjects(timestamp);
 
         this.gameObjects.forEach((obj, index) => {
-            obj.update();
+            obj.update({ elapsedMs, world: this.world });
 
+            // Remove dead enemies from the game
             if (obj.kind === GameObjectKind.Triangle && obj.combatComponent.dead) {
                 this.gameObjects.splice(index, 1);
             }
@@ -112,7 +114,7 @@ export class Game {
     private tryCreateNewObjects(timestamp: number): void {
         const totalElapsedSec = (timestamp - this.startTimestamp) / 1000;
         while (this.totalNumberObjects < totalElapsedSec) {
-            const enemy = this.createNewObject(timestamp);
+            const enemy = this.createNewObject();
             this.objects.push(enemy);
             this.totalNumberObjects++;
 
@@ -121,7 +123,7 @@ export class Game {
         }
     }
 
-    private createNewObject(timestamp: number): GameObject {
+    private createNewObject(): GameObject {
         const theta = Math.random() * 2 * Math.PI;
         const r = Math.max(this.camera.canvasWidth, this.camera.canvasHeight) / 2;
         const x = Math.cos(theta) * r + this.player.getPosition().x;
@@ -145,6 +147,10 @@ export class Game {
 
         this.ctx.font = "24px serif";
         this.ctx.fillText(`${min < 10 ? "0" : ""}${min}:${sec < 10 ? "0" : ""}${sec}`, 10, 60);
+    }
+
+    private getElapsedLoopTime(currentTime: number): number {
+        return currentTime - this.lastTimestamp;
     }
 }
 

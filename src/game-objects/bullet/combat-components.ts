@@ -1,6 +1,5 @@
-import { CombatComponent } from "../../components";
+import { CombatComponent, CommandParms } from "../../components";
 import { CombatComponentParams, GameObject } from "../../interfaces";
-import { World } from "../world";
 import { Bullet } from ".";
 
 
@@ -12,7 +11,7 @@ export class BulletCombatComponent extends CombatComponent {
         super({ damage: 20 });
     }
 
-    public update(bullet: Bullet, world: World): void {
+    public update(bullet: Bullet, params: CommandParms): void {
         if (bullet.enemy) {
             const enemy = bullet.enemy;
             if (enemy.combatComponent.dead) {
@@ -27,6 +26,9 @@ export class BulletCombatComponent extends CombatComponent {
                 }
             }
         } else {
+            const { world } = params;
+            if (!world) throw Error(`Missing world in update params of bullet class`);
+
             if (world.enemies.length > 0) {
                 bullet.enemy = world.enemies[0];
             }

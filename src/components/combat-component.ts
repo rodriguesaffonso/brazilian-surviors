@@ -1,5 +1,6 @@
 import { World } from "../game-objects/world";
 import { CombatComponentParams, GameObject } from "../interfaces";
+import { CommandParms } from "./params";
 
 export abstract class CombatComponent implements CombatComponentParams {
     public dead: boolean = false;
@@ -13,7 +14,7 @@ export abstract class CombatComponent implements CombatComponentParams {
         this.maxHp = params.maxHp ?? this.hp;
     }
 
-    public update(obj: GameObject, world?: World): void {
+    public update(obj: GameObject, params: CommandParms): void {
         throw new Error('NYI');
     }
 

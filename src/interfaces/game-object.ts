@@ -1,8 +1,5 @@
 
-import { CombatComponent } from "../components/combat-component";
-import { GraphicComponent } from "../components/graphic-components";
-import { InputComponent } from "../components/input-components";
-import { PhysicsComponent } from "../components/physics-components";
+import { CombatComponent, CommandParms, GraphicComponent, InputComponent, PhysicsComponent } from "../components";
 import { Vector2D } from "./vector2D";
 
 export enum GameObjectKind {
@@ -50,11 +47,13 @@ export abstract class GameObject {
         }
     }
 
-    public update(): void {
-        this.inputComponent?.update(this);
-        this.combatComponent?.update(this);
-        this.physicsComponent?.update(this);
-        this.graphicComponent?.update(this);
+    public update(params: CommandParms): void {
+        if (!params.elapsedMs) throw Error(`Missing elapsedMs in update command of GameObject`);
+
+        this.inputComponent?.update(this, params);
+        this.combatComponent?.update(this, params);
+        this.physicsComponent?.update(this, params);
+        this.graphicComponent?.update(this, params);
     }
 
     public getPosition(): Vector2D {
