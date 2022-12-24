@@ -54,7 +54,7 @@ export interface ObjectComponents {
 
 export abstract class GameObject extends Observer {
     public kind: GameObjectKind;
-    
+
     public inputComponent: InputComponent;
     public combatComponent: CombatComponent;
     public physicsComponent: PhysicsComponent;

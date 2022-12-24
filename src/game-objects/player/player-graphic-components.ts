@@ -10,8 +10,6 @@ export class PlayerGraphicComponent extends GraphicComponent {
 
     public visorColor = "red";
     public visorRadius = 2;
-
-    public hpLabelColor = "white";
     
     constructor(ctx: CanvasRenderingContext2D) {
         super(ctx);
@@ -30,11 +28,6 @@ export class PlayerGraphicComponent extends GraphicComponent {
         this.ctx.beginPath();
         this.ctx.arc(relativePosition.x + visorXOffset, relativePosition.y, this.visorRadius, 0, Math.PI * 2);
         this.ctx.fill();
-
-        // Draw hp bar status
-        this.ctx.fillStyle = this.hpLabelColor;
-        this.ctx.font = "24px serif";
-        this.ctx.fillText(`HP: ${player.combatComponent.hp} / ${player.combatComponent.maxHp}`, 10, 30);
     }
 
     private visorXOffset(plyer: Player): number {

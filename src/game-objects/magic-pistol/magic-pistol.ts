@@ -2,10 +2,11 @@ import { Game } from "../../game";
 import { GameObject, GameObjectKind, ObjectComponents } from "../../interfaces";
 import { Player } from "../player";
 import { World } from "../world";
+import { MagicPistolBullet } from "./magic-pistol-bullet";
 import { MagicPistolCombatComponent } from "./magic-pistol-combat-components";
 
 export class MagicPistol extends GameObject {
-    public bullets: GameObject[]; // TODO: update this to MagicPistolBullet when ready
+    public bullets: MagicPistolBullet[];
 
     public world: World;
     public player: Player;

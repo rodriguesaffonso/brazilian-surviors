@@ -1,10 +1,9 @@
 import { Camera, createCamera } from "./game-objects/camera";
-import { createGun } from "./game-objects/gun";
 import { createMagicPistol } from "./game-objects/magic-pistol";
 import { createPlayer, Player } from "./game-objects/player";
-import { createTriangle, Triangle, TriangleCombatComponent, TriangleGraphicComponent, TrianglePhysicsComponent } from "./game-objects/triangle";
+import { createTriangle } from "./game-objects/triangle";
 import { createWorld, World } from "./game-objects/world";
-import { GameObject, GameObjectKind, Vector2D } from "./interfaces";
+import { GameObject, Vector2D } from "./interfaces";
 import { Events } from "./interfaces/observer";
 
 export class Game {
@@ -107,7 +106,30 @@ export class Game {
     }
 
     private render(): void {
-        this.drawTime();
+        this.ctx.fillStyle = "white";
+        const drawTime = () => {
+            const elapsedMs = this.lastTimestamp - this.startTimestamp;
+
+            const min = Math.floor(elapsedMs / 1000 / 60);
+            const sec = Math.floor(elapsedMs / 1000 - min * 60);
+
+            this.ctx.font = "16px serif";
+            this.ctx.fillText(`${min < 10 ? "0" : ""}${min}:${sec < 10 ? "0" : ""}${sec}`, this.camera.canvasWidth / 2 - 15, 20);
+        }
+
+        const drawKills = () => {
+            this.ctx.font = "16px serif";
+            this.ctx.fillText(`Kills: ${this.kills}`, 10, 50);
+        }
+
+        const drawPlayerHp = () => {
+            this.ctx.font = "24px serif";
+            this.ctx.fillText(`HP: ${this.player.combatComponent.hp} / ${this.player.combatComponent.maxHp}`, 10, 30);
+        }
+
+        drawTime();
+        drawKills();
+        drawPlayerHp();
     }
 
     private tryCreateNewObjects(timestamp: number): void {
@@ -128,7 +150,7 @@ export class Game {
         const r = Math.max(this.camera.canvasWidth, this.camera.canvasHeight) / 2;
         const x = Math.cos(theta) * r + this.player.getPosition().x;
         const y = Math.sin(theta) * r + this.player.getPosition().y;
-        const obj =  createTriangle(this.world, this.player, this.camera, new Vector2D(x, y), this.ctx);
+        const obj = createTriangle(this.world, this.player, this.camera, new Vector2D(x, y), this.ctx);
         obj.on(Events.ObjectDead, () => {
             this.removeDeadObjectFromObjectsArray(obj);
             this.kills++;
@@ -138,16 +160,6 @@ export class Game {
 
     private isGameEnded(): boolean {
         return this.kills === this.killsToEndGame || this.player.combatComponent.dead;
-    }
-
-    private drawTime(): void {
-        const elapsedMs = this.lastTimestamp - this.startTimestamp;
-
-        const min = Math.floor(elapsedMs / 1000 / 60);
-        const sec = Math.floor(elapsedMs / 1000 - min * 60);
-
-        this.ctx.font = "24px serif";
-        this.ctx.fillText(`${min < 10 ? "0" : ""}${min}:${sec < 10 ? "0" : ""}${sec}`, 10, 60);
     }
 
     private getElapsedLoopTime(currentTime: number): number {
@@ -163,8 +175,8 @@ export class Game {
     }
 
     private removeDeadObjectFromObjectsArray(obj: GameObject, index?: number): void {
-        const removeObject = (index: number): void => { 
-            this.gameObjects.splice(index, 1); 
+        const removeObject = (index: number): void => {
+            this.gameObjects.splice(index, 1);
         }
 
         if (index !== undefined) {

@@ -3,7 +3,7 @@ import { GameObject } from "../../../interfaces";
 import { Events } from "../../../interfaces/observer";
 import { MagicPistolBullet } from "./magic-pistol-bullet";
 
-export class MagicPistolCombatComponent extends CombatComponent {
+export class MagicPistolBulletCombatComponent extends CombatComponent {
     public durationTimeout: number;
     public distToAttack: number;
 
