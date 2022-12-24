@@ -19,7 +19,7 @@ function menuStartGame() {
     hide([stopB, startB, resumeB]);
 }
 
-function menuPauseGame() {
+export function menuPauseGame() {
     if (game) {
         game.pauseGame();
 
@@ -28,7 +28,7 @@ function menuPauseGame() {
     }
 }
 
-function menuRsumeGame() {
+function menuResumeGame() {
     if (game) {
         game.resumeGame();
 
@@ -54,7 +54,7 @@ function init() {
     startB.addEventListener("click", menuStartGame);
     stopB.addEventListener("click", menuStopGame);
     pauseB.addEventListener("click", menuPauseGame);
-    resumeB.addEventListener("click", menuRsumeGame);
+    resumeB.addEventListener("click", menuResumeGame);
 }
 
 init();

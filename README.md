@@ -1,9 +1,6 @@
 # brazilian-survivors
 
 TODO
-- Manage timer when there is tabs switch or apps switchs
-- add stage progression
-- add upgrade component
 - enemy progression: time triggered upgrades
 - player progression: stage triggered progression (pop up selection)
 
@@ -14,6 +11,8 @@ BUG
 - Magic Pistol: bullet stop when first bullet kills the enemy quickly
 
 DONE
+- add upgrade component
+- Manage timer when there is tabs switch or apps switchs
 - fix game end when player dead
 - adds pause and resume features (popup, pause game, correct amange timestamp btw loops)
 - magic bullet can hit any enemy on the way

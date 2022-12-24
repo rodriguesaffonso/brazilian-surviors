@@ -6,7 +6,9 @@ import { createWorld, World } from "./game-objects/world";
 import { GameObject, Vector2D } from "./interfaces";
 import { Events } from "./interfaces/observer";
 
-import { menuStopGame } from ".";
+import { menuPauseGame, menuStopGame } from ".";
+import { CommandParms } from "./components";
+import { TriggerReason, UpgradeManager } from "./components/upgrade-manager";
 
 export class Game {
     public ctx: CanvasRenderingContext2D;
@@ -14,6 +16,8 @@ export class Game {
     public player: Player;
     public camera: Camera;
     public world: World;
+
+    public upgradeManager: UpgradeManager;
 
     public running: boolean;
     public paused: boolean;
@@ -31,8 +35,16 @@ export class Game {
 
     public animationRequestId: number;
 
+    private visibilityEventListener: () => void;
+
     constructor(ctx: CanvasRenderingContext2D) {
         this.ctx = ctx;
+
+        this.visibilityEventListener = () => {
+            if (document.visibilityState === 'hidden') {
+                menuPauseGame();
+            }
+        }
     }
 
     public startGame(): void {
@@ -48,6 +60,8 @@ export class Game {
             this.player,
             magicPistol
         ]);
+
+        this.upgradeManager = new UpgradeManager();
 
         this.running = true;
         this.paused = false;
@@ -67,6 +81,7 @@ export class Game {
         this.lastTimestamp = Date.now();
         this.startTimestamp = this.lastTimestamp;
         this.animationRequestId = window.requestAnimationFrame(this.renderLoop.bind(this));
+        window.addEventListener('visibilitychange', this.visibilityEventListener);
     }
 
     public stopGame(): void {
@@ -77,6 +92,7 @@ export class Game {
         this.player.inputComponent.stop();
         this.camera.inputComponent.stop();
         window.cancelAnimationFrame(this.animationRequestId);
+        window.removeEventListener('visibilitychange', this.visibilityEventListener);
 
         console.log({
             duration: this.lastTimestamp - this.startTimestamp,
@@ -121,8 +137,6 @@ export class Game {
         const elapsed = this.getElapsedLoopTime(currentTime);
 
         if (elapsed >= 10) {
-            console.log(elapsed);
-
             this.gameLoop(currentTime);
 
             if (this.isGameEnded()) {
@@ -138,11 +152,13 @@ export class Game {
     }
 
     private gameLoop(timestamp: number): void {
-        const elapsedMs = this.getElapsedLoopTime(timestamp);
+        const updateParams: CommandParms = { elapsedMs: this.getElapsedLoopTime(timestamp), game: this };
+        this.upgradeManager.update(TriggerReason.Time, updateParams);
+
         this.tryCreateNewObjects(timestamp);
 
         this.gameObjects.forEach((obj) => {
-            obj.update({ elapsedMs, game: this });
+            obj.update(updateParams);
         });
 
         this.gameObjects.sort((a, b) => a.kind - b.kind);
@@ -197,6 +213,7 @@ export class Game {
         obj.on(Events.ObjectDead, () => {
             this.removeDeadObjectFromObjectsArray(obj);
             this.kills++;
+            this.upgradeManager.update(TriggerReason.NumberOfKills, { game: this, elapsedMs: undefined });
         });
         return obj;
     }
