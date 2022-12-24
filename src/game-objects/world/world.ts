@@ -1,5 +1,7 @@
 import { CommandParms } from "../../components";
 import { GameObject, GameObjectKind, ObjectComponents } from "../../interfaces";
+import { Camera } from "../camera";
+import { WorldGraphicComponent } from "./world-graphic-components";
 
 export class World extends GameObject {
     public enemies: GameObject[] = [];
@@ -25,4 +27,10 @@ export class World extends GameObject {
             }
         });
     }
+}
+
+export function createWorld(ctx: CanvasRenderingContext2D, camera: Camera): World {
+    return new World({
+        graphic: new WorldGraphicComponent(ctx, camera)
+    });
 }

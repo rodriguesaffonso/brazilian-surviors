@@ -1,5 +1,6 @@
 import { InputComponent, PhysicsComponent } from "../../components";
 import { GameObject, GameObjectKind, ObjectComponents, Vector2D } from "../../interfaces";
+import { PlayerInputComponent, PlayerPhysicsComponent } from "../player";
 
 const CANVAS_SIZE = 800;
 
@@ -20,4 +21,12 @@ export class Camera extends GameObject {
             maxP: new Vector2D(Math.floor(this.getPosition().x + this.canvasWidth / 2), Math.floor(this.getPosition().y + this.canvasHeight / 2)),
         }
     }
+}
+
+export function createCamera(): Camera {
+    const physicsComponent = new PlayerPhysicsComponent();
+    return new Camera({
+        input: new PlayerInputComponent(physicsComponent),
+        physics: physicsComponent
+    });
 }

@@ -1,6 +1,9 @@
 import { GameObject, GameObjectKind, ObjectComponents } from "../../interfaces";
 import { Camera } from "../camera";
 import { PlayerCombatComponent } from "./player-combat-component";
+import { PlayerGraphicComponent } from "./player-graphic-components";
+import { PlayerInputComponent } from "./player-input-components";
+import { PlayerPhysicsComponent } from "./player-physics-components";
 
 export class Player extends GameObject {
     public weapons: GameObject[];
@@ -22,4 +25,13 @@ export class Player extends GameObject {
         this.weapons.push(w);
         return this;
     }
+}
+
+export function createPlayer(ctx: CanvasRenderingContext2D, camera: Camera): Player {
+    const physicsComponent = new PlayerPhysicsComponent();
+    return new Player(camera, {
+        input: new PlayerInputComponent(physicsComponent),
+        physics: physicsComponent,
+        graphic: new PlayerGraphicComponent(ctx)
+    });
 }

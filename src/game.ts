@@ -1,9 +1,11 @@
-import { Camera } from "./game-objects/camera";
-import { Gun, GunCombatComponent } from "./game-objects/gun";
-import { Player, PlayerGraphicComponent, PlayerInputComponent, PlayerPhysicsComponent } from "./game-objects/player";
-import { Triangle, TriangleCombatComponent, TriangleGraphicComponent, TrianglePhysicsComponent } from "./game-objects/triangle";
-import { World, WorldGraphicComponent } from "./game-objects/world";
+import { Camera, createCamera } from "./game-objects/camera";
+import { createGun } from "./game-objects/gun";
+import { createMagicPistol } from "./game-objects/magic-pistol";
+import { createPlayer, Player } from "./game-objects/player";
+import { createTriangle, Triangle, TriangleCombatComponent, TriangleGraphicComponent, TrianglePhysicsComponent } from "./game-objects/triangle";
+import { createWorld, World } from "./game-objects/world";
 import { GameObject, GameObjectKind, Vector2D } from "./interfaces";
+import { Events } from "./interfaces/observer";
 
 export class Game {
     public ctx: CanvasRenderingContext2D;
@@ -19,6 +21,7 @@ export class Game {
     public totalNumberObjects: number = 0;
     public newObjectFrequency: number = 1;
     public kills: number = 0;
+    public killsToEndGame: number;
     public gameObjects: GameObject[] = [];
 
     public animationRequestId: number;
@@ -32,13 +35,13 @@ export class Game {
         this.world = createWorld(this.ctx, this.camera);
         this.player = createPlayer(this.ctx, this.camera);
 
-        const playerGun = createGun(this.ctx, this.camera, this.world, this.player, this.addToGameObjectsArray.bind(this));
+        const magicPistol = createMagicPistol(this);
 
         this.gameObjects.push(...[
             this.world,
             this.camera,
             this.player,
-            playerGun,
+            magicPistol
         ]);
 
         this.isRunning = true;
@@ -48,6 +51,7 @@ export class Game {
         this.totalNumberObjects = 0;
         this.newObjectFrequency = 1;
         this.kills = 0;
+        this.killsToEndGame = 100;
 
         this.ctx.canvas.height = this.camera.canvasHeight;
         this.ctx.canvas.width = this.camera.canvasWidth;
@@ -95,17 +99,8 @@ export class Game {
         const elapsedMs = this.getElapsedLoopTime(timestamp);
         this.tryCreateNewObjects(timestamp);
 
-        this.gameObjects.forEach((obj, index) => {
-            obj.update({ elapsedMs, world: this.world });
-
-            // Remove dead enemies from the game
-            if (obj.combatComponent?.dead) {
-                this.gameObjects.splice(index, 1);
-
-                if (obj.kind === GameObjectKind.Triangle) {
-                    this.kills++;
-                }
-            }
+        this.gameObjects.forEach((obj) => {
+            obj.update({ elapsedMs, game: this });
         });
 
         this.gameObjects.sort((a, b) => a.kind - b.kind);
@@ -119,6 +114,7 @@ export class Game {
         const totalElapsedSec = (timestamp - this.startTimestamp) / 1000;
         while (this.totalNumberObjects < totalElapsedSec) {
             const enemy = this.createNewObject();
+
             this.objects.push(enemy);
             this.totalNumberObjects++;
 
@@ -132,15 +128,16 @@ export class Game {
         const r = Math.max(this.camera.canvasWidth, this.camera.canvasHeight) / 2;
         const x = Math.cos(theta) * r + this.player.getPosition().x;
         const y = Math.sin(theta) * r + this.player.getPosition().y;
-        return new Triangle(this.player, this.camera, {
-            graphic: new TriangleGraphicComponent(this.ctx),
-            physics: new TrianglePhysicsComponent(new Vector2D(x, y)),
-            combat: new TriangleCombatComponent(this.world),
+        const obj =  createTriangle(this.world, this.player, this.camera, new Vector2D(x, y), this.ctx);
+        obj.on(Events.ObjectDead, () => {
+            this.removeDeadObjectFromObjectsArray(obj);
+            this.kills++;
         });
+        return obj;
     }
 
     private isGameEnded(): boolean {
-        return this.kills === 10 || this.player.combatComponent.dead;
+        return this.kills === this.killsToEndGame || this.player.combatComponent.dead;
     }
 
     private drawTime(): void {
@@ -157,38 +154,28 @@ export class Game {
         return currentTime - this.lastTimestamp;
     }
 
-    private addToGameObjectsArray(obj: GameObject): void {
+    public addToObjectsArray(obj: GameObject): void {
         this.gameObjects.push(obj);
     }
-}
 
-function createCamera(): Camera {
-    const physicsComponent = new PlayerPhysicsComponent();
-    return new Camera({
-        input: new PlayerInputComponent(physicsComponent),
-        physics: physicsComponent
-    });
-}
+    public removeFromObjectsArray(obj: GameObject): void {
+        this.removeDeadObjectFromObjectsArray(obj);
+    }
 
-function createPlayer(ctx: CanvasRenderingContext2D, camera: Camera): Player {
-    const physicsComponent = new PlayerPhysicsComponent();
-    return new Player(camera, {
-        input: new PlayerInputComponent(physicsComponent),
-        physics: physicsComponent,
-        graphic: new PlayerGraphicComponent(ctx)
-    });
-}
+    private removeDeadObjectFromObjectsArray(obj: GameObject, index?: number): void {
+        const removeObject = (index: number): void => { 
+            this.gameObjects.splice(index, 1); 
+        }
 
-function createWorld(ctx: CanvasRenderingContext2D, camera: Camera): World {
-    return new World({
-        graphic: new WorldGraphicComponent(ctx, camera)
-    });
-}
+        if (index !== undefined) {
+            removeObject(index);
+            return;
+        }
 
-function createGun(ctx: CanvasRenderingContext2D, camera: Camera, world: World, player: Player, cb: (obj: GameObject) => void): Gun {
-    const gun = new Gun(ctx, camera, world, { combat: new GunCombatComponent(ctx, camera, {}) });
-    gun.setAddBulletToGameObjectArray(cb);
-
-    player.addWeapon(gun);
-    return gun;
+        this.gameObjects.forEach((currObj, index) => {
+            if (currObj === obj) {
+                removeObject(index);
+            }
+        });
+    }
 }

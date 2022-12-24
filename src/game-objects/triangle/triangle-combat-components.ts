@@ -39,7 +39,7 @@ export class TriangleCombatComponent extends CombatComponent {
             }
 
             if (this.canAttack(enemy, player)) {
-                player.combatComponent.takeHit(enemy.combatComponent.damage)
+                player.combatComponent.takeHit(player, enemy.combatComponent.damage)
                 this.lastAttackTime = currentTime;
             }
         }

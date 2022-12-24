@@ -13,7 +13,6 @@ export class TriangleGraphicComponent extends GraphicComponent {
 
     public update(triangle: Triangle): void {
         if (!this.insideRenderLimits(triangle)) {
-            console.log(triangle, 'outside of limits');
             return;
 
         }

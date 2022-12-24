@@ -1,6 +1,7 @@
 import { CombatComponent, CommandParms } from "../../components";
 import { CombatComponentParams, GameObject } from "../../interfaces";
-import { Bullet } from ".";
+import { Events } from "../../interfaces/observer";
+import { Bullet } from "./bullet";
 
 
 export class BulletCombatComponent extends CombatComponent {
@@ -12,7 +13,7 @@ export class BulletCombatComponent extends CombatComponent {
     constructor(params: CombatComponentParams) {
         super({
             damage: params.damage ?? 20,
-            coldown: params.coldown ?? 500,
+            cooldown: params.cooldown ?? 500,
             duration: params.duration ?? 5000
         });
         this.cooldownTimeout = 0;
@@ -23,7 +24,7 @@ export class BulletCombatComponent extends CombatComponent {
     public update(bullet: Bullet, params: CommandParms): void {
         if (this.dead) return;
         this.decreaseCooldownTimeout(params);
-        this.updateDurationTimeout(params);
+        this.updateDurationTimeout(bullet, params);
 
         if (bullet.enemy) {
             const enemy = bullet.enemy;
@@ -32,7 +33,7 @@ export class BulletCombatComponent extends CombatComponent {
             }
 
             if (this.canAttack(bullet, enemy)) {
-                enemy.combatComponent.takeHit(bullet.combatComponent.damage);
+                enemy.combatComponent.takeHit(enemy, bullet.combatComponent.damage);
 
                 if (enemy.combatComponent.dead) {
                     bullet.enemy = undefined;
@@ -42,9 +43,7 @@ export class BulletCombatComponent extends CombatComponent {
                 this.readyToAttack = false;
             }
         } else {
-            const { world } = params;
-            if (!world) throw Error(`Missing world in update params of bullet class`);
-
+            const { world } = params.game;
             if (world.enemies.length > 0) {
                 const { gun } = bullet;
                 for (const enemy of world.enemies) {
@@ -78,11 +77,12 @@ export class BulletCombatComponent extends CombatComponent {
         }
     }
 
-    private updateDurationTimeout(params: CommandParms): void {
+    private updateDurationTimeout(bullet: Bullet, params: CommandParms): void {
         this.durationTimeout -= params.elapsedMs;
         if (this.durationTimeout <= 0) {
             this.durationTimeout = 0;
             this.dead = true;
+            bullet.emit(Events.ObjectDead);
         }
     }
 }

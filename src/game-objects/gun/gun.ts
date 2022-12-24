@@ -1,7 +1,9 @@
 import { GameObject, GameObjectKind, ObjectComponents } from "../../interfaces";
 import { Bullet, BulletCombatComponent, BulletGraphicComponent, BulletPhysicsComponent } from "../bullet";
 import { Camera } from "../camera";
+import { Player } from "../player";
 import { World } from "../world";
+import { GunCombatComponent } from "./gun-combat-components";
 
 
 export class Gun extends GameObject {
@@ -21,4 +23,12 @@ export class Gun extends GameObject {
     public setAddBulletToGameObjectArray(cb: (bullet: Bullet) => void): void {
         this.addBulletToGameObjectArray = cb;
     }
+}
+
+export function createGun(ctx: CanvasRenderingContext2D, camera: Camera, world: World, player: Player, cb: (obj: GameObject) => void): Gun {
+    const gun = new Gun(ctx, camera, world, { combat: new GunCombatComponent(ctx, camera, {}) });
+    gun.setAddBulletToGameObjectArray(cb);
+
+    player.addWeapon(gun);
+    return gun;
 }

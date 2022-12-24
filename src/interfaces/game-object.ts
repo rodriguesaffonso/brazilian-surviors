@@ -1,15 +1,25 @@
 
 import { CombatComponent, CommandParms, GraphicComponent, InputComponent, PhysicsComponent } from "../components";
+import { Observer } from "./observer";
 import { Vector2D } from "./vector2D";
 
+// The order in this enum matter as how the game process its objects,
+// so the player and its weapons needs to be updated before the enemies
 export enum GameObjectKind {
-    Game = 0,
-    World = 1,
-    Camera = 2,
-    Player = 3,
-    Gun = 4,
-    Bullet = 5,
-    Triangle = 6,
+    // Global game objects
+    Game = 1,
+    World,
+    Camera,
+
+    // Player objects
+    Player,
+    Gun,
+    Bullet,
+    MagicPistol,
+    MagicPistolBullet,
+
+    // Enemies objects
+    Triangle,
 }
 
 export enum ObjectDirection {
@@ -23,8 +33,9 @@ export interface CombatComponentParams {
     damage?: number,
     hp?: number,
     maxHp?: number,
-    coldown?: number,
-    duration?: number
+    cooldown?: number,
+    duration?: number,
+    amount?: number,
 }
 
 export interface PhysicsComponentParams {
@@ -33,6 +44,7 @@ export interface PhysicsComponentParams {
     speed?: number;
     direction?: ObjectDirection;
 }
+
 export interface ObjectComponents {
     input?: InputComponent;
     combat?: CombatComponent;
@@ -40,7 +52,7 @@ export interface ObjectComponents {
     graphic?: GraphicComponent;
 }
 
-export abstract class GameObject {
+export abstract class GameObject extends Observer {
     public kind: GameObjectKind;
     
     public inputComponent: InputComponent;
@@ -49,6 +61,7 @@ export abstract class GameObject {
     public graphicComponent: GraphicComponent;
 
     constructor(components: ObjectComponents, kind: GameObjectKind) {
+        super();
         this.kind = kind;
         this.inputComponent = components.input;
         this.combatComponent = components.combat;

@@ -1,7 +1,9 @@
 
 import { CommandParms } from "../../components";
 import { CombatComponent } from "../../components/combat-component";
+import { Game } from "../../game";
 import { CombatComponentParams } from "../../interfaces";
+import { Events } from "../../interfaces/observer";
 import { Bullet, BulletCombatComponent, BulletGraphicComponent, BulletPhysicsComponent } from "../bullet";
 import { Camera } from "../camera";
 import { World } from "../world";
@@ -16,7 +18,7 @@ export class GunCombatComponent extends CombatComponent {
     public ctx: CanvasRenderingContext2D;
 
     constructor(ctx: CanvasRenderingContext2D, camera: Camera, params: CombatComponentParams) {
-        super({ coldown: params.coldown ?? 100 });
+        super({ cooldown: params.cooldown ?? 100 });
         this.camera = camera;
         this.ctx = ctx;
         this.projectiles = 3;
@@ -28,24 +30,17 @@ export class GunCombatComponent extends CombatComponent {
         this.decreaseCooldownTimeout(params);
 
         if (this.cooldownTimeout <= 0) {
-            if (this.tryAddNewBullet(gun, params.world)) {
+            if (this.tryAddNewBullet(gun, params.game)) {
                 this.readyToAttack = false;
             }
         }
 
-        // remove dead bullets from this weapon array
-        gun.weapons.forEach((bullet, index) => {
-            if (bullet.combatComponent.dead) {
-                gun.weapons.splice(index, 1);
-            }
-        });
-        
         this.resetCooldown();
     }
 
-    private tryAddNewBullet(gun: Gun, world: World): boolean {       
+    private tryAddNewBullet(gun: Gun, game: Game): boolean {       
         if (this.readyToAttack && gun.weapons.length < this.projectiles) {
-            const bullet = new Bullet(this.camera, world, gun, {
+            const bullet = new Bullet(this.camera, game.world, gun, {
                 physics: new BulletPhysicsComponent({ position: this.camera.getPosition() }), 
                 combat: new BulletCombatComponent({}),
                 graphic: new BulletGraphicComponent(this.ctx), 
@@ -55,7 +50,19 @@ export class GunCombatComponent extends CombatComponent {
             gun.weapons.push(bullet);
     
             // add in game object array in game class
-            gun.addBulletToGameObjectArray(bullet);
+            game.addToObjectsArray(bullet);
+
+            // On killed callback
+            bullet.on(Events.ObjectDead, () => {
+                game.removeFromObjectsArray(bullet);
+
+                // Remove from Gun weapons array
+                gun.weapons.forEach((bullet, index) => {
+                    if (bullet.combatComponent.dead) {
+                        gun.weapons.splice(index, 1);
+                    }
+                });
+            });
 
             return true;
         }
