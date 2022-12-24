@@ -6,6 +6,8 @@ import { createWorld, World } from "./game-objects/world";
 import { GameObject, Vector2D } from "./interfaces";
 import { Events } from "./interfaces/observer";
 
+import { menuStopGame } from ".";
+
 export class Game {
     public ctx: CanvasRenderingContext2D;
 
@@ -124,7 +126,7 @@ export class Game {
             this.gameLoop(currentTime);
 
             if (this.isGameEnded()) {
-                this.stopGame();
+                menuStopGame();
                 return;
             }
 

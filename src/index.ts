@@ -11,7 +11,7 @@ function hide(elements: HTMLElement[]) { elements.forEach(e => e.hidden = true);
 function show(elements: HTMLElement[]) { elements.forEach(e => e.hidden = false); }
 
 let game: Game;
-function startGame() {
+function menuStartGame() {
     game = new Game(ctx);
     game.startGame();
 
@@ -19,7 +19,7 @@ function startGame() {
     hide([stopB, startB, resumeB]);
 }
 
-function pauseGame() {
+function menuPauseGame() {
     if (game) {
         game.pauseGame();
 
@@ -28,7 +28,7 @@ function pauseGame() {
     }
 }
 
-function resumeGame() {
+function menuRsumeGame() {
     if (game) {
         game.resumeGame();
 
@@ -37,7 +37,7 @@ function resumeGame() {
     }
 }
 
-function stopGame() {
+export function menuStopGame() {
     if (game) {
         game.stopGame();
         game = undefined;
@@ -51,10 +51,10 @@ function init() {
     show([startB]);
     hide([stopB, pauseB, resumeB]);
     
-    startB.addEventListener("click", startGame);
-    stopB.addEventListener("click", stopGame);
-    pauseB.addEventListener("click", pauseGame);
-    resumeB.addEventListener("click", resumeGame);
+    startB.addEventListener("click", menuStartGame);
+    stopB.addEventListener("click", menuStopGame);
+    pauseB.addEventListener("click", menuPauseGame);
+    resumeB.addEventListener("click", menuRsumeGame);
 }
 
 init();

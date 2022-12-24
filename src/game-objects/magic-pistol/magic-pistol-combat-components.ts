@@ -14,6 +14,7 @@ export class MagicPistolCombatComponent extends CombatComponent {
 
     public bulletIntervalMs: number;
     public bulletIntervalTimeout: number;
+    public bulletsShoot: number;
 
     public cooldownTimeout: number;
 
@@ -23,13 +24,14 @@ export class MagicPistolCombatComponent extends CombatComponent {
     constructor() {
         super({
             amount: 2,
-            cooldown: 1000
+            cooldown: 1200
         });
         this.state = MagicPistolState.ReadyToShoot;
         this.bulletIntervalMs = 150;
         this.bulletIntervalTimeout = this.bulletIntervalMs;
         this.cooldownTimeout = this.cooldown;
         this.range = 200;
+        this.bulletsShoot = 0;
     }
 
     public update(pistol: MagicPistol, params: CommandParms): void {
@@ -53,8 +55,9 @@ export class MagicPistolCombatComponent extends CombatComponent {
             }
 
             const bullet = createMagicPistolBullet(pistol, enemy, params.game);
+            this.bulletsShoot++;
 
-            if (pistol.bullets.length === this.amount) {
+            if (this.bulletsShoot === this.amount) {
                 this.toOnCooldownState();
             } else {
                 // There is more bullets to shoot, reset bullet timeout
@@ -80,8 +83,6 @@ export class MagicPistolCombatComponent extends CombatComponent {
     }
 
     private handleReadyToShoot(pistol: MagicPistol, params: CommandParms): void {
-        if (pistol.bullets.length !== 0) return;
-
         // Check if there is close a close enemy
         const enemy = this.getCloseEnemy(pistol);
         if (enemy) {
@@ -90,6 +91,7 @@ export class MagicPistolCombatComponent extends CombatComponent {
     }
 
     private toShootingState(): void {
+        this.bulletsShoot = 0;
         this.bulletIntervalTimeout = this.bulletIntervalMs;
         this.state = MagicPistolState.Shooting;
     }
