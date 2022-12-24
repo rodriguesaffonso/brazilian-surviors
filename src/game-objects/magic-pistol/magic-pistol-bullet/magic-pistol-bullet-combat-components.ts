@@ -29,7 +29,7 @@ export class MagicPistolBulletCombatComponent extends CombatComponent {
     private tryAttackEnemy(bullet: MagicPistolBullet, enemy: GameObject): void {
         if (this.canAttack(bullet, enemy)) {
             enemy.combatComponent.takeHit(enemy, bullet.combatComponent.damage);
-
+            
             this.dead = true;
             bullet.emit(Events.ObjectDead);
         }

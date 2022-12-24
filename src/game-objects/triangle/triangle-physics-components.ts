@@ -1,12 +1,15 @@
 
 import { CommandParms } from "../../components";
 import { PhysicsComponent } from "../../components/physics-components";
-import { Vector2D } from "../../interfaces";
+import { PhysicsComponentParams, Vector2D } from "../../interfaces";
 import { Triangle } from "./triangle";
 
 export class TrianglePhysicsComponent extends PhysicsComponent {
-    constructor(position: Vector2D) {
-        super({ position, speed: 0.8 });
+    constructor(params: PhysicsComponentParams) {
+        super({ 
+            position: params.position, 
+            speed: params.speed ?? 0.8
+        });
     }
 
     public update(enemy: Triangle, params: CommandParms): void {

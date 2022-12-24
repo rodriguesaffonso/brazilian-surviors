@@ -67,10 +67,6 @@ export abstract class GameObject extends Observer {
         this.combatComponent = components.combat;
         this.physicsComponent = components.physics;
         this.graphicComponent = components.graphic;
-
-        if (components.input) {
-            components.input.start();
-        }
     }
 
     public update(params: CommandParms): void {

@@ -51,7 +51,7 @@ export class Game {
         this.camera = createCamera();
         this.world = createWorld(this.ctx, this.camera);
         this.player = createPlayer(this.ctx, this.camera);
-
+        
         const magicPistol = createMagicPistol(this);
 
         this.gameObjects.push(...[
@@ -90,7 +90,6 @@ export class Game {
         this.ctx.canvas.width = 0;
 
         this.player.inputComponent.stop();
-        this.camera.inputComponent.stop();
         window.cancelAnimationFrame(this.animationRequestId);
         window.removeEventListener('visibilitychange', this.visibilityEventListener);
 
@@ -209,7 +208,7 @@ export class Game {
         const r = Math.max(this.camera.canvasWidth, this.camera.canvasHeight) / 2;
         const x = Math.cos(theta) * r + this.player.getPosition().x;
         const y = Math.sin(theta) * r + this.player.getPosition().y;
-        const obj = createTriangle(this.world, this.player, this.camera, new Vector2D(x, y), this.ctx);
+        const obj = createTriangle(this, new Vector2D(x, y), this.ctx, this.upgradeManager);
         obj.on(Events.ObjectDead, () => {
             this.removeDeadObjectFromObjectsArray(obj);
             this.kills++;

@@ -1,8 +1,13 @@
 # brazilian-survivors
 
-TODO
 - enemy progression: time triggered upgrades
 - player progression: stage triggered progression (pop up selection)
+
+TODO
+- player health bar
+- make upgrade progression event driven
+- refactor base objects config to better apply upgrades
+- camera and player using the same components
 
 BUG
 - Last triangle are colored with white when game is paused

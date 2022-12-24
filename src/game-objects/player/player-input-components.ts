@@ -9,6 +9,7 @@ export class PlayerInputComponent extends InputComponent {
     constructor(physics: PlayerPhysicsComponent) {
         super();
         this.physicsComponent = physics;
+        this.start();
     }
 
     public update(player: Player): void {

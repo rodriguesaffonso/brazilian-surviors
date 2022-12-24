@@ -1,23 +1,20 @@
 import { CombatComponent } from "../../components";
+import { CombatComponentParams } from "../../interfaces";
 import { Player } from "../player/player";
 import { World } from "../world/world";
 import { Triangle } from "./triangle";
 
 
 export class TriangleCombatComponent extends CombatComponent {
-    
     public distToAttack: number = 10;
-    public damage = 8;
-    public maxHp = 10;
-    public hp = 10;
 
     public world: World;
 
     private lastAttackTime: number;
     private attackCooldownMs: number = 100;
 
-    constructor(world: World) {
-        super({ hp: 10, damage: 8 });
+    constructor(world: World, params: CombatComponentParams) {
+        super(params);
         this.world = world;
     }
 
@@ -28,11 +25,11 @@ export class TriangleCombatComponent extends CombatComponent {
         }
 
         if (player.getPosition().sub(enemy.player.getPosition()).modulo() < this.distToAttack) {
-            const currentTime = Date.now(); // TODO: pass time from game loop
+            const currentTime = Date.now();
             if (!this.lastAttackTime) {
                 this.lastAttackTime = currentTime;
             }
-            
+
             const elapsed = currentTime - this.lastAttackTime;
             if (elapsed <= this.attackCooldownMs) {
                 return;
