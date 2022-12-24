@@ -13,9 +13,13 @@ export class Game {
     public camera: Camera;
     public world: World;
 
-    public isRunning: boolean = true;
+    public running: boolean;
+    public paused: boolean;
+
     public startTimestamp: number;
     public lastTimestamp: number;
+    public intraElapsed: number;
+
     public objects: GameObject[] = [];
     public totalNumberObjects: number = 0;
     public newObjectFrequency: number = 1;
@@ -43,7 +47,10 @@ export class Game {
             magicPistol
         ]);
 
-        this.isRunning = true;
+        this.running = true;
+        this.paused = false;
+        this.intraElapsed = 0;
+
         this.startTimestamp = undefined;
         this.lastTimestamp = undefined;
         this.objects = [];
@@ -61,7 +68,7 @@ export class Game {
     }
 
     public stopGame(): void {
-        this.isRunning = false;
+        this.running = false;
         this.ctx.canvas.height = 0;
         this.ctx.canvas.width = 0;
 
@@ -75,11 +82,45 @@ export class Game {
         });
     }
 
+    public pauseGame(): void {
+        const drawPauseIcon = () => {
+            // Popup square
+            const borderSize = 5;
+            this.ctx.fillStyle = "rgba(50, 50, 50, 0.8)"; // gray half transparent
+            this.ctx.fillRect(borderSize, borderSize, this.camera.canvasWidth - 2 * borderSize, this.camera.canvasHeight - 2 * borderSize);
+            this.ctx.fill();
+
+            // Pause icon
+            const barSize = 10;
+            this.ctx.fillStyle = "white";
+            this.ctx.fillRect(this.camera.canvasWidth / 2 - 7 - barSize, 50, 10, 70);
+            this.ctx.fillRect(this.camera.canvasWidth / 2 + 7, 50, 10, 70);
+            this.ctx.fill();
+        }
+
+        if (!this.paused) {
+            this.paused = true;
+            this.intraElapsed = Date.now() - this.lastTimestamp;
+            drawPauseIcon();
+            window.cancelAnimationFrame(this.animationRequestId);
+        }
+    }
+
+    public resumeGame(): void {
+        if (this.paused) {
+            this.paused = false;
+            this.lastTimestamp = Date.now() - this.intraElapsed;
+            this.animationRequestId = window.requestAnimationFrame(this.renderLoop.bind(this));
+        }
+    }
+
     private renderLoop(): void {
         const currentTime = Date.now();
         const elapsed = this.getElapsedLoopTime(currentTime);
 
         if (elapsed >= 10) {
+            console.log(elapsed);
+
             this.gameLoop(currentTime);
 
             if (this.isGameEnded()) {

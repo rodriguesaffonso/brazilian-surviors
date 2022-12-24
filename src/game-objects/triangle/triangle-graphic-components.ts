@@ -17,10 +17,10 @@ export class TriangleGraphicComponent extends GraphicComponent {
 
         }
 
-        this.ctx.fillStyle = this.backgroundColor;
         const sqrt3 = Math.sqrt(3);
         const relativePosition = triangle.getPosition().sub(triangle.camera.getCanvasLimits().minP);
-
+        
+        this.ctx.fillStyle = this.backgroundColor;
         this.ctx.beginPath();
         this.ctx.moveTo(relativePosition.x - this.edgeLength / 6, relativePosition.y - this.edgeLength * sqrt3 / 6);
         this.ctx.lineTo(relativePosition.x + this.edgeLength * 5 / 6, relativePosition.y - this.edgeLength * sqrt3 / 6);

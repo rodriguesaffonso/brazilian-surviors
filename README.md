@@ -1,15 +1,16 @@
 # brazilian-survivors
 
 TODO
-- adds pause and resume features (popup, pause game, correct amange timestamp btw loops)
 - Manage timer when there is tabs switch or apps switchs
 
 BUG
+- Last triangle are colored with white when game is paused
 - Visor animation reset when moving only up or down
-- Bullet dont move after spawned and after some delay
+- Magic Pistol: Bullet dont move after spawned and after some delay
 - Magic Pistol: bullet stop when first bullet kills the enemy quickly
 
 DONE
+- adds pause and resume features (popup, pause game, correct amange timestamp btw loops)
 - magic bullet can hit any enemy on the way
 - Kill marker on screen
 - Remove old gun and bullet weapons
