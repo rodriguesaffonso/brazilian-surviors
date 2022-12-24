@@ -25,7 +25,6 @@ export class Triangle extends GameObject {
 
 export function createTriangle(g: Game, position: Vector2D, ctx: CanvasRenderingContext2D, upgrade: UpgradeManager): Triangle {
     const baseParams = upgrade.getBaseParams(GameObjectKind.Triangle);
-    console.log(baseParams);
     return new Triangle(g.player, g.camera, {
         graphic: new TriangleGraphicComponent(ctx),
         physics: new TrianglePhysicsComponent({ position }),
