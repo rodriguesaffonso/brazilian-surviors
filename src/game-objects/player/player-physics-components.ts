@@ -3,7 +3,7 @@ import { Vector2D } from "../../interfaces";
 
 export class PlayerPhysicsComponent extends PhysicsComponent {
     constructor() {
-        super({ speed: 2 });
+        super({ speed: 1.2 });
     }
 
     public setVelocityDirection(direction: Vector2D): void {

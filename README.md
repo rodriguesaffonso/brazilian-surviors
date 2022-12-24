@@ -1,7 +1,6 @@
 # brazilian-survivors
 
 TODO
-- magic bullet can hit any enemy on the way
 - adds pause and resume features (popup, pause game, correct amange timestamp btw loops)
 - Manage timer when there is tabs switch or apps switchs
 
@@ -11,6 +10,7 @@ BUG
 - Magic Pistol: bullet stop when first bullet kills the enemy quickly
 
 DONE
+- magic bullet can hit any enemy on the way
 - Kill marker on screen
 - Remove old gun and bullet weapons
 - New weapon: Magic Pistol

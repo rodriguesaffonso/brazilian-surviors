@@ -1,4 +1,5 @@
 import { CombatComponent, CommandParms } from "../../../components";
+import { Game } from "../../../game";
 import { GameObject } from "../../../interfaces";
 import { Events } from "../../../interfaces/observer";
 import { MagicPistolBullet } from "./magic-pistol-bullet";
@@ -19,20 +20,33 @@ export class MagicPistolBulletCombatComponent extends CombatComponent {
     public update(bullet: MagicPistolBullet, params: CommandParms): void {
         this.updateDurationTimeout(bullet, params.elapsedMs);
 
-        if (bullet.targetEnemy) {
-            const enemy = bullet.targetEnemy;
-            if (this.canAttack(bullet, enemy)) {
-                enemy.combatComponent.takeHit(enemy, bullet.combatComponent.damage);
+        const enemy = bullet.targetEnemy || this.getCloseEnemy(bullet, params.game);
+        if (enemy) {
+            this.tryAttackEnemy(bullet, enemy);
+        }
+    }
 
-                this.dead = true;
-                bullet.emit(Events.ObjectDead);
-            }
+    private tryAttackEnemy(bullet: MagicPistolBullet, enemy: GameObject): void {
+        if (this.canAttack(bullet, enemy)) {
+            enemy.combatComponent.takeHit(enemy, bullet.combatComponent.damage);
+
+            this.dead = true;
+            bullet.emit(Events.ObjectDead);
         }
     }
 
     private canAttack(bullet: MagicPistolBullet, enemy: GameObject): boolean {
         return !enemy.combatComponent.dead
             && enemy.getPosition().sub(bullet.getPosition()).modulo() < this.distToAttack;
+    }
+
+    private getCloseEnemy(bullet: MagicPistolBullet, g: Game): GameObject {
+        for (const enemy of g.world.enemies) {
+            if (this.canAttack(bullet, enemy)) {
+                return enemy;
+            }
+        }
+        return undefined;
     }
 
     private updateDurationTimeout(bullet: MagicPistolBullet, elapsedMs: number): void {

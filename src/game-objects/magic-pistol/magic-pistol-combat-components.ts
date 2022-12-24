@@ -26,7 +26,7 @@ export class MagicPistolCombatComponent extends CombatComponent {
             cooldown: 1000
         });
         this.state = MagicPistolState.ReadyToShoot;
-        this.bulletIntervalMs = 100;
+        this.bulletIntervalMs = 150;
         this.bulletIntervalTimeout = this.bulletIntervalMs;
         this.cooldownTimeout = this.cooldown;
         this.range = 200;

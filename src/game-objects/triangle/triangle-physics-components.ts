@@ -6,7 +6,7 @@ import { Triangle } from "./triangle";
 
 export class TrianglePhysicsComponent extends PhysicsComponent {
     constructor(position: Vector2D) {
-        super({ position, speed: 1 });
+        super({ position, speed: 0.8 });
     }
 
     public update(enemy: Triangle, params: CommandParms): void {
