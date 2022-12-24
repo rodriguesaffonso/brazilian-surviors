@@ -2,7 +2,7 @@
 
 TODO
 - Manage timer when there is tabs switch or apps switchs
-- Bullet: should track the closet to the player enemy
+- Bullet: should track the closest enemy to the player, if enemy is dead -> follow straight line, if the
 
 BUG
 - Visor animation reset when moving only up or down

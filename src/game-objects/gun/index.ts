@@ -1,2 +1,2 @@
-export * from './combat-components';
+export * from './bullet-combat-components';
 export * from './gun';

@@ -1,4 +1,4 @@
-export * from './combat-components';
-export * from './graphic-components';
-export * from './physics-components';
+export * from './bullet-combat-components';
+export * from './bullet-graphic-components';
+export * from './bullet-physics-components';
 export * from './bullet';

@@ -1,6 +1,6 @@
 import { GameObject, GameObjectKind, ObjectComponents } from "../../interfaces";
 import { Camera } from "../camera";
-import { PlayerCombatComponent } from "./combat-component";
+import { PlayerCombatComponent } from "./player-combat-component";
 
 export class Player extends GameObject {
     public weapons: GameObject[];

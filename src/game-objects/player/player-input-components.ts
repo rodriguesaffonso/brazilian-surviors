@@ -1,6 +1,6 @@
 import { InputComponent } from "../../components";
 import { Vector2D } from "../../interfaces";
-import { PlayerPhysicsComponent, Player } from "../player";
+import { PlayerPhysicsComponent, Player } from ".";
 
 export class PlayerInputComponent extends InputComponent {
     private keyStates: Record<string, boolean> = {};
