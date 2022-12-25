@@ -19,6 +19,7 @@
   },
   "scripts": {
     "dev": "npx webpack",
+    "build": "npx webpack",
     "watch": "npm-watch dev"
   }
 }
