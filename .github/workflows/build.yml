@@ -19,7 +19,7 @@ jobs:
   
   deploy:
     runs-on: ubuntu-latest
-    needs: bundle
+    needs: build
     environment:
       name: github-pages
       url: ${{steps.deployment.outputs.page_url}}
