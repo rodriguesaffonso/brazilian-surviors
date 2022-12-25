@@ -1,4 +1,4 @@
-import { GameObjectKind } from "../interfaces";
+import { GameObject, GameObjectKind } from "../interfaces";
 import { CommandParms } from "./params";
 
 export enum TriggerReason {
@@ -18,7 +18,7 @@ export class UpgradeManager {
 
   constructor() {
     this.timeMsUpgradesAt = [
-      { value: 1000 * 10, upgrade: () => this.overrideParams(GameObjectKind.Triangle, { hp: 100 }) },
+      { value: 1000 * 10, upgrade: () => this.overrideParams(GameObjectKind.Triangle, { hp: 45 }) },
       { value: 1000 * 30, upgrade: () => { } },
       { value: 1000 * 60 * 1, upgrade: () => { } },
       { value: 1000 * 60 * 2, upgrade: () => { } },
@@ -33,7 +33,19 @@ export class UpgradeManager {
           params.game.camera.physicsComponent.speed = 2;
         }
       },
-      { value: 20, upgrade: () => { } },
+      { 
+        value: 20, 
+        upgrade: (params) => {
+          let pistol: GameObject;
+          for (const obj of params.game.gameObjects) {
+            if (obj.kind === GameObjectKind.MagicPistol) {
+              pistol = obj;
+              break;
+            }
+          }
+          pistol.combatComponent.amount++;
+        } 
+      },
       { value: 50, upgrade: () => { } },
       { value: 75, upgrade: () => { } },
       { value: 100, upgrade: () => { } },
