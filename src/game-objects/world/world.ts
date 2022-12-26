@@ -1,5 +1,5 @@
 import { CommandParms } from "../../components";
-import { GameObject, GameObjectKind, ObjectComponents } from "../../interfaces";
+import { GameObject, GameObjectKind, ObjectComponents } from "../../utils";
 import { Camera } from "../camera";
 import { WorldGraphicComponent } from "./world-graphic-components";
 

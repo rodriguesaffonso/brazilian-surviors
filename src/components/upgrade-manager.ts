@@ -1,4 +1,4 @@
-import { GameObject, GameObjectKind } from "../interfaces";
+import { GameObject, GameObjectKind } from "../utils";
 import { CommandParms } from "./params";
 
 export enum TriggerReason {

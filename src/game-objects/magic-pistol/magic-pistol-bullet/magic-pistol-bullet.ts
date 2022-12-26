@@ -1,6 +1,6 @@
 import { Game } from "../../../game";
-import { GameObject, GameObjectKind, ObjectComponents } from "../../../interfaces";
-import { Events } from "../../../interfaces/observer";
+import { GameObject, GameObjectKind, ObjectComponents } from "../../../utils";
+import { Events } from "../../../utils/observer";
 import { MagicPistol } from "../magic-pistol";
 import { MagicPistolBulletCombatComponent } from "./magic-pistol-bullet-combat-components";
 import { MagicPistolBulletGraphicComponent } from "./magic-pistol-bullet-graphic-components";

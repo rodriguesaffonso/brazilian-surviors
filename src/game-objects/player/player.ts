@@ -1,4 +1,4 @@
-import { GameObject, GameObjectKind, ObjectComponents } from "../../interfaces";
+import { GameObject, GameObjectKind, ObjectComponents } from "../../utils";
 import { Camera } from "../camera";
 import { PlayerCombatComponent } from "./player-combat-component";
 import { PlayerGraphicComponent } from "./player-graphic-components";

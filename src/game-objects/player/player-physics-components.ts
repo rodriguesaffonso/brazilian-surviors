@@ -1,5 +1,5 @@
 import { PhysicsComponent } from "../../components";
-import { Vector2D } from "../../interfaces";
+import { Vector2D } from "../../utils";
 
 export class PlayerPhysicsComponent extends PhysicsComponent {
     constructor() {

@@ -1,5 +1,5 @@
 import { Game } from "../../game";
-import { GameObject, GameObjectKind, ObjectComponents } from "../../interfaces";
+import { GameObject, GameObjectKind, ObjectComponents } from "../../utils";
 import { Player } from "../player";
 import { World } from "../world";
 import { MagicPistolBullet } from "./magic-pistol-bullet";

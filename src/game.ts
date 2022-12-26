@@ -3,8 +3,8 @@ import { createMagicPistol } from "./game-objects/magic-pistol";
 import { createPlayer, Player } from "./game-objects/player";
 import { createTriangle } from "./game-objects/triangle";
 import { createWorld, World } from "./game-objects/world";
-import { GameObject, Vector2D } from "./interfaces";
-import { Events } from "./interfaces/observer";
+import { GameObject, Vector2D } from "./utils";
+import { Events } from "./utils/observer";
 
 import { menuPauseGame, menuStopGame } from ".";
 import { CommandParms } from "./components";

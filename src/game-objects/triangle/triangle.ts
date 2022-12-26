@@ -1,6 +1,6 @@
 import { UpgradeManager } from "../../components/upgrade-manager";
 import { Game } from "../../game";
-import { GameObject, GameObjectKind, ObjectComponents, Vector2D } from "../../interfaces";
+import { GameObject, GameObjectKind, ObjectComponents, Vector2D } from "../../utils";
 import { Camera } from "../camera";
 import { Player } from "../player";
 import { TriangleCombatComponent } from "./triangle-combat-components";

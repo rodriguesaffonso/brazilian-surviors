@@ -1,7 +1,7 @@
 
 import { CommandParms } from "../../components";
 import { PhysicsComponent } from "../../components/physics-components";
-import { PhysicsComponentParams, Vector2D } from "../../interfaces";
+import { PhysicsComponentParams, Vector2D } from "../../utils";
 import { Triangle } from "./triangle";
 
 export class TrianglePhysicsComponent extends PhysicsComponent {

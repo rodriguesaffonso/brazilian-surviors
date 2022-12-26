@@ -1,5 +1,5 @@
-import { CombatComponentParams, GameObject } from "../interfaces";
-import { Events } from "../interfaces/observer";
+import { CombatComponentParams, GameObject } from "../utils";
+import { Events } from "../utils/observer";
 import { CommandParms } from "./params";
 
 export abstract class CombatComponent implements CombatComponentParams {

@@ -1,5 +1,5 @@
 import { CommandParms, PhysicsComponent } from "../../../components";
-import { PhysicsComponentParams, Vector2D } from "../../../interfaces";
+import { PhysicsComponentParams, Vector2D } from "../../../utils";
 import { MagicPistolBullet } from "./magic-pistol-bullet";
 
 export class MagicPistolBulletPhysicsComponent extends PhysicsComponent {

@@ -1,4 +1,4 @@
-import { GameObject, ObjectDirection, PhysicsComponentParams, Vector2D } from "../interfaces";
+import { GameObject, ObjectDirection, PhysicsComponentParams, Vector2D } from "../utils";
 import { CommandParms } from "./params";
 
 export abstract class PhysicsComponent {

@@ -1,5 +1,5 @@
 import { InputComponent, PhysicsComponent } from "../../components";
-import { GameObject, GameObjectKind, ObjectComponents, Vector2D } from "../../interfaces";
+import { GameObject, GameObjectKind, ObjectComponents, Vector2D } from "../../utils";
 import { PlayerInputComponent, PlayerPhysicsComponent } from "../player";
 
 const CANVAS_SIZE = 800;

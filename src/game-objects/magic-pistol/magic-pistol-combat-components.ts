@@ -1,5 +1,5 @@
 import { CombatComponent, CommandParms } from "../../components";
-import { GameObject } from "../../interfaces";
+import { GameObject } from "../../utils";
 import { MagicPistol } from "./magic-pistol";
 import { createMagicPistolBullet } from "./magic-pistol-bullet";
 

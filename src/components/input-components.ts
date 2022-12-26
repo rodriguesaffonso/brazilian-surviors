@@ -1,4 +1,4 @@
-import { GameObject } from "../interfaces";
+import { GameObject } from "../utils";
 import { CommandParms } from "./params";
 
 export abstract class InputComponent {

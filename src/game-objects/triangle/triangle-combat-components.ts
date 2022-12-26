@@ -1,5 +1,5 @@
 import { CombatComponent } from "../../components";
-import { CombatComponentParams } from "../../interfaces";
+import { CombatComponentParams } from "../../utils";
 import { Player } from "../player/player";
 import { World } from "../world/world";
 import { Triangle } from "./triangle";

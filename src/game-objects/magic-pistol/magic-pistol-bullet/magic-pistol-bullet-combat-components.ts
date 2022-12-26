@@ -1,7 +1,7 @@
 import { CombatComponent, CommandParms } from "../../../components";
 import { Game } from "../../../game";
-import { GameObject } from "../../../interfaces";
-import { Events } from "../../../interfaces/observer";
+import { GameObject } from "../../../utils";
+import { Events } from "../../../utils/observer";
 import { MagicPistolBullet } from "./magic-pistol-bullet";
 
 export class MagicPistolBulletCombatComponent extends CombatComponent {
