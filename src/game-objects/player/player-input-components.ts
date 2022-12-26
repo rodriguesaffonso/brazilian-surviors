@@ -14,6 +14,7 @@ export class PlayerInputComponent extends InputComponent {
     private physicsComponent: PlayerPhysicsComponent;
 
     private canvasElement: HTMLElement;
+    private startTouchPosition: Vector2D;
 
     constructor(physics: PlayerPhysicsComponent) {
         super();
@@ -43,25 +44,18 @@ export class PlayerInputComponent extends InputComponent {
 
     public onTouchEvent(event: TouchEvent): void {
         this.inputType = InputType.Touch;
-        if (event.type === 'touchmove') {
-            if (event.touches.length > 1) return;
-    
-            const touch = event.touches[0];
-            const touchPosition = new Vector2D(
-                touch.pageX,
-                touch.pageY
-            );
+        if (event.touches.length > 1) return;
+        const touch = event.touches[0];
 
-            const canvasPosition = new Vector2D(
-                window.screenX + this.canvasElement.getBoundingClientRect().left,
-                window.screenY + this.canvasElement.getBoundingClientRect().top,
-            );
-            
-            const positionOnCanvas = touchPosition.sub(canvasPosition);
-            const velocityDirection = positionOnCanvas.sub(new Vector2D(400, 400));
-            this.nextVelocityDirection = velocityDirection;
+        if (event.type === 'touchstart') {
+            this.startTouchPosition = this.getTouchPosition(touch);
+        }
+        else if (event.type === 'touchmove') {
+            const touchPosition = this.getTouchPosition(touch);
+            this.nextVelocityDirection = touchPosition.sub(this.startTouchPosition);
         }
         else if (event.type === 'touchend') {
+            this.startTouchPosition = Vector2D.zero();
             this.nextVelocityDirection = Vector2D.zero();
         }
         else {
@@ -75,6 +69,7 @@ export class PlayerInputComponent extends InputComponent {
         window.addEventListener("keyup", this.onKeyEvent.bind(this));
 
         // Touch events
+        this.canvasElement.addEventListener('touchstart', this.onTouchEvent.bind(this));
         this.canvasElement.addEventListener('touchmove', this.onTouchEvent.bind(this));
         this.canvasElement.addEventListener('touchend', this.onTouchEvent.bind(this));
     }
@@ -104,5 +99,8 @@ export class PlayerInputComponent extends InputComponent {
         return ['w', 'a', 's', 'd'].includes(key);
     }
 
+    private getTouchPosition(t: Touch): Vector2D {
+        return new Vector2D(t.pageX, t.pageY);
+    }
 
 }
