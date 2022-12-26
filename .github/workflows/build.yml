@@ -11,9 +11,9 @@ jobs:
           node-version: '14'
       - run: npm i
       - run: npm run build
-      - uses: actions/upload-artifact@main
-        with:
-          name: page
-          path: dist
-          if-no-files-found: error
+      # - uses: actions/upload-artifact@main
+      #   with:
+      #     name: page
+      #     path: dist
+      #     if-no-files-found: error
   # TODO: Remove bundle.js from src/ folder and add workflow/pipelines to generate artifacts and deploy to pages
