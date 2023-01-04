@@ -1,18 +1,19 @@
-import { InputComponent, PhysicsComponent } from "../../components";
-import { GameObject, GameObjectKind, ObjectComponents, Vector2D } from "../../utils";
+import { GameObject, GameObjectKind, getCanvasSize, ObjectComponents, Vector2D } from "../../utils";
 import { PlayerInputComponent, PlayerPhysicsComponent } from "../player";
 
-const CANVAS_SIZE = 800;
-
 export class Camera extends GameObject {
-    public readonly canvasWidth = CANVAS_SIZE;
-    public readonly canvasHeight = CANVAS_SIZE;
+    public readonly canvasWidth;
+    public readonly canvasHeight;
     
     constructor(components: ObjectComponents) {
         super({ 
             input: components.input,
             physics: components.physics,
         }, GameObjectKind.Camera);
+
+        const ws = getCanvasSize();
+        this.canvasWidth = ws.width;
+        this.canvasHeight = ws.height;
     }
 
     public getCanvasLimits(): { minP: Vector2D, maxP: Vector2D } {

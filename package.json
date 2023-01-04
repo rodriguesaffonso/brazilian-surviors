@@ -14,7 +14,7 @@
   "watch": {
     "dev": {
       "patterns": ["src"],
-      "extensions": "ts"
+      "extensions": "ts, html, css"
     }
   },
   "scripts": {

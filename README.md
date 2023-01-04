@@ -16,6 +16,7 @@ BUG
 - Magic Pistol: bullet stop when first bullet kills the enemy quickly
 
 DONE
+- responsive canvas size
 - add upgrade component
 - Manage timer when there is tabs switch or apps switchs
 - fix game end when player dead

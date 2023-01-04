@@ -1,6 +1,8 @@
 import { Game } from "./game";
+import { getCanvasSize } from "./utils";
 
-const ctx = document.querySelector("canvas").getContext("2d");
+const canvasEl = document.querySelector("canvas"); 
+const ctx = canvasEl.getContext("2d");
 
 const startB = document.getElementById("startGameButton");
 const stopB = document.getElementById("stopGameButton");
@@ -15,7 +17,7 @@ function menuStartGame() {
     game = new Game(ctx);
     game.startGame();
 
-    show([pauseB]);
+    show([pauseB, canvasEl]);
     hide([stopB, startB, resumeB]);
 }
 
@@ -23,7 +25,7 @@ export function menuPauseGame() {
     if (game) {
         game.pauseGame();
 
-        show([resumeB, stopB]);
+        show([resumeB, stopB, canvasEl]);
         hide([pauseB, startB]);
     }
 }
@@ -32,7 +34,7 @@ function menuResumeGame() {
     if (game) {
         game.resumeGame();
 
-        show([pauseB]);
+        show([pauseB, canvasEl]);
         hide([resumeB, stopB, startB]);
     }
 }
@@ -43,18 +45,20 @@ export function menuStopGame() {
         game = undefined;
 
         show([startB]);
-        hide([stopB, pauseB, resumeB]);
+        hide([stopB, pauseB, resumeB, canvasEl]);
     }
 }
 
 function init() {    
     show([startB]);
-    hide([stopB, pauseB, resumeB]);
+    hide([stopB, pauseB, resumeB, canvasEl]);
     
     startB.addEventListener("click", menuStartGame);
     stopB.addEventListener("click", menuStopGame);
     pauseB.addEventListener("click", menuPauseGame);
     resumeB.addEventListener("click", menuResumeGame);
+
+    console.log(getCanvasSize());
 }
 
 init();
