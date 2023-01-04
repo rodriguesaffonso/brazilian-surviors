@@ -20,7 +20,7 @@ export class MagicPistolBulletCombatComponent extends CombatComponent {
     public update(bullet: MagicPistolBullet, params: CommandParms): void {
         this.updateDurationTimeout(bullet, params.elapsedMs);
 
-        const enemy = bullet.targetEnemy || this.getCloseEnemy(bullet, params.game);
+        const enemy = this.getCloseEnemy(bullet, params.game);
         if (enemy) {
             this.tryAttackEnemy(bullet, enemy);
         }

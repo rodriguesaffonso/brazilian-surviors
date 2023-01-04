@@ -54,7 +54,7 @@ export class MagicPistolCombatComponent extends CombatComponent {
                 this.toOnCooldownState();
             }
 
-            const bullet = createMagicPistolBullet(pistol, enemy, params.game);
+            createMagicPistolBullet(pistol, enemy, params.game);
             this.bulletsShoot++;
 
             if (this.bulletsShoot === this.amount) {

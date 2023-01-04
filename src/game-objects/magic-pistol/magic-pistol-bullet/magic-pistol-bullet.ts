@@ -1,5 +1,5 @@
 import { Game } from "../../../game";
-import { GameObject, GameObjectKind, ObjectComponents } from "../../../utils";
+import { GameObject, GameObjectKind, ObjectComponents, Vector2D } from "../../../utils";
 import { Events } from "../../../utils/observer";
 import { MagicPistol } from "../magic-pistol";
 import { MagicPistolBulletCombatComponent } from "./magic-pistol-bullet-combat-components";
@@ -7,13 +7,16 @@ import { MagicPistolBulletGraphicComponent } from "./magic-pistol-bullet-graphic
 import { MagicPistolBulletPhysicsComponent } from "./magic-pistol-bullet-physics-components";
 
 export class MagicPistolBullet extends GameObject {
-    public targetEnemy: GameObject;
-
     public pistol: MagicPistol;
+    public bulletDirection: Vector2D;
 
     constructor(components: ObjectComponents, pistol: MagicPistol, game: Game) {
         super(components, GameObjectKind.MagicPistol);
         this.pistol = pistol;
+    }
+
+    public setBulletDirection(enemy: GameObject): void {
+        this.physicsComponent.velocity = enemy.getPosition().sub(this.getPosition()).unit().multiply(this.physicsComponent.speed);
     }
 }
 
@@ -28,10 +31,7 @@ export function createMagicPistolBullet(pistol: MagicPistol, enemy: GameObject, 
         throw Error('undefined enemy');
     }
 
-    bullet.targetEnemy = enemy;
-    enemy.on(Events.ObjectDead, () => {
-        bullet.targetEnemy = undefined;
-    });
+    bullet.setBulletDirection(enemy);
 
     g.addToObjectsArray(bullet);
     pistol.bullets.push(bullet);
