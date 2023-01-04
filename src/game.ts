@@ -177,17 +177,11 @@ export class Game {
 
         const drawKills = () => {
             this.ctx.font = "16px serif";
-            this.ctx.fillText(`Kills: ${this.kills}`, 10, 50);
-        }
-
-        const drawPlayerHp = () => {
-            this.ctx.font = "24px serif";
-            this.ctx.fillText(`HP: ${this.player.combatComponent.hp} / ${this.player.combatComponent.maxHp}`, 10, 30);
+            this.ctx.fillText(`Kills: ${this.kills}`, 10, 20);
         }
 
         drawTime();
         drawKills();
-        drawPlayerHp();
     }
 
     private tryCreateNewObjects(timestamp: number): void {

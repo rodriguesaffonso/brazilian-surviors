@@ -1,14 +1,13 @@
 # brazilian-survivors
 
+TODO
 - enemy progression: time triggered upgrades
 - player progression: stage triggered progression (pop up selection)
-
-TODO
 - objects might drop collectatable items (collectable component)
-- player health bar
 - make upgrade progression event driven
 - refactor base objects config to better apply upgrades
 - camera and player using the same components
+- object colision: enemies colide and dont stack on top of each other
 
 BUG
 - Last triangle are colored with white when game is paused
@@ -17,6 +16,7 @@ BUG
 - Magic Pistol: bullet stop when first bullet kills the enemy quickly
 
 DONE
+- player health bar
 - Magic bullet: bullet does not follow anymore, it just go in straight line
 - responsive canvas size
 - add upgrade component
