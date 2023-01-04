@@ -1,7 +1,7 @@
 import { GameObject } from "../utils";
-import { CommandParms } from "./params";
+import { CommandParms, Component } from "./interfaces";
 
-export abstract class GraphicComponent {
+export abstract class GraphicComponent implements Component {
     public ctx: CanvasRenderingContext2D;
     
     constructor(ctx: CanvasRenderingContext2D) {

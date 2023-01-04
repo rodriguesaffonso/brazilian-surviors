@@ -1,5 +1,5 @@
 import { GameObject, GameObjectKind } from "../utils";
-import { CommandParms } from "./params";
+import { CommandParms } from "./interfaces";
 
 export enum TriggerReason {
   Time = 1,
@@ -54,7 +54,8 @@ export class UpgradeManager {
     this.baseParamsByObjectKind = new Map([
       [GameObjectKind.Triangle, {
         hp: 10,
-        damage: 8
+        damage: 8,
+        probToGenerate: 0.75
       }]
     ]);
 

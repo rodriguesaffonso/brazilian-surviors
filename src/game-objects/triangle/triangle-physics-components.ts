@@ -13,9 +13,6 @@ export class TrianglePhysicsComponent extends PhysicsComponent {
     }
 
     public update(enemy: Triangle, params: CommandParms): void {
-        if (!enemy.player) {
-            return;
-        }
         const vectorToPlayer = enemy.player.getPosition().sub(enemy.getPosition());
         if (vectorToPlayer.modulo() < this.speed) {
             return;

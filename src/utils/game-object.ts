@@ -18,6 +18,9 @@ export enum GameObjectKind {
     MagicPistol,
     MagicPistolBullet,
 
+    // Collectables
+    Gem,
+
     // Enemies objects
     Triangle,
 }

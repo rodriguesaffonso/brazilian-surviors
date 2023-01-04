@@ -1,8 +1,8 @@
 import { CombatComponentParams, GameObject } from "../utils";
 import { Events } from "../utils/observer";
-import { CommandParms } from "./params";
+import { CommandParms, Component } from "./interfaces";
 
-export abstract class CombatComponent implements CombatComponentParams {
+export abstract class CombatComponent implements CombatComponentParams, Component {
     public dead: boolean = false;
     public hp: number;
     public maxHp?: number;
@@ -29,9 +29,15 @@ export abstract class CombatComponent implements CombatComponentParams {
         if (this.dead) { return; }
         this.hp -= damage
         if (this.hp <= 0) {
-            this.hp = 0;
-            this.dead = true;
-            obj.emit(Events.ObjectDead);
+            this.kill(obj);
         }
+    }
+
+    protected kill(obj: GameObject): void {
+        if (this.dead) return;
+
+        this.hp = 0;
+        this.dead = true;
+        obj.emit(Events.ObjectDead);
     }
 }

@@ -1,7 +1,7 @@
 import { GameObject, ObjectDirection, PhysicsComponentParams, Vector2D } from "../utils";
-import { CommandParms } from "./params";
+import { CommandParms, Component } from "./interfaces";
 
-export abstract class PhysicsComponent {
+export abstract class PhysicsComponent implements Component  {
     public position: Vector2D;          // Position of the object
     public velocity: Vector2D;          // Current object velocity
     public direction: ObjectDirection;  // Current direction the object is facing

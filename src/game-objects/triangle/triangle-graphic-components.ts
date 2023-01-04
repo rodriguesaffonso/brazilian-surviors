@@ -1,4 +1,3 @@
-import { CommandParms } from "../../components";
 import { GraphicComponent } from "../../components/graphic-components";
 import { Triangle } from "./triangle";
 

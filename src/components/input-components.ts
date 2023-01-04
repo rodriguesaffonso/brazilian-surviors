@@ -1,7 +1,7 @@
 import { GameObject } from "../utils";
-import { CommandParms } from "./params";
+import { CommandParms, Component } from "./interfaces";
 
-export abstract class InputComponent {
+export abstract class InputComponent implements Component {
     public update(obj?: GameObject, params?: CommandParms): void {
         throw Error('NYI');
     }
