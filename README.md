@@ -3,7 +3,6 @@
 TODO
 - enemy progression: time triggered upgrades
 - player progression: stage triggered progression (pop up selection)
-- objects might drop collectatable items (collectable component)
 - make upgrade progression event driven
 - refactor base objects config to better apply upgrades
 - camera and player using the same components
@@ -16,6 +15,7 @@ BUG
 - Magic Pistol: bullet stop when first bullet kills the enemy quickly
 
 DONE
+- objects might drop collectatable items (collectable component)
 - player health bar
 - Magic bullet: bullet does not follow anymore, it just go in straight line
 - responsive canvas size

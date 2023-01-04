@@ -30,6 +30,7 @@ export class Game {
     public totalNumberObjects: number = 0;
     public newObjectFrequency: number = 1;
     public kills: number = 0;
+    public gemsCollected: number = 0;
     public killsToEndGame: number;
     public gameObjects: GameObject[] = [];
 
@@ -74,6 +75,7 @@ export class Game {
         this.newObjectFrequency = 1;
         this.kills = 0;
         this.killsToEndGame = 100;
+        this.gemsCollected = 0;
 
         this.ctx.canvas.height = this.camera.canvasHeight;
         this.ctx.canvas.width = this.camera.canvasWidth;
@@ -95,7 +97,8 @@ export class Game {
 
         console.log({
             duration: this.lastTimestamp - this.startTimestamp,
-            kills: this.kills
+            kills: this.kills,
+            gems: this.gemsCollected
         });
     }
 
@@ -180,8 +183,14 @@ export class Game {
             this.ctx.fillText(`Kills: ${this.kills}`, 10, 20);
         }
 
+        const drawGems = () => {
+            this.ctx.font = "16px serif";
+            this.ctx.fillText(`Gems: ${this.gemsCollected}`, 10, 40);
+        }
+
         drawTime();
         drawKills();
+        drawGems();
     }
 
     private tryCreateNewObjects(timestamp: number): void {
@@ -221,6 +230,10 @@ export class Game {
 
     public addToObjectsArray(obj: GameObject): void {
         this.gameObjects.push(obj);
+
+        obj.on(Events.ItemCollected, () => {
+            this.gemsCollected++;
+        });
     }
 
     public removeFromObjectsArray(obj: GameObject): void {

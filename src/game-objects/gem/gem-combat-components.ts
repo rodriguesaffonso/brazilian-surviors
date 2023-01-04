@@ -1,5 +1,5 @@
 import { CombatComponent, CommandParms } from "../../components";
-import { CombatComponentParams } from "../../utils";
+import { CombatComponentParams, Events } from "../../utils";
 import { Player } from "../player/player";
 import { World } from "../world/world";
 import { Gem } from "./gem";
@@ -19,6 +19,7 @@ export class GemCombatComponent extends CombatComponent {
 
         if (this.canAttack(gem, player)) {
             this.kill(gem);
+            gem.emit(Events.ItemCollected);
         }
     }
 

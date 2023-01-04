@@ -1,7 +1,8 @@
 export type ObserverEventCallback = () => void;
 
 export enum Events {
-  ObjectDead = 1
+  ObjectDead = 1,
+  ItemCollected
 }
 
 export abstract class Observer {
