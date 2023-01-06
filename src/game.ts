@@ -3,14 +3,14 @@ import { createMagicPistol } from "./game-objects/magic-pistol";
 import { createPlayer, Player } from "./game-objects/player";
 import { createTriangle } from "./game-objects/triangle";
 import { createWorld, World } from "./game-objects/world";
-import { GameObject, Vector2D } from "./utils";
-import { Events } from "./utils/observer";
+import { GameObject, GameObjectKind, Vector2D } from "./utils";
+import { Events, Observer } from "./utils/observer";
 
 import { menuPauseGame, menuStopGame } from ".";
 import { CommandParms } from "./components";
-import { TriggerReason, UpgradeManager } from "./components/upgrade-manager";
+import { UpgradeManager } from "./components/upgrade-manager/upgrade-manager";
 
-export class Game {
+export class Game extends Observer {
     public ctx: CanvasRenderingContext2D;
 
     public player: Player;
@@ -40,6 +40,7 @@ export class Game {
     private visibilityEventListener: () => void;
 
     constructor(ctx: CanvasRenderingContext2D) {
+        super();
         this.ctx = ctx;
 
         this.visibilityEventListener = () => {
@@ -63,7 +64,7 @@ export class Game {
             magicPistol
         ]);
 
-        this.upgradeManager = new UpgradeManager();
+        this.upgradeManager = new UpgradeManager(this);
 
         this.running = true;
         this.paused = false;
@@ -74,7 +75,7 @@ export class Game {
         this.lastObjectAtTimestamp = undefined;
         this.objects = [];
         this.totalNumberObjects = 0;
-        this.newObjectFrequency = 2;
+        this.newObjectFrequency = 1;
         this.kills = 0;
         this.killsToEndGame = 100;
         this.gemsCollected = 0;
@@ -88,6 +89,16 @@ export class Game {
         
         this.animationRequestId = window.requestAnimationFrame(this.renderLoop.bind(this));
         window.addEventListener('visibilitychange', this.visibilityEventListener);
+
+        this.on(Events.ObjectDead, () => {
+            // 
+        })
+        .on(Events.NextTimestamp, (timestamp) => {
+            this.upgradeManager.tryTriggerNextUpgrage(Events.NextTimestamp, timestamp);
+        })
+        .on(Events.ItemCollected, () => {
+            this.upgradeManager.tryTriggerNextUpgrage(Events.ItemCollected);
+        });
     }
 
     public stopGame(): void {
@@ -98,6 +109,7 @@ export class Game {
         this.player.inputComponent.stop();
         window.cancelAnimationFrame(this.animationRequestId);
         window.removeEventListener('visibilitychange', this.visibilityEventListener);
+        this.clear();
 
         console.log({
             duration: this.lastTimestamp - this.startTimestamp,
@@ -143,6 +155,7 @@ export class Game {
         const elapsed = this.getElapsedLoopTime(currentTime);
 
         if (elapsed >= 10) {
+            this.emit(Events.NextTimestamp, elapsed);
             this.gameLoop(currentTime);
 
             if (this.isGameEnded()) {
@@ -159,8 +172,7 @@ export class Game {
 
     private gameLoop(timestamp: number): void {
         const updateParams: CommandParms = { elapsedMs: this.getElapsedLoopTime(timestamp), game: this };
-        this.upgradeManager.update(TriggerReason.Time, updateParams);
-
+        
         this.tryCreateNewEnemies(timestamp);
 
         this.gameObjects.forEach((obj) => obj.update(updateParams));
@@ -244,7 +256,7 @@ export class Game {
         const obj = createTriangle(this, pos, this.ctx, this.upgradeManager);
         obj.on(Events.ObjectDead, () => {
             this.kills++;
-            this.upgradeManager.update(TriggerReason.Kills, { game: this, elapsedMs: undefined });
+            this.emit(Events.ObjectDead);
         });
         return obj;
     }
@@ -260,9 +272,12 @@ export class Game {
     public addToObjectsArray(obj: GameObject): void {
         this.gameObjects.push(obj);
 
-        obj.on(Events.ItemCollected, () => {
-            this.gemsCollected++;
-        });
+        if (obj.kind === GameObjectKind.Gem) {
+            obj.on(Events.ItemCollected, () => {
+                this.gemsCollected++;
+                this.emit(Events.ItemCollected);
+            });
+        }
     }
 
     private clearDeadObjects(): void {

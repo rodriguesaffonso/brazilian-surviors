@@ -1,10 +1,7 @@
 # brazilian-survivors
 
 TODO
-- enemy progression: time triggered upgrades
 - player progression: stage triggered progression (pop up selection)
-- make upgrade progression event driven
-- refactor base objects config to better apply upgrades
 - camera and player using the same components
 - object colision: enemies colide and dont stack on top of each other
 
@@ -13,6 +10,8 @@ BUG
 - Visor animation reset when moving only up or down
 
 DONE
+- make upgrade progression event driven
+- enemy progression: time triggered upgrades
 - Magic Pistol: Bullet dont move after spawned and after some delay
 - Magic Pistol: bullet stop when first bullet kills the enemy quickly
 - objects might drop collectatable items (collectable component)

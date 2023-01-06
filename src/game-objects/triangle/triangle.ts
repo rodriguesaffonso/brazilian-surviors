@@ -1,11 +1,8 @@
-import { UpgradeManager } from "../../components/upgrade-manager";
+import { UpgradeManager } from "../../components/upgrade-manager/upgrade-manager";
 import { Game } from "../../game";
 import { Events, GameObject, GameObjectKind, ObjectComponents, Vector2D } from "../../utils";
 import { Camera } from "../camera";
-import { Gem } from "../gem";
-import { GemCombatComponent } from "../gem/gem-combat-components";
-import { GemGraphicComponent } from "../gem/gem-graphic-components";
-import { GemPhysicsComponent } from "../gem/gem-physics-components";
+import { createGem } from "../gem";
 import { Player } from "../player";
 import { TriangleCollectableCompoment } from "./triangle-collectable-components";
 import { TriangleCombatComponent } from "./triangle-combat-components";
@@ -39,11 +36,7 @@ export function createTriangle(g: Game, position: Vector2D, ctx: CanvasRendering
     const collectableComponent = new TriangleCollectableCompoment(baseParams.probToGenerate);
     triangle.on(Events.ObjectDead, () => {
         if (collectableComponent.canGenerateCollectables()) {
-            g.addToObjectsArray(new Gem({
-                graphic: new GemGraphicComponent(ctx),
-                physics: new GemPhysicsComponent({ position: triangle.getPosition() }),
-                combat: new GemCombatComponent({})
-            }));
+            g.addToObjectsArray(createGem(triangle.getPosition(), ctx));
         }
     });
     return triangle;

@@ -1,8 +1,6 @@
 import { CombatComponent, CommandParms } from "../../components";
-import { TriggerReason } from "../../components/upgrade-manager";
 import { CombatComponentParams, Events } from "../../utils";
 import { Player } from "../player/player";
-import { World } from "../world/world";
 import { Gem } from "./gem";
 
 export class GemCombatComponent extends CombatComponent {
@@ -21,7 +19,6 @@ export class GemCombatComponent extends CombatComponent {
         if (this.canAttack(gem, player)) {
             this.kill(gem);
             gem.emit(Events.ItemCollected);
-            params.game.upgradeManager.update(TriggerReason.Gems, params);
         }
     }
 

@@ -1,8 +1,9 @@
-export type ObserverEventCallback = () => void;
+export type ObserverEventCallback = (params?: any) => void;
 
 export enum Events {
   ObjectDead = 1,
-  ItemCollected
+  ItemCollected,
+  NextTimestamp
 }
 
 export abstract class Observer {
@@ -12,7 +13,7 @@ export abstract class Observer {
     this.cbsByEvent = new Map();
   }
 
-  public on(event: Events, cb: ObserverEventCallback): void {
+  public on(event: Events, cb: ObserverEventCallback): Observer {
     let cbs = this.cbsByEvent.get(event);
     if (cbs === undefined) {
       cbs = [];
@@ -20,12 +21,18 @@ export abstract class Observer {
     }
 
     cbs.push(cb);
+
+    return this;
   }
 
-  public emit(event: Events): void {
+  public emit(event: Events, params?: any): void {
     for (const cb of this.cbsByEvent.get(event) || []) {
-      cb();
+      cb(params);
     }
+  }
+
+  public clear(): void {
+    this.cbsByEvent.clear();
   }
 
   // TODO: How to handle remove observer and callbacks?
