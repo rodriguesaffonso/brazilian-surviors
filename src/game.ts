@@ -24,6 +24,7 @@ export class Game {
 
     public startTimestamp: number;
     public lastTimestamp: number;
+    public lastObjectAtTimestamp: number;
     public intraElapsed: number;
 
     public objects: GameObject[] = [];
@@ -70,9 +71,10 @@ export class Game {
 
         this.startTimestamp = undefined;
         this.lastTimestamp = undefined;
+        this.lastObjectAtTimestamp = undefined;
         this.objects = [];
         this.totalNumberObjects = 0;
-        this.newObjectFrequency = 1;
+        this.newObjectFrequency = 2;
         this.kills = 0;
         this.killsToEndGame = 100;
         this.gemsCollected = 0;
@@ -82,6 +84,8 @@ export class Game {
 
         this.lastTimestamp = Date.now();
         this.startTimestamp = this.lastTimestamp;
+        this.lastObjectAtTimestamp = this.lastTimestamp;
+        
         this.animationRequestId = window.requestAnimationFrame(this.renderLoop.bind(this));
         window.addEventListener('visibilitychange', this.visibilityEventListener);
     }
@@ -193,8 +197,9 @@ export class Game {
     }
 
     private tryCreateNewEnemies(timestamp: number): void {
-        const totalElapsedSec = (timestamp - this.startTimestamp) / 1000;
-        while (this.totalNumberObjects < totalElapsedSec) {
+        const elapsedFromLastObject = timestamp - this.lastObjectAtTimestamp;
+        let numberOfNewObjects = Math.floor(elapsedFromLastObject / 1000 * this.newObjectFrequency);
+        while (numberOfNewObjects--) {
             const enemy = this.createNewEnemy();
 
             this.objects.push(enemy);
@@ -202,6 +207,8 @@ export class Game {
 
             this.world.addEnemy(enemy);
             this.gameObjects.push(enemy);
+
+            this.lastObjectAtTimestamp = timestamp;
         }
     }
 
@@ -234,11 +241,10 @@ export class Game {
                 break;
         }
 
-        console.log(minP, maxP);
-        const obj = createTriangle(this, pos.add(this.player.getPosition()), this.ctx, this.upgradeManager);
+        const obj = createTriangle(this, pos, this.ctx, this.upgradeManager);
         obj.on(Events.ObjectDead, () => {
             this.kills++;
-            this.upgradeManager.update(TriggerReason.NumberOfKills, { game: this, elapsedMs: undefined });
+            this.upgradeManager.update(TriggerReason.Kills, { game: this, elapsedMs: undefined });
         });
         return obj;
     }

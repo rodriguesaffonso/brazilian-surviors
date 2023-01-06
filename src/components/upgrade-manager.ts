@@ -3,7 +3,8 @@ import { CommandParms } from "./interfaces";
 
 export enum TriggerReason {
   Time = 1,
-  NumberOfKills
+  Kills,
+  Gems
 }
 
 export interface UpgradeItem {
@@ -72,20 +73,21 @@ export class UpgradeManager {
     }
 
     const nextUpgradeValue: number = nextUpgrade.value;
-
-    if (reason === TriggerReason.Time) {
-      const totalElapsedMs = params.elapsedMs + params.game.lastTimestamp - params.game.startTimestamp;
-
-      if (totalElapsedMs >= nextUpgradeValue) {
-        this.timeMsUpgradesAt.splice(0, 1);
-        nextUpgrade.upgrade?.(params);
-      }
-    }
-    else if (reason === TriggerReason.NumberOfKills) {
-      if (params.game.kills >= nextUpgradeValue) {
-        this.killsUpgradesAt.splice(0, 1);
-        nextUpgrade.upgrade?.(params);
-      }
+    switch (reason) {
+      case TriggerReason.Time:
+        const totalElapsedMs = params.elapsedMs + params.game.lastTimestamp - params.game.startTimestamp;
+    
+        if (totalElapsedMs >= nextUpgradeValue) {
+          this.timeMsUpgradesAt.splice(0, 1);
+          nextUpgrade.upgrade?.(params);
+        }
+        break;
+      case TriggerReason.Kills:
+        if (params.game.kills >= nextUpgradeValue) {
+          this.killsUpgradesAt.splice(0, 1);
+          nextUpgrade.upgrade?.(params);
+        }
+        break;
     }
   }
 
@@ -93,7 +95,7 @@ export class UpgradeManager {
     if (reason === TriggerReason.Time) {
       return this.timeMsUpgradesAt.at(0);
     }
-    if (reason === TriggerReason.NumberOfKills) {
+    if (reason === TriggerReason.Kills) {
       return this.killsUpgradesAt.at(0);
     }
     return undefined;

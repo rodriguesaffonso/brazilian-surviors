@@ -52,6 +52,7 @@ export class MagicPistolCombatComponent extends CombatComponent {
             const enemy = this.getCloseEnemy(pistol);
             if (!enemy) {
                 this.toOnCooldownState();
+                return;
             }
 
             createMagicPistolBullet(pistol, enemy, params.game);

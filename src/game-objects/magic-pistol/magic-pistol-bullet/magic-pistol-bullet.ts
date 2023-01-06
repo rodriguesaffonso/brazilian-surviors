@@ -27,10 +27,6 @@ export function createMagicPistolBullet(pistol: MagicPistol, enemy: GameObject, 
         graphic: new MagicPistolBulletGraphicComponent(g.ctx)
     }, pistol, g);
 
-    if (enemy === undefined) {
-        throw Error('undefined enemy');
-    }
-
     bullet.setBulletDirection(enemy);
 
     g.addToObjectsArray(bullet);
