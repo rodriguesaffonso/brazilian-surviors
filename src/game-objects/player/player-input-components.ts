@@ -69,9 +69,9 @@ export class PlayerInputComponent extends InputComponent {
         window.addEventListener("keyup", this.onKeyEvent.bind(this));
 
         // Touch events
-        this.canvasElement.addEventListener('touchstart', this.onTouchEvent.bind(this));
-        this.canvasElement.addEventListener('touchmove', this.onTouchEvent.bind(this));
-        this.canvasElement.addEventListener('touchend', this.onTouchEvent.bind(this));
+        window.addEventListener('touchstart', this.onTouchEvent.bind(this));
+        window.addEventListener('touchmove', this.onTouchEvent.bind(this));
+        window.addEventListener('touchend', this.onTouchEvent.bind(this));
     }
 
     public stop(): void {
@@ -80,8 +80,8 @@ export class PlayerInputComponent extends InputComponent {
         window.removeEventListener("keyup", this.onKeyEvent.bind(this));
 
         // Touch events
-        this.canvasElement.addEventListener('touchmove', this.onTouchEvent.bind(this));
-        this.canvasElement.addEventListener('touchend', this.onTouchEvent.bind(this));
+        window.addEventListener('touchmove', this.onTouchEvent.bind(this));
+        window.addEventListener('touchend', this.onTouchEvent.bind(this));
     }
 
     private handleInput(key: string, isPressed: boolean): void {
