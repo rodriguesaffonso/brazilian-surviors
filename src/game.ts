@@ -161,6 +161,8 @@ export class Game {
 
         this.gameObjects.forEach((obj) => obj.update(updateParams));
         this.gameObjects.sort((a, b) => a.kind - b.kind);
+
+        this.clearDeadObjects();
     }
 
     private render(): void {
@@ -232,9 +234,9 @@ export class Game {
                 break;
         }
 
+        console.log(minP, maxP);
         const obj = createTriangle(this, pos.add(this.player.getPosition()), this.ctx, this.upgradeManager);
         obj.on(Events.ObjectDead, () => {
-            this.removeDeadObjectFromObjectsArray(obj);
             this.kills++;
             this.upgradeManager.update(TriggerReason.NumberOfKills, { game: this, elapsedMs: undefined });
         });
@@ -257,24 +259,11 @@ export class Game {
         });
     }
 
-    public removeFromObjectsArray(obj: GameObject): void {
-        this.removeDeadObjectFromObjectsArray(obj);
-    }
-
-    private removeDeadObjectFromObjectsArray(obj: GameObject, index?: number): void {
-        const removeObject = (index: number): void => {
-            this.gameObjects.splice(index, 1);
-        }
-
-        if (index !== undefined) {
-            removeObject(index);
-            return;
-        }
-
-        this.gameObjects.forEach((currObj, index) => {
-            if (currObj === obj) {
-                removeObject(index);
+    private clearDeadObjects(): void {
+        this.gameObjects.forEach((obj, index) => {
+            if (obj.combatComponent?.dead) {
+                this.gameObjects.splice(index, 1);
             }
-        });
+        })
     }
 }

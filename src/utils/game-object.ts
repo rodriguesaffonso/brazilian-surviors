@@ -13,8 +13,6 @@ export enum GameObjectKind {
 
     // Player objects
     Player,
-    Gun,
-    Bullet,
     MagicPistol,
     MagicPistolBullet,
 

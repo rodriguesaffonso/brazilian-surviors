@@ -46,10 +46,6 @@ export function createTriangle(g: Game, position: Vector2D, ctx: CanvasRendering
             });
 
             g.addToObjectsArray(gem);
-
-            gem.on(Events.ObjectDead, () => {
-                g.removeFromObjectsArray(gem);
-            })
         }
     });
     return triangle;

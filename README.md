@@ -11,10 +11,10 @@ TODO
 BUG
 - Last triangle are colored with white when game is paused
 - Visor animation reset when moving only up or down
-- Magic Pistol: Bullet dont move after spawned and after some delay
-- Magic Pistol: bullet stop when first bullet kills the enemy quickly
 
 DONE
+- Magic Pistol: Bullet dont move after spawned and after some delay
+- Magic Pistol: bullet stop when first bullet kills the enemy quickly
 - objects might drop collectatable items (collectable component)
 - player health bar
 - Magic bullet: bullet does not follow anymore, it just go in straight line

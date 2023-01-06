@@ -37,8 +37,6 @@ export function createMagicPistolBullet(pistol: MagicPistol, enemy: GameObject, 
     pistol.bullets.push(bullet);
 
     bullet.on(Events.ObjectDead, () => {
-        g.removeFromObjectsArray(bullet);
-
         pistol.bullets.forEach((b, index) => {
             if (b === bullet) {
                 pistol.bullets.splice(index, 1);
