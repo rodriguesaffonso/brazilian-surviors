@@ -52,7 +52,7 @@ export class Game {
         this.camera = createCamera();
         this.world = createWorld(this.ctx, this.camera);
         this.player = createPlayer(this.ctx, this.camera);
-        
+
         const magicPistol = createMagicPistol(this);
 
         this.gameObjects.push(...[
@@ -157,12 +157,9 @@ export class Game {
         const updateParams: CommandParms = { elapsedMs: this.getElapsedLoopTime(timestamp), game: this };
         this.upgradeManager.update(TriggerReason.Time, updateParams);
 
-        this.tryCreateNewObjects(timestamp);
+        this.tryCreateNewEnemies(timestamp);
 
-        this.gameObjects.forEach((obj) => {
-            obj.update(updateParams);
-        });
-
+        this.gameObjects.forEach((obj) => obj.update(updateParams));
         this.gameObjects.sort((a, b) => a.kind - b.kind);
     }
 
@@ -193,10 +190,10 @@ export class Game {
         drawGems();
     }
 
-    private tryCreateNewObjects(timestamp: number): void {
+    private tryCreateNewEnemies(timestamp: number): void {
         const totalElapsedSec = (timestamp - this.startTimestamp) / 1000;
         while (this.totalNumberObjects < totalElapsedSec) {
-            const enemy = this.createNewObject();
+            const enemy = this.createNewEnemy();
 
             this.objects.push(enemy);
             this.totalNumberObjects++;
@@ -206,12 +203,36 @@ export class Game {
         }
     }
 
-    private createNewObject(): GameObject {
-        const theta = Math.random() * 2 * Math.PI;
-        const r = Math.max(this.camera.canvasWidth, this.camera.canvasHeight) / 2;
-        const x = Math.cos(theta) * r + this.player.getPosition().x;
-        const y = Math.sin(theta) * r + this.player.getPosition().y;
-        const obj = createTriangle(this, new Vector2D(x, y), this.ctx, this.upgradeManager);
+    private createNewEnemy(): GameObject {
+        const { minP, maxP } = this.camera.getCanvasLimits();
+        const A = minP
+        const B = new Vector2D(maxP.x, minP.y);
+        const C = maxP;
+        const D = new Vector2D(minP.x, maxP.y);
+        let pos: Vector2D;
+
+        const side = Math.floor(Math.random() * 4);
+        const p = Math.random();
+        switch (side) {
+            case 0:
+                // Up
+                pos = A.multiply(p).add(B.multiply(1 - p));
+                break;
+            case 1:
+                // Right
+                pos = B.multiply(p).add(C.multiply(1 - p));
+                break;
+            case 2:
+                // Down
+                pos = C.multiply(p).add(D.multiply(1 - p));
+                break;
+            case 3:
+                // Left
+                pos = D.multiply(p).add(A.multiply(1 - p));
+                break;
+        }
+
+        const obj = createTriangle(this, pos.add(this.player.getPosition()), this.ctx, this.upgradeManager);
         obj.on(Events.ObjectDead, () => {
             this.removeDeadObjectFromObjectsArray(obj);
             this.kills++;
