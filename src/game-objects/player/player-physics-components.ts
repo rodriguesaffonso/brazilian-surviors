@@ -1,5 +1,5 @@
-import { PhysicsComponent } from "../../components";
-import { Vector2D } from "../../utils";
+import { CommandParms, PhysicsComponent } from "../../components";
+import { GameObject, Vector2D } from "../../utils";
 
 export class PlayerPhysicsComponent extends PhysicsComponent {
     constructor() {

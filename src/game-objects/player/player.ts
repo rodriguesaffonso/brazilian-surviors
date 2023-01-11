@@ -25,6 +25,10 @@ export class Player extends GameObject {
         this.weapons.push(w);
         return this;
     }
+
+    public isMoving(): boolean {
+        return this.physicsComponent.isMoving();
+    }
 }
 
 export function createPlayer(ctx: CanvasRenderingContext2D, camera: Camera): Player {

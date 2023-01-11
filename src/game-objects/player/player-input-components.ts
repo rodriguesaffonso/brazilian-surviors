@@ -8,19 +8,15 @@ enum InputType {
 }
 
 export class PlayerInputComponent extends InputComponent {
-    private inputType: InputType;
     private keyStates: Record<string, boolean> = {};
     private nextVelocityDirection: Vector2D;
     private physicsComponent: PlayerPhysicsComponent;
 
-    private canvasElement: HTMLElement;
     private startTouchPosition: Vector2D;
 
     constructor(physics: PlayerPhysicsComponent) {
         super();
-        this.canvasElement = document.getElementById('gameCanvas');
         this.physicsComponent = physics;
-        this.inputType = InputType.Keyboard;
         this.nextVelocityDirection = Vector2D.zero();
         this.start();
     }
@@ -30,7 +26,6 @@ export class PlayerInputComponent extends InputComponent {
     }
 
     public onKeyEvent(event: KeyboardEvent): void {
-        this.inputType = InputType.Keyboard;
         if (event.type === "keydown") {
             this.handleInput(event.key, true);
         }
@@ -43,7 +38,6 @@ export class PlayerInputComponent extends InputComponent {
     }
 
     public onTouchEvent(event: TouchEvent): void {
-        this.inputType = InputType.Touch;
         if (event.touches.length > 1) return;
         const touch = event.touches[0];
 
