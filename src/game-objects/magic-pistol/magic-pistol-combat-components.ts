@@ -1,5 +1,6 @@
 import { CombatComponent, CommandParms } from "../../components";
-import { GameObject } from "../../utils";
+import { Game } from "../../game";
+import { GameObject, GameObjectKind } from "../../utils";
 import { MagicPistol } from "./magic-pistol";
 import { createMagicPistolBullet } from "./magic-pistol-bullet";
 
@@ -49,7 +50,7 @@ export class MagicPistolCombatComponent extends CombatComponent {
         this.bulletIntervalTimeout -= params.elapsedMs;
         if (this.bulletIntervalTimeout <= 0) {
             // Add new bullet to pistol.bullets array (needs the delete on killed method to remove them from the array)
-            const enemy = this.getCloseEnemy(pistol);
+            const enemy = this.getCloseEnemy(params.game);
             if (!enemy) {
                 this.toOnCooldownState();
                 return;
@@ -85,7 +86,7 @@ export class MagicPistolCombatComponent extends CombatComponent {
 
     private handleReadyToShoot(pistol: MagicPistol, params: CommandParms): void {
         // Check if there is close a close enemy
-        const enemy = this.getCloseEnemy(pistol);
+        const enemy = this.getCloseEnemy(params.game);
         if (enemy) {
             this.toShootingState();
         }
@@ -97,17 +98,18 @@ export class MagicPistolCombatComponent extends CombatComponent {
         this.state = MagicPistolState.Shooting;
     }
 
-    private getCloseEnemy(pistol: MagicPistol): GameObject {
-        const enemies = pistol.world.enemies
+    private getCloseEnemy(g: Game): GameObject {
+        const enemies = g.gameObjects
+            .filter(obj => obj.kind === GameObjectKind.Triangle)
             .map(enemy => {
                 return {
-                    enemy, dist: pistol.player.getPosition().sub(enemy.getPosition()).modulo()
+                    enemy, dist: g.player.getPosition().sub(enemy.getPosition()).modulo()
                 }
             })
             .sort((a, b) => a.dist - b.dist);
 
         for (const { enemy } of enemies) {
-            const distToPlayer = pistol.player.getPosition().sub(enemy.getPosition()).modulo();
+            const distToPlayer = g.player.getPosition().sub(enemy.getPosition()).modulo();
             if (distToPlayer <= this.range) {
                 return enemy;
             }

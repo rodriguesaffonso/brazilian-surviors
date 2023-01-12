@@ -8,14 +8,11 @@ import { Triangle } from "./triangle";
 export class TriangleCombatComponent extends CombatComponent {
     public distToAttack: number = 10;
 
-    public world: World;
-
     private lastAttackTime: number;
     private attackCooldownMs: number = 100;
 
-    constructor(world: World, params: CombatComponentParams) {
+    constructor(params: CombatComponentParams) {
         super(params);
-        this.world = world;
     }
 
     public update(enemy: Triangle): void {

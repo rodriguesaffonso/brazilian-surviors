@@ -7,14 +7,11 @@ import { MagicPistolCombatComponent } from "./magic-pistol-combat-components";
 
 export class MagicPistol extends GameObject {
     public bullets: MagicPistolBullet[];
-
-    public world: World;
     public player: Player;
 
     constructor(components: ObjectComponents, game: Game) {
         super(components, GameObjectKind.MagicPistol);
         this.bullets = [];
-        this.world = game.world;
         this.player = game.player;
     }
 }

@@ -30,7 +30,7 @@ export function createTriangle(g: Game, position: Vector2D, ctx: CanvasRendering
     const triangle = new Triangle(g.player, g.camera, {
         graphic: new TriangleGraphicComponent(ctx),
         physics: new TrianglePhysicsComponent({ position }),
-        combat: new TriangleCombatComponent(g.world, { hp: baseParams.hp, damage: baseParams.hp }),
+        combat: new TriangleCombatComponent({ hp: baseParams.hp, damage: baseParams.hp }),
     });
 
     const collectableComponent = new TriangleCollectableCompoment(baseParams.probToGenerate);

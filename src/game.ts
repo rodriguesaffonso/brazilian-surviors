@@ -227,7 +227,6 @@ export class Game extends Observer {
             this.objects.push(enemy);
             this.totalNumberObjects++;
 
-            this.world.addEnemy(enemy);
             this.gameObjects.push(enemy);
 
             this.lastObjectAtTime = this.clock.getTotalElapsedTime();

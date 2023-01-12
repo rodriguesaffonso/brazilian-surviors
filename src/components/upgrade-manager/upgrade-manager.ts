@@ -91,7 +91,6 @@ export class UpgradeManager {
     
     const nextUpgrade = skillPath.nextUpgrade();
     if (nextUpgrade) {
-      console.log(skillPath.isComplete());
       console.log(nextUpgrade.description());
     }
   }

@@ -1,6 +1,6 @@
 import { CombatComponent, CommandParms } from "../../../components";
 import { Game } from "../../../game";
-import { GameObject } from "../../../utils";
+import { GameObject, GameObjectKind } from "../../../utils";
 import { Events } from "../../../utils/observer";
 import { MagicPistolBullet } from "./magic-pistol-bullet";
 
@@ -41,7 +41,7 @@ export class MagicPistolBulletCombatComponent extends CombatComponent {
     }
 
     private getCloseEnemy(bullet: MagicPistolBullet, g: Game): GameObject {
-        for (const enemy of g.world.enemies) {
+        for (const enemy of g.gameObjects.filter(obj => obj.kind === GameObjectKind.Triangle)) {
             if (this.canAttack(bullet, enemy)) {
                 return enemy;
             }
