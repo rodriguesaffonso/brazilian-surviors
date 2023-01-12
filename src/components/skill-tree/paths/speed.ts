@@ -4,7 +4,7 @@ import { SkillKind, SkillNode, SkillPath } from "../interfaces";
 export class SpeedSkillNode extends SkillNode {
   private p: number; // percentege increased
 
-  constructor(p: number) { 
+  constructor(p: number) {
     super(SkillKind.Speed);
     this.p = p;
   }
@@ -24,12 +24,15 @@ export class SpeedSkillNode extends SkillNode {
 
 export class SpeedSkillPath extends SkillPath {
   constructor() {
-    super([
-      new SpeedSkillNode(0.1),
-      new SpeedSkillNode(0.1),
-      new SpeedSkillNode(0.1),
-      new SpeedSkillNode(0.1),
-      new SpeedSkillNode(0.1),
-    ]);
+    super({
+      path: [
+        new SpeedSkillNode(0.1),
+        new SpeedSkillNode(0.1),
+        new SpeedSkillNode(0.1),
+        new SpeedSkillNode(0.1),
+        new SpeedSkillNode(0.1),
+      ],
+      nodeColor: '#ffe119'
+    });
   }
 }

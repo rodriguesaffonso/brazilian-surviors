@@ -32,22 +32,30 @@ export abstract class SkillNode {
   public isLocked(): boolean { return this.locked; }
 }
 
+export interface SkillPathParams {
+  path: SkillNode[],
+  nodeColor: string
+}
 export abstract class SkillPath {
   protected begin: SkillNode;
   protected current: SkillNode;
+  
+  public nodeColor: string;
+  public static lockedNodeColor: '#7f7f7f';
 
-  constructor(path: SkillNode[]) {
-    if (path.length === 0) {
+  constructor(params: SkillPathParams) {
+    if (params.path.length === 0) {
       throw Error('SkillPath needs to have at least 1 node');
     }
-    this.begin = path[0];
+    this.begin = params.path[0];
     this.current = this.begin;
-    for (let i = 1; i < path.length; i++) {
-      const node = path[i];
+    for (let i = 1; i < params.path.length; i++) {
+      const node = params.path[i];
       this.current.next = node;
       this.current = node;
     }
     this.current = this.begin;
+    this.nodeColor = params.nodeColor;
   }
 
   public visiblePath(): SkillNode[] {
@@ -69,6 +77,10 @@ export abstract class SkillPath {
 
   public isComplete(): boolean {
     return this.current === undefined;
+  }
+
+  public isLocked(): boolean {
+    return this.begin.isLocked();
   }
 
   public apply(g: Game): void {

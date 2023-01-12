@@ -25,12 +25,15 @@ export class MaxHealthSkillNode extends SkillNode {
 
 export class MaxHealthSkillPath extends SkillPath {
   constructor() {
-    super([
-      new MaxHealthSkillNode(0.1),
-      new MaxHealthSkillNode(0.1),
-      new MaxHealthSkillNode(0.1),
-      new MaxHealthSkillNode(0.1),
-      new MaxHealthSkillNode(0.1),
-    ]);
+    super({
+      path: [
+        new MaxHealthSkillNode(0.1),
+        new MaxHealthSkillNode(0.1),
+        new MaxHealthSkillNode(0.1),
+        new MaxHealthSkillNode(0.1),
+        new MaxHealthSkillNode(0.1),
+      ],
+      nodeColor: '#f58231'
+    });
   }
 }

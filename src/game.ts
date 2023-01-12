@@ -6,9 +6,10 @@ import { createWorld, World } from "./game-objects/world";
 import { GameObject, GameObjectKind, Vector2D } from "./utils";
 import { Events, Observer } from "./utils/observer";
 
-import { menuPauseGame, menuStopGame } from ".";
+import { menuPauseGame, menuResumeGame, menuStopGame } from ".";
 import { CommandParms } from "./components";
 import { UpgradeManager } from "./components/upgrade-manager/upgrade-manager";
+import { SkillTree } from "./components/skill-tree/skill-tree";
 
 export class Game extends Observer {
     public ctx: CanvasRenderingContext2D;
@@ -18,6 +19,7 @@ export class Game extends Observer {
     public world: World;
 
     public upgradeManager: UpgradeManager;
+    public skillTree: SkillTree;
 
     public running: boolean;
     public paused: boolean;
@@ -64,6 +66,7 @@ export class Game extends Observer {
             magicPistol
         ]);
 
+        this.skillTree = new SkillTree();
         this.upgradeManager = new UpgradeManager(this);
 
         this.running = true;
@@ -88,7 +91,17 @@ export class Game extends Observer {
         this.lastObjectAtTimestamp = this.lastTimestamp;
         
         this.animationRequestId = window.requestAnimationFrame(this.renderLoop.bind(this));
+        
         window.addEventListener('visibilitychange', this.visibilityEventListener);
+        window.addEventListener("keydown", (e) => {
+            if (e.key === 'p') {
+                if (this.paused) {
+                    menuResumeGame();
+                } else {
+                    menuPauseGame();
+                }
+            }
+        });
 
         this.on(Events.ObjectDead, () => {
             // 
@@ -112,7 +125,7 @@ export class Game extends Observer {
         this.clear();
 
         console.log({
-            duration: this.lastTimestamp - this.startTimestamp,
+            duration: this.totalElapsedTime(),
             kills: this.kills,
             gems: this.gemsCollected
         });
@@ -138,6 +151,7 @@ export class Game extends Observer {
             this.paused = true;
             this.intraElapsed = Date.now() - this.lastTimestamp;
             drawPauseIcon();
+            this.skillTree.drawOnPause(this);
             window.cancelAnimationFrame(this.animationRequestId);
         }
     }
@@ -184,7 +198,7 @@ export class Game extends Observer {
     private render(): void {
         this.ctx.fillStyle = "white";
         const drawTime = () => {
-            const elapsedMs = this.lastTimestamp - this.startTimestamp;
+            const elapsedMs = this.totalElapsedTime();
 
             const min = Math.floor(elapsedMs / 1000 / 60);
             const sec = Math.floor(elapsedMs / 1000 - min * 60);
@@ -262,7 +276,7 @@ export class Game extends Observer {
     }
 
     private isGameEnded(): boolean {
-        return this.kills === this.killsToEndGame || this.player.combatComponent.dead;
+        return this.player.combatComponent.dead || this.totalElapsedTime() > 10 * 60 * 1000;
     }
 
     private getElapsedLoopTime(currentTime: number): number {
@@ -286,5 +300,9 @@ export class Game extends Observer {
                 this.gameObjects.splice(index, 1);
             }
         })
+    }
+
+    private totalElapsedTime(): number {
+        return this.lastTimestamp - this.startTimestamp;
     }
 }

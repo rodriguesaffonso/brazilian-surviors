@@ -40,7 +40,7 @@ export class UpgradeManager {
       }]
     ]);
 
-    this.skillTree = new SkillTree();
+    this.skillTree = g.skillTree;
   }
 
   public getBaseParams(kind: GameObjectKind): any {

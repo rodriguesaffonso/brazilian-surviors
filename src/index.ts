@@ -30,7 +30,7 @@ export function menuPauseGame() {
     }
 }
 
-function menuResumeGame() {
+export function menuResumeGame() {
     if (game) {
         game.resumeGame();
 

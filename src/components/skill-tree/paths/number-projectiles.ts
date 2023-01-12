@@ -32,10 +32,13 @@ export class NumberProjectilesSkillNode extends SkillNode {
 
 export class NumberProjectilesSkillPath extends SkillPath {
   constructor() {
-    super([
-      new NumberProjectilesSkillNode(1),
-      new NumberProjectilesSkillNode(1),
-      new NumberProjectilesSkillNode(1)
-    ]);
+    super({
+      path: [
+        new NumberProjectilesSkillNode(1),
+        new NumberProjectilesSkillNode(1),
+        new NumberProjectilesSkillNode(1)
+      ],
+      nodeColor: '#3cb44b'
+    });
   }
 }
