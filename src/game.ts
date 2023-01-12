@@ -26,8 +26,9 @@ export class Game extends Observer {
 
     public startTimestamp: number;
     public lastTimestamp: number;
-    public lastObjectAtTimestamp: number;
+    public lastObjectAtTime: number;
     public intraElapsed: number;
+    public totalElapsedTime: number;
 
     public objects: GameObject[] = [];
     public totalNumberObjects: number = 0;
@@ -86,7 +87,9 @@ export class Game extends Observer {
 
         this.startTimestamp = undefined;
         this.lastTimestamp = undefined;
-        this.lastObjectAtTimestamp = undefined;
+        this.lastObjectAtTime = 0;
+        this.totalElapsedTime = 0;
+
         this.objects = [];
         this.totalNumberObjects = 0;
         this.newObjectFrequency = 1;
@@ -99,7 +102,6 @@ export class Game extends Observer {
 
         this.lastTimestamp = Date.now();
         this.startTimestamp = this.lastTimestamp;
-        this.lastObjectAtTimestamp = this.lastTimestamp;
         
         this.animationRequestId = window.requestAnimationFrame(this.renderLoop.bind(this));
         
@@ -129,7 +131,7 @@ export class Game extends Observer {
         this.clear();
 
         console.log({
-            duration: this.totalElapsedTime(),
+            duration: this.totalElapsedTime,
             kills: this.kills,
             gems: this.gemsCollected
         });
@@ -171,6 +173,10 @@ export class Game extends Observer {
     private renderLoop(): void {
         const currentTime = Date.now();
         const elapsed = this.getElapsedLoopTime(currentTime);
+        this.totalElapsedTime += elapsed;
+
+        console.log(this.totalElapsedTime);
+        
 
         if (elapsed >= 10) {
             this.emit(Events.NextTimestamp, elapsed);
@@ -202,10 +208,8 @@ export class Game extends Observer {
     private render(): void {
         this.ctx.fillStyle = "white";
         const drawTime = () => {
-            const elapsedMs = this.totalElapsedTime();
-
-            const min = Math.floor(elapsedMs / 1000 / 60);
-            const sec = Math.floor(elapsedMs / 1000 - min * 60);
+            const min = Math.floor(this.totalElapsedTime / 1000 / 60);
+            const sec = Math.floor(this.totalElapsedTime / 1000 - min * 60);
 
             this.ctx.font = "16px serif";
             this.ctx.fillText(`${min < 10 ? "0" : ""}${min}:${sec < 10 ? "0" : ""}${sec}`, this.camera.canvasWidth / 2 - 15, 20);
@@ -227,7 +231,7 @@ export class Game extends Observer {
     }
 
     private tryCreateNewEnemies(timestamp: number): void {
-        const elapsedFromLastObject = timestamp - this.lastObjectAtTimestamp;
+        const elapsedFromLastObject = this.totalElapsedTime - this.lastObjectAtTime;
         let numberOfNewObjects = Math.floor(elapsedFromLastObject / 1000 * this.newObjectFrequency);
         while (numberOfNewObjects--) {
             const enemy = this.createNewEnemy();
@@ -238,7 +242,7 @@ export class Game extends Observer {
             this.world.addEnemy(enemy);
             this.gameObjects.push(enemy);
 
-            this.lastObjectAtTimestamp = timestamp;
+            this.lastObjectAtTime = this.totalElapsedTime;
         }
     }
 
@@ -280,7 +284,7 @@ export class Game extends Observer {
     }
 
     private isGameEnded(): boolean {
-        return this.player.combatComponent.dead || this.totalElapsedTime() > 10 * 60 * 1000;
+        return this.player.combatComponent.dead || this.getTotalElapsedTime() > 10 * 60 * 1000;
     }
 
     private getElapsedLoopTime(currentTime: number): number {
@@ -306,7 +310,7 @@ export class Game extends Observer {
         })
     }
 
-    private totalElapsedTime(): number {
+    private getTotalElapsedTime(): number {
         return this.lastTimestamp - this.startTimestamp;
     }
 }
