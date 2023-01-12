@@ -40,6 +40,9 @@ export class UpgradeManager {
       }],
       [GameObjectKind.Gem, {
         radiusToPlayer: 30
+      }],
+      [GameObjectKind.Player, {
+        healthRegen: 0
       }]
     ]);
 

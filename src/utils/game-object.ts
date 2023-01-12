@@ -37,6 +37,7 @@ export interface CombatComponentParams {
     cooldown?: number,
     duration?: number,
     amount?: number,
+    healthRegen?: number,
 }
 
 export interface PhysicsComponentParams {

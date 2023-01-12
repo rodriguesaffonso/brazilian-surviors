@@ -1,3 +1,4 @@
+import { UpgradeManager } from "../../components/upgrade-manager/upgrade-manager";
 import { GameObject, GameObjectKind, ObjectComponents } from "../../utils";
 import { Camera } from "../camera";
 import { PlayerCombatComponent } from "./player-combat-component";
@@ -10,12 +11,7 @@ export class Player extends GameObject {
     public camera: Camera;
     
     constructor(camera: Camera, components: ObjectComponents) {
-        super({
-            input: components.input,
-            physics: components.physics,
-            combat: new PlayerCombatComponent({ hp: 100, maxHp: 100, damage: 0 }),
-            graphic: components.graphic
-        }, GameObjectKind.Player);
+        super(components, GameObjectKind.Player);
 
         this.camera = camera;
         this.weapons = [];
@@ -31,11 +27,13 @@ export class Player extends GameObject {
     }
 }
 
-export function createPlayer(ctx: CanvasRenderingContext2D, camera: Camera): Player {
+export function createPlayer(ctx: CanvasRenderingContext2D, camera: Camera, upgrade: UpgradeManager): Player {
+    const baseParams = upgrade.getBaseParams(GameObjectKind.Player);
     const physicsComponent = new PlayerPhysicsComponent();
     return new Player(camera, {
         input: new PlayerInputComponent(physicsComponent),
         physics: physicsComponent,
-        graphic: new PlayerGraphicComponent(ctx)
+        graphic: new PlayerGraphicComponent(ctx),
+        combat: new PlayerCombatComponent({ healthRegen: baseParams.healthRegen })
     });
 }

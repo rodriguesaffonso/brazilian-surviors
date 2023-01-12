@@ -40,6 +40,7 @@ export class Game extends Observer {
     public animationRequestId: number;
 
     private visibilityEventListener: () => void;
+    private keyEventListener: (e: KeyboardEvent) => void;
 
     constructor(ctx: CanvasRenderingContext2D) {
         super();
@@ -50,12 +51,25 @@ export class Game extends Observer {
                 menuPauseGame();
             }
         }
+
+        this.keyEventListener = (e) => {
+            if (e.key === 'p') {
+                if (this.paused) {
+                    menuResumeGame();
+                } else {
+                    menuPauseGame();
+                }
+            }
+        }
     }
 
     public startGame(): void {
+        this.skillTree = new SkillTree();
+        this.upgradeManager = new UpgradeManager(this);
+
         this.camera = createCamera();
         this.world = createWorld(this.ctx, this.camera);
-        this.player = createPlayer(this.ctx, this.camera);
+        this.player = createPlayer(this.ctx, this.camera, this.upgradeManager);
 
         const magicPistol = createMagicPistol(this);
 
@@ -65,9 +79,6 @@ export class Game extends Observer {
             this.player,
             magicPistol
         ]);
-
-        this.skillTree = new SkillTree();
-        this.upgradeManager = new UpgradeManager(this);
 
         this.running = true;
         this.paused = false;
@@ -93,15 +104,7 @@ export class Game extends Observer {
         this.animationRequestId = window.requestAnimationFrame(this.renderLoop.bind(this));
         
         window.addEventListener('visibilitychange', this.visibilityEventListener);
-        window.addEventListener("keydown", (e) => {
-            if (e.key === 'p') {
-                if (this.paused) {
-                    menuResumeGame();
-                } else {
-                    menuPauseGame();
-                }
-            }
-        });
+        window.addEventListener("keydown", this.keyEventListener);
 
         this.on(Events.ObjectDead, () => {
             // 
@@ -122,6 +125,7 @@ export class Game extends Observer {
         this.player.inputComponent.stop();
         window.cancelAnimationFrame(this.animationRequestId);
         window.removeEventListener('visibilitychange', this.visibilityEventListener);
+        window.removeEventListener('keydown', this.keyEventListener);
         this.clear();
 
         console.log({
