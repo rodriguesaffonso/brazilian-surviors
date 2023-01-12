@@ -36,8 +36,7 @@ export class Game extends Observer {
     public gameObjects: GameObject[] = [];
 
     public animationRequestId: number;
-
-    private clock: Timer;
+    public clock: Timer;
 
     private visibilityEventListener: () => void;
     private keyEventListener: (e: KeyboardEvent) => void;
@@ -86,7 +85,6 @@ export class Game extends Observer {
         this.paused = false;
 
         this.lastObjectAtTime = 0;
-
         this.objects = [];
         this.totalNumberObjects = 0;
         this.newObjectFrequency = 1;
@@ -192,6 +190,7 @@ export class Game extends Observer {
         this.gameObjects.sort((a, b) => a.kind - b.kind);
 
         this.clearDeadObjects();
+        this.removeFarObjects();
     }
 
     private render(): void {
@@ -291,6 +290,21 @@ export class Game extends Observer {
         this.gameObjects.forEach((obj, index) => {
             if (obj.combatComponent?.dead) {
                 this.gameObjects.splice(index, 1);
+            }
+        })
+    }
+
+    private removeFarObjects(): void {
+        const { farMaxP, farMinP } = this.camera.getCanvasLimits();
+
+        const insideFarCanvas = (p: Vector2D): boolean => {
+            return p.x >= farMinP.x && p.x <= farMaxP.x && p.y >= farMinP.y && p.y <= farMaxP.y;
+        }
+        this.gameObjects.forEach((obj, index) => {
+            if (obj.kind === GameObjectKind.Triangle) {
+                if (!insideFarCanvas(obj.getPosition())) {
+                    this.gameObjects.splice(index, 1);
+                }
             }
         })
     }

@@ -50,11 +50,9 @@ export const TimeDrivenUpgrades = [
 
 function updateNewEnemyFrequency(game: Game, freq: number) {
   game.newObjectFrequency = freq;
-  console.log(`newObjectFrequency: ${game.newObjectFrequency}`);
 }
 
 function increaseNewEnemyFrequency(game: Game, perc: number) {
   game.newObjectFrequency *= (1 + perc);
-  console.log(`newObjectFrequency: ${game.newObjectFrequency}`);
 }
 

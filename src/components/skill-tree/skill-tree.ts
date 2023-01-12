@@ -9,7 +9,10 @@ import { SpeedSkillPath } from "./paths/speed";
 
 export class SkillTree {
   private paths: SkillPath[];
+  private activePaths: SkillPath[];
   private maxOffers: number;
+  private maxActivePaths: number;
+
 
   constructor() {
     this.paths = [
@@ -18,15 +21,27 @@ export class SkillTree {
       new SpeedSkillPath(),
 
       new NumberProjectilesSkillPath(),
-      
+
       new MagnetRangeSkillPath(),
-    ]
+    ];
+    this.activePaths = [];
     this.maxOffers = 3;
+    this.maxActivePaths = 3;
   }
 
-  public offers(): SkillPath[] {
+  public offers(): SkillPath[] {    
+    if (this.activePaths.length === this.maxActivePaths) {
+      console.log('Max active paths');
+      return this.capRandonOffers(this.activePaths);
+    } 
+
+    return this.capRandonOffers(this.paths);
+  }
+
+  private capRandonOffers(paths: SkillPath[]): SkillPath[] {
     const possibleOffers = [];
-    for (const path of this.paths) {
+
+    for (const path of paths) {
       if (!path.isComplete()) {
         possibleOffers.push(path);
       }
@@ -38,10 +53,14 @@ export class SkillTree {
   }
 
   public apply(path: SkillPath, g: Game): void {
-    if (path.isComplete) {
+    if (path.isComplete()) {
       throw Error('You cannot apply a new skill to a complete skill path');
     }
 
+    if (path.isLocked()) {
+      this.activePaths.push(path);
+    }
+    console.log(this.activePaths);
     path.apply(g);
   }
 

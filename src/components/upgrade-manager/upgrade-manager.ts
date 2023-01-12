@@ -87,15 +87,12 @@ export class UpgradeManager {
     if (offers.length === 0) return;
     
     const skillPath = offers[0];
-
-    menuPauseGame();
-    alert(skillPath.nextUpgrade().description());
-    menuResumeGame();
-
-    skillPath.apply(this.game);
-
-    // Reset key states to prevent player from running away
-    (this.game.player.inputComponent as PlayerInputComponent).resetKeyStates();
-    (this.game.camera.inputComponent as PlayerInputComponent).resetKeyStates();
+    this.game.skillTree.apply(skillPath, this.game);
+    
+    const nextUpgrade = skillPath.nextUpgrade();
+    if (nextUpgrade) {
+      console.log(skillPath.isComplete());
+      console.log(nextUpgrade.description());
+    }
   }
 }

@@ -39,7 +39,7 @@ export interface SkillPathParams {
 export abstract class SkillPath {
   protected begin: SkillNode;
   protected current: SkillNode;
-  
+
   public nodeColor: string;
   public static lockedNodeColor: '#7f7f7f';
 

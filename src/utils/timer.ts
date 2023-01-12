@@ -1,7 +1,6 @@
 export class Timer {
   private intraElapsed: number;
   private lastTimestamp: number;
-  private startTimestamp: number;
   private gameLoopTimeMs: number;
   private totalElapsedTime: number;
 
@@ -10,7 +9,6 @@ export class Timer {
     this.intraElapsed = 0;
     this.totalElapsedTime = 0;
     this.lastTimestamp = Date.now();
-    this.startTimestamp = this.lastTimestamp;
   }
 
   public beforeLoop(): number {
