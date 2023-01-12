@@ -1,7 +1,7 @@
 import { Game } from "../../game";
 import { Events, GameObjectKind } from "../../utils";
 import { CommandParms } from "../interfaces";
-import { GemDrivenUpgrades } from "./gem-driven-upgrades";
+import { SkillTree } from "../skill-tree/skill-tree";
 import { TimeDrivenUpgrades } from "./time-driven-upgrades";
 
 export enum TriggerReason {
@@ -23,17 +23,14 @@ export class UpgradeManager {
   private totalElapsedGameTime: number;
   private timeDrivenUpgrades;
   private timeIndex: number;
-  // Gem upgrades
-  private gemDrivenUpgrades;
-  private gemIndex: number;
+
+  private skillTree: SkillTree;
 
   constructor(g: Game) {
     this.game = g;
     this.totalElapsedGameTime = 0;
     this.timeDrivenUpgrades = TimeDrivenUpgrades;
     this.timeIndex = 0;
-    this.gemDrivenUpgrades = GemDrivenUpgrades;
-    this.gemIndex = 0;
 
     this.baseParamsByObjectKind = new Map([
       [GameObjectKind.Triangle, {
@@ -42,6 +39,8 @@ export class UpgradeManager {
         probToGenerate: 0.75
       }]
     ]);
+
+    this.skillTree = new SkillTree();
   }
 
   public getBaseParams(kind: GameObjectKind): any {
@@ -65,13 +64,18 @@ export class UpgradeManager {
         
         break;
       case Events.ItemCollected:
-        if (this.gemIndex === this.gemDrivenUpgrades.length) return;
-        nextUpgrade = this.gemDrivenUpgrades[this.gemIndex];
-
-        if (this.game.gemsCollected >= nextUpgrade.value) {
-          nextUpgrade.cb(this);
-          this.gemIndex++;
-        }
+        this.applyRandomSkillUpgrade();
     }
+  }
+
+  private applyRandomSkillUpgrade(): void {
+    if (this.game.gemsCollected % 5 !== 0) return;
+    
+    const offers = this.skillTree.offers();
+    if (offers.length === 0) return;
+    
+    const skillPath = offers[0];
+    alert(skillPath.nextUpgrade().description());
+    skillPath.apply(this.game);
   }
 }

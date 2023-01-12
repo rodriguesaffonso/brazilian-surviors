@@ -3,6 +3,7 @@
 [Test Game](https://rodriguesaffonso.github.io/brazilian-surviors/src/)
 
 TODO
+- show skill option and draw skill tree
 - player progression: stage triggered progression (pop up selection)
 - camera and player using the same components
 - object colision: enemies colide and dont stack on top of each other
@@ -12,6 +13,8 @@ BUG
 - Visor animation reset when moving only up or down
 
 DONE
+- implement skill tree
+- player avatar animation
 - make upgrade progression event driven
 - enemy progression: time triggered upgrades
 - Magic Pistol: Bullet dont move after spawned and after some delay
