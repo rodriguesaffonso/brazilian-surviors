@@ -37,6 +37,11 @@ export class PlayerInputComponent extends InputComponent {
         }
     }
 
+    public resetKeyStates(): void {
+        this.keyStates = {};
+        this.nextVelocityDirection = Vector2D.zero();
+    }
+
     public onTouchEvent(event: TouchEvent): void {
         if (event.touches.length > 1) return;
         const touch = event.touches[0];

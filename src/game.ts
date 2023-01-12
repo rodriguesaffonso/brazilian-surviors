@@ -175,9 +175,6 @@ export class Game extends Observer {
         const elapsed = this.getElapsedLoopTime(currentTime);
         this.totalElapsedTime += elapsed;
 
-        console.log(this.totalElapsedTime);
-        
-
         if (elapsed >= 10) {
             this.emit(Events.NextTimestamp, elapsed);
             this.gameLoop(currentTime);

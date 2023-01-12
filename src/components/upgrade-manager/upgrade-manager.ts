@@ -1,4 +1,5 @@
 import { Game } from "../../game";
+import { PlayerInputComponent } from "../../game-objects/player";
 import { Events, GameObjectKind } from "../../utils";
 import { CommandParms } from "../interfaces";
 import { SkillTree } from "../skill-tree/skill-tree";
@@ -87,5 +88,9 @@ export class UpgradeManager {
     const skillPath = offers[0];
     alert(skillPath.nextUpgrade().description());
     skillPath.apply(this.game);
+
+    // Reset key states to prevent player from running away
+    (this.game.player.inputComponent as PlayerInputComponent).resetKeyStates();
+    (this.game.camera.inputComponent as PlayerInputComponent).resetKeyStates();
   }
 }
