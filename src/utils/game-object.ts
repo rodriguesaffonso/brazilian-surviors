@@ -44,6 +44,7 @@ export interface PhysicsComponentParams {
     velocity?: Vector2D;
     speed?: number;
     direction?: ObjectDirection;
+    radiusToPlayer?: number;
 }
 
 export interface ObjectComponents {

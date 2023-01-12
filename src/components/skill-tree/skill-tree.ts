@@ -1,6 +1,7 @@
 import { Game } from "../../game";
 import { Vector2D } from "../../utils";
 import { SkillPath } from "./interfaces";
+import { MagnetRangeSkillPath } from "./paths/magnet-range";
 import { MaxHealthSkillPath } from "./paths/max-health";
 import { NumberProjectilesSkillPath } from "./paths/number-projectiles";
 import { SpeedSkillPath } from "./paths/speed";
@@ -13,7 +14,8 @@ export class SkillTree {
     this.paths = [
       new MaxHealthSkillPath(),
       new SpeedSkillPath(),
-      new NumberProjectilesSkillPath()
+      new NumberProjectilesSkillPath(),
+      new MagnetRangeSkillPath(),
     ]
     this.maxOffers = 1;
   }

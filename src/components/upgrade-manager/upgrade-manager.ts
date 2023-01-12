@@ -37,6 +37,9 @@ export class UpgradeManager {
         hp: 10,
         damage: 8,
         probToGenerate: 0.75
+      }],
+      [GameObjectKind.Gem, {
+        radiusToPlayer: 30
       }]
     ]);
 
@@ -45,6 +48,10 @@ export class UpgradeManager {
 
   public getBaseParams(kind: GameObjectKind): any {
     return this.baseParamsByObjectKind.get(kind);
+  }
+
+  public updateBaseParams(kind: GameObjectKind, params: any) : void {
+    this.baseParamsByObjectKind.set(kind, params);
   }
 
   public tryTriggerNextUpgrage(event: Events, param?: number): void {

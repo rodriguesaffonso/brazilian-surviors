@@ -14,7 +14,7 @@ export class GemPhysicsComponent extends PhysicsComponent {
             speed: params.speed ?? 4
         });
 
-        this.radiusToPlayer = 30;
+        this.radiusToPlayer = params.radiusToPlayer;
         this.attracted = false;
     }
 

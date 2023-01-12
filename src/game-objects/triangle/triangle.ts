@@ -36,7 +36,7 @@ export function createTriangle(g: Game, position: Vector2D, ctx: CanvasRendering
     const collectableComponent = new TriangleCollectableCompoment(baseParams.probToGenerate);
     triangle.on(Events.ObjectDead, () => {
         if (collectableComponent.canGenerateCollectables()) {
-            g.addToObjectsArray(createGem(triangle.getPosition(), ctx));
+            g.addToObjectsArray(createGem(triangle.getPosition(), ctx, upgrade));
         }
     });
     return triangle;
