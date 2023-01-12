@@ -10,6 +10,7 @@ import { menuPauseGame, menuResumeGame, menuStopGame } from ".";
 import { CommandParms } from "./components";
 import { UpgradeManager } from "./components/upgrade-manager/upgrade-manager";
 import { SkillTree } from "./components/skill-tree/skill-tree";
+import { Timer } from "./utils/timer";
 
 export class Game extends Observer {
     public ctx: CanvasRenderingContext2D;
@@ -24,11 +25,7 @@ export class Game extends Observer {
     public running: boolean;
     public paused: boolean;
 
-    public startTimestamp: number;
-    public lastTimestamp: number;
     public lastObjectAtTime: number;
-    public intraElapsed: number;
-    public totalElapsedTime: number;
 
     public objects: GameObject[] = [];
     public totalNumberObjects: number = 0;
@@ -40,12 +37,15 @@ export class Game extends Observer {
 
     public animationRequestId: number;
 
+    private clock: Timer;
+
     private visibilityEventListener: () => void;
     private keyEventListener: (e: KeyboardEvent) => void;
 
     constructor(ctx: CanvasRenderingContext2D) {
         super();
         this.ctx = ctx;
+        this.clock = new Timer();
 
         this.visibilityEventListener = () => {
             if (document.visibilityState === 'hidden') {
@@ -67,6 +67,7 @@ export class Game extends Observer {
     public startGame(): void {
         this.skillTree = new SkillTree();
         this.upgradeManager = new UpgradeManager(this);
+        this.clock.start();
 
         this.camera = createCamera();
         this.world = createWorld(this.ctx, this.camera);
@@ -83,12 +84,8 @@ export class Game extends Observer {
 
         this.running = true;
         this.paused = false;
-        this.intraElapsed = 0;
 
-        this.startTimestamp = undefined;
-        this.lastTimestamp = undefined;
         this.lastObjectAtTime = 0;
-        this.totalElapsedTime = 0;
 
         this.objects = [];
         this.totalNumberObjects = 0;
@@ -100,9 +97,6 @@ export class Game extends Observer {
         this.ctx.canvas.height = this.camera.canvasHeight;
         this.ctx.canvas.width = this.camera.canvasWidth;
 
-        this.lastTimestamp = Date.now();
-        this.startTimestamp = this.lastTimestamp;
-        
         this.animationRequestId = window.requestAnimationFrame(this.renderLoop.bind(this));
         
         window.addEventListener('visibilitychange', this.visibilityEventListener);
@@ -131,21 +125,21 @@ export class Game extends Observer {
         this.clear();
 
         console.log({
-            duration: this.totalElapsedTime,
+            duration: this.clock.getTotalElapsedTime(),
             kills: this.kills,
             gems: this.gemsCollected
         });
     }
 
     public pauseGame(): void {
-        const drawPauseIcon = () => {
-            // Popup square
+        const drawPopupSquare = () => {
             const borderSize = 5;
             this.ctx.fillStyle = "rgba(50, 50, 50, 0.8)"; // gray half transparent
             this.ctx.fillRect(borderSize, borderSize, this.camera.canvasWidth - 2 * borderSize, this.camera.canvasHeight - 2 * borderSize);
             this.ctx.fill();
+        }
 
-            // Pause icon
+        const drawPauseIcon = () => {
             const barSize = 10;
             this.ctx.fillStyle = "white";
             this.ctx.fillRect(this.camera.canvasWidth / 2 - 7 - barSize, 50, 10, 70);
@@ -154,37 +148,35 @@ export class Game extends Observer {
         }
 
         if (!this.paused) {
-            this.paused = true;
-            this.intraElapsed = Date.now() - this.lastTimestamp;
+            drawPopupSquare();
             drawPauseIcon();
-            this.skillTree.drawOnPause(this);
+            this.paused = true;
+            this.clock.pause();
             window.cancelAnimationFrame(this.animationRequestId);
+            this.skillTree.drawOnPause(this);
         }
     }
 
     public resumeGame(): void {
         if (this.paused) {
             this.paused = false;
-            this.lastTimestamp = Date.now() - this.intraElapsed;
+            this.clock.resume();
             this.animationRequestId = window.requestAnimationFrame(this.renderLoop.bind(this));
         }
     }
 
     private renderLoop(): void {
-        const currentTime = Date.now();
-        const elapsed = this.getElapsedLoopTime(currentTime);
-        this.totalElapsedTime += elapsed;
-
-        if (elapsed >= 10) {
-            this.emit(Events.NextTimestamp, elapsed);
-            this.gameLoop(currentTime);
+        const now = this.clock.beforeLoop();
+        if (now) {
+            this.emit(Events.NextTimestamp, this.clock.getElapsedLoopTime(now));
+            this.gameLoop(now);
 
             if (this.isGameEnded()) {
                 menuStopGame();
                 return;
             }
 
-            this.lastTimestamp = currentTime;
+            this.clock.afterLoop(now);
             this.render();
         }
 
@@ -192,7 +184,7 @@ export class Game extends Observer {
     }
 
     private gameLoop(timestamp: number): void {
-        const updateParams: CommandParms = { elapsedMs: this.getElapsedLoopTime(timestamp), game: this };
+        const updateParams: CommandParms = { elapsedMs: this.clock.getElapsedLoopTime(timestamp), game: this };
         
         this.tryCreateNewEnemies(timestamp);
 
@@ -205,8 +197,8 @@ export class Game extends Observer {
     private render(): void {
         this.ctx.fillStyle = "white";
         const drawTime = () => {
-            const min = Math.floor(this.totalElapsedTime / 1000 / 60);
-            const sec = Math.floor(this.totalElapsedTime / 1000 - min * 60);
+            const min = Math.floor(this.clock.getTotalElapsedTime() / 1000 / 60);
+            const sec = Math.floor(this.clock.getTotalElapsedTime() / 1000 - min * 60);
 
             this.ctx.font = "16px serif";
             this.ctx.fillText(`${min < 10 ? "0" : ""}${min}:${sec < 10 ? "0" : ""}${sec}`, this.camera.canvasWidth / 2 - 15, 20);
@@ -228,7 +220,7 @@ export class Game extends Observer {
     }
 
     private tryCreateNewEnemies(timestamp: number): void {
-        const elapsedFromLastObject = this.totalElapsedTime - this.lastObjectAtTime;
+        const elapsedFromLastObject = this.clock.getTotalElapsedTime() - this.lastObjectAtTime;
         let numberOfNewObjects = Math.floor(elapsedFromLastObject / 1000 * this.newObjectFrequency);
         while (numberOfNewObjects--) {
             const enemy = this.createNewEnemy();
@@ -239,7 +231,7 @@ export class Game extends Observer {
             this.world.addEnemy(enemy);
             this.gameObjects.push(enemy);
 
-            this.lastObjectAtTime = this.totalElapsedTime;
+            this.lastObjectAtTime = this.clock.getTotalElapsedTime();
         }
     }
 
@@ -281,11 +273,7 @@ export class Game extends Observer {
     }
 
     private isGameEnded(): boolean {
-        return this.player.combatComponent.dead || this.getTotalElapsedTime() > 10 * 60 * 1000;
-    }
-
-    private getElapsedLoopTime(currentTime: number): number {
-        return currentTime - this.lastTimestamp;
+        return this.player.combatComponent.dead || this.clock.getTotalElapsedTime() > 10 * 60 * 1000;
     }
 
     public addToObjectsArray(obj: GameObject): void {
@@ -305,9 +293,5 @@ export class Game extends Observer {
                 this.gameObjects.splice(index, 1);
             }
         })
-    }
-
-    private getTotalElapsedTime(): number {
-        return this.lastTimestamp - this.startTimestamp;
     }
 }

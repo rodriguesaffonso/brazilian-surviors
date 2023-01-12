@@ -1,3 +1,4 @@
+import { menuPauseGame, menuResumeGame } from "../..";
 import { Game } from "../../game";
 import { PlayerInputComponent } from "../../game-objects/player";
 import { Events, GameObjectKind } from "../../utils";
@@ -86,7 +87,11 @@ export class UpgradeManager {
     if (offers.length === 0) return;
     
     const skillPath = offers[0];
+
+    menuPauseGame();
     alert(skillPath.nextUpgrade().description());
+    menuResumeGame();
+
     skillPath.apply(this.game);
 
     // Reset key states to prevent player from running away

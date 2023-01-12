@@ -13,15 +13,15 @@ export class SkillTree {
 
   constructor() {
     this.paths = [
+      new HealthRegenSkillPath(),
       new MaxHealthSkillPath(),
       new SpeedSkillPath(),
-      new HealthRegenSkillPath(),
 
       new NumberProjectilesSkillPath(),
       
       new MagnetRangeSkillPath(),
     ]
-    this.maxOffers = 1;
+    this.maxOffers = 3;
   }
 
   public offers(): SkillPath[] {
