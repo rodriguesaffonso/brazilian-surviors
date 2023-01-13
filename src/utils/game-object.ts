@@ -1,5 +1,6 @@
 
 import { CombatComponent, CommandParms, GraphicComponent, InputComponent, PhysicsComponent } from "../components";
+import { ColliderComponent } from "../components/collider-components";
 import { Observer } from "./observer";
 import { Vector2D } from "./vector2D";
 
@@ -48,6 +49,12 @@ export interface PhysicsComponentParams {
     speed?: number;
     direction?: ObjectDirection;
     radiusToPlayer?: number;
+    mass?: number;
+}
+
+export interface ColliderComponentParams {
+    radius: number;
+    physics: PhysicsComponent;
 }
 
 export interface ObjectComponents {
@@ -55,6 +62,7 @@ export interface ObjectComponents {
     combat?: CombatComponent;
     physics?: PhysicsComponent;
     graphic?: GraphicComponent;
+    collider?: ColliderComponent;
 }
 
 export abstract class GameObject extends Observer {
@@ -64,6 +72,7 @@ export abstract class GameObject extends Observer {
     public combatComponent: CombatComponent;
     public physicsComponent: PhysicsComponent;
     public graphicComponent: GraphicComponent;
+    public colliderComponent: ColliderComponent;
 
     constructor(components: ObjectComponents, kind: GameObjectKind) {
         super();
@@ -72,6 +81,7 @@ export abstract class GameObject extends Observer {
         this.combatComponent = components.combat;
         this.physicsComponent = components.physics;
         this.graphicComponent = components.graphic;
+        this.colliderComponent = components.collider;
     }
 
     public update(params: CommandParms): void {
@@ -79,6 +89,7 @@ export abstract class GameObject extends Observer {
 
         this.inputComponent?.update(this, params);
         this.combatComponent?.update(this, params);
+        this.colliderComponent?.update(this, params);
         this.physicsComponent?.update(this, params);
         this.graphicComponent?.update(this, params);
     }

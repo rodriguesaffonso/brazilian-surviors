@@ -19,8 +19,12 @@ export const TimeDrivenUpgrades = [
   ...slowEnemyFreqIncrease(3 * 60 * 1000),
   
   // LEVEL 5
-  { value: 4 * 60 * 1000, cb: (g: Game) => newLevel(g, { hp: 40, damage: 25, color: "#AF1B3F" }) },
+  { value: 4 * 60 * 1000, cb: (g: Game) => newLevel(g, { hp: 40, damage: 25, color: "#7BDFF2" }) },
   ...slowEnemyFreqIncrease(4 * 60 * 1000),
+  
+  // LEVEL 6
+  { value: 5 * 60 * 1000, cb: (g: Game) => newLevel(g, { hp: 50, damage: 30, color: "#AF1B3F" }) },
+  ...slowEnemyFreqIncrease(5 * 60 * 1000),
 ]
 
 function slowEnemyFreqIncrease(time: number) {

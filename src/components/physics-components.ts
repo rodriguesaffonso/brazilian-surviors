@@ -6,6 +6,7 @@ export abstract class PhysicsComponent implements Component  {
     public velocity: Vector2D;          // Current object velocity
     public direction: ObjectDirection;  // Current direction the object is facing
     public speed: number;
+    public mass: number;
 
     private lastPosition: Vector2D;
     private lastUniquePosition: Vector2D;   // Last unique position kept to update the direction every update loop
@@ -16,6 +17,8 @@ export abstract class PhysicsComponent implements Component  {
         this.velocity = params.velocity ?? new Vector2D(0, 0);
         this.speed = params.speed ?? 0;
         this.direction = params.direction ?? ObjectDirection.Right;
+        this.mass = 10;
+
         this.lastUniquePosition = Vector2D.zero();
         this.lastPosition = this.position.copy();
         this.lastDirection = this.direction;

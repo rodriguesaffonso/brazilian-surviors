@@ -24,7 +24,7 @@ export class MagicPistolCombatComponent extends CombatComponent {
 
     constructor(params: CombatComponentParams) {
         super({
-            amount: 2,
+            amount: 1,
             cooldown: params.cooldown
         });
         this.state = MagicPistolState.ReadyToShoot;

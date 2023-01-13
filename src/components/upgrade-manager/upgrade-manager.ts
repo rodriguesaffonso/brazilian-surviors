@@ -37,6 +37,7 @@ export class UpgradeManager {
         hp: 10,
         damage: 8,
         probToGenerate: 0.75,
+        radius: 5,
         color: "#8DAA9D"
       }],
       [GameObjectKind.Gem, {

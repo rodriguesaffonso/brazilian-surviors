@@ -38,6 +38,14 @@ export class Vector2D {
         return this.add(v.multiply(-1));
     }
 
+    public dot(v: Vector2D): number {
+        return this.x + v.x + this.y * v.y;
+    }
+
+    public projOver(v: Vector2D): Vector2D {
+        return v.multiply(this.dot(v) / v.dot(v));
+    }
+
     public equals(v: Vector2D): boolean {
         return this.x === v.x && this.y === v.y;
     }
