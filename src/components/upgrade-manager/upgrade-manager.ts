@@ -29,14 +29,15 @@ export class UpgradeManager {
   constructor(g: Game) {
     this.game = g;
     this.totalElapsedGameTime = 0;
-    this.timeDrivenUpgrades = TimeDrivenUpgrades;
+    this.timeDrivenUpgrades = TimeDrivenUpgrades.sort((a, b) => a.value - b.value);
     this.timeIndex = 0;
 
     this.baseParamsByObjectKind = new Map([
       [GameObjectKind.Triangle, {
         hp: 10,
         damage: 8,
-        probToGenerate: 0.75
+        probToGenerate: 0.75,
+        color: "#8DAA9D"
       }],
       [GameObjectKind.Gem, {
         radiusToPlayer: 30
@@ -63,18 +64,15 @@ export class UpgradeManager {
     this.baseParamsByObjectKind.set(kind, params);
   }
 
-  public tryTriggerNextUpgrage(event: Events, param?: number): void {
+  public tryTriggerNextUpgrage(event: Events): void {
     let nextUpgrade;
     switch (event) {
       case Events.NextTimestamp:
         if (this.timeIndex === this.timeDrivenUpgrades.length) return;
         nextUpgrade = this.timeDrivenUpgrades[this.timeIndex];
-
-        const elapsed = param;
-        this.totalElapsedGameTime += elapsed;
         
-        if (this.totalElapsedGameTime >= nextUpgrade.value) {
-          nextUpgrade.cb(this);
+        if (this.game.clock.getTotalElapsedTime() >= nextUpgrade.value) {
+          nextUpgrade.cb(this.game);
           this.timeIndex++;
         }
         

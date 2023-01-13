@@ -104,8 +104,8 @@ export class Game extends Observer {
         this.on(Events.ObjectDead, () => {
             // 
         })
-        .on(Events.NextTimestamp, (timestamp) => {
-            this.upgradeManager.tryTriggerNextUpgrage(Events.NextTimestamp, timestamp);
+        .on(Events.NextTimestamp, () => {
+            this.upgradeManager.tryTriggerNextUpgrage(Events.NextTimestamp);
         })
         .on(Events.ItemCollected, () => {
             this.upgradeManager.tryTriggerNextUpgrage(Events.ItemCollected);

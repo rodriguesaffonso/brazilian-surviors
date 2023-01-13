@@ -5,10 +5,11 @@ import { Triangle } from "./triangle";
 
 export class TriangleGraphicComponent extends GraphicComponent {
     public edgeLength: number = 10;
-    public backgroundColor: string = "#8DAA9D";
+    public backgroundColor: string;
 
-    constructor(ctx: CanvasRenderingContext2D) {
+    constructor(ctx: CanvasRenderingContext2D, color: string) {
         super(ctx);
+        this.backgroundColor = color;
     }
 
     public update(triangle: Triangle): void {
@@ -23,6 +24,7 @@ export class TriangleGraphicComponent extends GraphicComponent {
         const p2 = new Vector2D(relativePosition.x + this.edgeLength * 5 / 6, relativePosition.y - this.edgeLength * sqrt3 / 6);
         const p3 = new Vector2D(relativePosition.x + this.edgeLength / 3, relativePosition.y + this.edgeLength * sqrt3 / 3);
 
+        this.ctx.save();
         this.ctx.fillStyle = this.backgroundColor;
         this.ctx.beginPath();
         this.ctx.moveTo(p1.x, p1.y);
@@ -36,6 +38,7 @@ export class TriangleGraphicComponent extends GraphicComponent {
         this.ctx.lineTo(p2.x, p2.y);
         this.ctx.lineTo(p3.x, p3.y);
         this.ctx.stroke();
+        this.ctx.restore();
     }
 
     private insideRenderLimits(triangle: Triangle): boolean {
