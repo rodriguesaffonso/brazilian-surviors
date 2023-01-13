@@ -1,37 +1,44 @@
 import { Game } from "../../game";
-import { Vector2D } from "../../utils";
+import { GameObject, GameObjectKind, ObjectComponents, Vector2D } from "../../utils";
 import { SkillPath } from "./interfaces";
 import { HealthRegenSkillPath } from "./paths/health-regen";
 import { MagnetRangeSkillPath } from "./paths/magnet-range";
 import { MaxHealthSkillPath } from "./paths/max-health";
 import { NumberProjectilesSkillPath } from "./paths/number-projectiles";
+import { ProjectilePiercingSkillPath } from "./paths/projectile-piercing";
 import { SpeedSkillPath } from "./paths/speed";
+import { SkillTreeGraphicComponent } from "./skill-tree-graphic-component";
 
-export class SkillTree {
+export class SkillTree extends GameObject {
   private paths: SkillPath[];
   private activePaths: SkillPath[];
   private maxOffers: number;
   private maxActivePaths: number;
 
 
-  constructor() {
+  constructor(components: ObjectComponents) {
+    super(components, GameObjectKind.SkillTree);
     this.paths = [
       new HealthRegenSkillPath(),
       new MaxHealthSkillPath(),
       new SpeedSkillPath(),
 
       new NumberProjectilesSkillPath(),
+      new ProjectilePiercingSkillPath(),
 
       new MagnetRangeSkillPath(),
     ];
     this.activePaths = [];
     this.maxOffers = 3;
-    this.maxActivePaths = 3;
+    this.maxActivePaths = 4;
+  }
+
+  public getActivePaths(): SkillPath[] {
+    return this.activePaths;
   }
 
   public offers(): SkillPath[] {    
     if (this.activePaths.length === this.maxActivePaths) {
-      console.log('Max active paths');
       return this.capRandonOffers(this.activePaths);
     } 
 
@@ -60,7 +67,6 @@ export class SkillTree {
     if (path.isLocked()) {
       this.activePaths.push(path);
     }
-    console.log(this.activePaths);
     path.apply(g);
   }
 
@@ -147,4 +153,10 @@ export class SkillTree {
       drawSkillPath(startPathPosition, visiblePaths[i]);
     }
   }
+}
+
+export function createSkillTree(g: Game): SkillTree {
+  return new SkillTree({
+    graphic: new SkillTreeGraphicComponent(g.ctx)
+  });
 }

@@ -21,9 +21,10 @@ export class MagicPistolBullet extends GameObject {
 }
 
 export function createMagicPistolBullet(pistol: MagicPistol, enemy: GameObject, g: Game): MagicPistolBullet {
+    const baseParams = g.upgradeManager.getBaseParams(GameObjectKind.MagicPistolBullet)
     const bullet = new MagicPistolBullet({
         physics: new MagicPistolBulletPhysicsComponent({ position: g.player.getPosition() }),
-        combat: new MagicPistolBulletCombatComponent(),
+        combat: new MagicPistolBulletCombatComponent({ piercingCount: baseParams.piercingCount }),
         graphic: new MagicPistolBulletGraphicComponent(g.ctx)
     }, pistol, g);
 

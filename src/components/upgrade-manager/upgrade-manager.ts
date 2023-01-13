@@ -1,9 +1,7 @@
-import { menuPauseGame, menuResumeGame } from "../..";
 import { Game } from "../../game";
-import { PlayerInputComponent } from "../../game-objects/player";
+import { SkillTree } from "../../game-objects/skill-tree/skill-tree";
 import { Events, GameObjectKind } from "../../utils";
 import { CommandParms } from "../interfaces";
-import { SkillTree } from "../skill-tree/skill-tree";
 import { TimeDrivenUpgrades } from "./time-driven-upgrades";
 
 export enum TriggerReason {
@@ -45,6 +43,9 @@ export class UpgradeManager {
       }],
       [GameObjectKind.Player, {
         healthRegen: 0
+      }],
+      [GameObjectKind.MagicPistolBullet, {
+        piercingCount: 1
       }]
     ]);
 

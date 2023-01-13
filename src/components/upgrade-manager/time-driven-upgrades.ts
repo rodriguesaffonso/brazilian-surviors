@@ -28,23 +28,23 @@ export const TimeDrivenUpgrades = [
   },
   {
     value: 1000 * 40,
-    cb: (upgrade: UpgradeManager) => increaseNewEnemyFrequency(upgrade.game, 0.5)
+    cb: (upgrade: UpgradeManager) => increaseNewEnemyFrequency(upgrade.game, 0.15)
   },
   {
     value: 1000 * 45,
-    cb: (upgrade: UpgradeManager) => increaseNewEnemyFrequency(upgrade.game, 0.5)
+    cb: (upgrade: UpgradeManager) => increaseNewEnemyFrequency(upgrade.game, 0.15)
   },
   {
     value: 1000 * 50,
-    cb: (upgrade: UpgradeManager) => increaseNewEnemyFrequency(upgrade.game, 0.5)
+    cb: (upgrade: UpgradeManager) => increaseNewEnemyFrequency(upgrade.game, 0.15)
   },
   {
     value: 1000 * 55,
-    cb: (upgrade: UpgradeManager) => increaseNewEnemyFrequency(upgrade.game, 0.5)
+    cb: (upgrade: UpgradeManager) => increaseNewEnemyFrequency(upgrade.game, 0.15)
   },
   {
     value: 1000 * 60,
-    cb: (upgrade: UpgradeManager) => increaseNewEnemyFrequency(upgrade.game, 0.1)
+    cb: (upgrade: UpgradeManager) => increaseNewEnemyFrequency(upgrade.game, 0.15)
   },
 ]
 

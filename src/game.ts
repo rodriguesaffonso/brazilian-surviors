@@ -9,8 +9,8 @@ import { Events, Observer } from "./utils/observer";
 import { menuPauseGame, menuResumeGame, menuStopGame } from ".";
 import { CommandParms } from "./components";
 import { UpgradeManager } from "./components/upgrade-manager/upgrade-manager";
-import { SkillTree } from "./components/skill-tree/skill-tree";
 import { Timer } from "./utils/timer";
+import { createSkillTree, SkillTree } from "./game-objects/skill-tree/skill-tree";
 
 export class Game extends Observer {
     public ctx: CanvasRenderingContext2D;
@@ -64,7 +64,7 @@ export class Game extends Observer {
     }
 
     public startGame(): void {
-        this.skillTree = new SkillTree();
+        this.skillTree = createSkillTree(this);
         this.upgradeManager = new UpgradeManager(this);
         this.clock.start();
 
@@ -77,6 +77,7 @@ export class Game extends Observer {
         this.gameObjects.push(...[
             this.world,
             this.camera,
+            this.skillTree,
             this.player,
             magicPistol
         ]);

@@ -1,20 +1,22 @@
 import { CombatComponent, CommandParms } from "../../../components";
 import { Game } from "../../../game";
-import { GameObject, GameObjectKind } from "../../../utils";
+import { CombatComponentParams, GameObject, GameObjectKind } from "../../../utils";
 import { Events } from "../../../utils/observer";
 import { MagicPistolBullet } from "./magic-pistol-bullet";
 
 export class MagicPistolBulletCombatComponent extends CombatComponent {
     public durationTimeout: number;
     public distToAttack: number;
+    public piercingCount: number;
 
-    constructor() {
+    constructor(params: CombatComponentParams) {
         super({
             duration: 2000,
             damage: 20
         });
         this.durationTimeout = this.duration;
         this.distToAttack = 5;
+        this.piercingCount = params.piercingCount;
     }
 
     public update(bullet: MagicPistolBullet, params: CommandParms): void {
@@ -28,10 +30,13 @@ export class MagicPistolBulletCombatComponent extends CombatComponent {
 
     private tryAttackEnemy(bullet: MagicPistolBullet, enemy: GameObject): void {
         if (this.canAttack(bullet, enemy)) {
+            this.piercingCount--;
             enemy.combatComponent.takeHit(enemy, bullet.combatComponent.damage);
             
-            this.dead = true;
-            bullet.emit(Events.ObjectDead);
+            if (this.piercingCount === 0) {
+                this.dead = true;
+                bullet.emit(Events.ObjectDead);
+            }
         }
     }
 

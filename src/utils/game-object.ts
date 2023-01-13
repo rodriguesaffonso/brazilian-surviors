@@ -10,6 +10,7 @@ export enum GameObjectKind {
     Game = 1,
     World,
     Camera,
+    SkillTree,
 
     // Player objects
     Player,
@@ -38,6 +39,7 @@ export interface CombatComponentParams {
     duration?: number,
     amount?: number,
     healthRegen?: number,
+    piercingCount?: number
 }
 
 export interface PhysicsComponentParams {
