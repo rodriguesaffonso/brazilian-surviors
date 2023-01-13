@@ -44,6 +44,9 @@ export class UpgradeManager {
       [GameObjectKind.Player, {
         healthRegen: 0
       }],
+      [GameObjectKind.MagicPistol, {
+        cooldown: 1200
+      }],
       [GameObjectKind.MagicPistolBullet, {
         piercingCount: 1
       }]

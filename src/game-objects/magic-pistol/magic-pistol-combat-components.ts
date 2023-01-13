@@ -1,6 +1,6 @@
 import { CombatComponent, CommandParms } from "../../components";
 import { Game } from "../../game";
-import { GameObject, GameObjectKind } from "../../utils";
+import { CombatComponentParams, GameObject, GameObjectKind } from "../../utils";
 import { MagicPistol } from "./magic-pistol";
 import { createMagicPistolBullet } from "./magic-pistol-bullet";
 
@@ -22,10 +22,10 @@ export class MagicPistolCombatComponent extends CombatComponent {
     public range: number;
     public attackingEnemy: GameObject;
 
-    constructor() {
+    constructor(params: CombatComponentParams) {
         super({
             amount: 2,
-            cooldown: 1200
+            cooldown: params.cooldown
         });
         this.state = MagicPistolState.ReadyToShoot;
         this.bulletIntervalMs = 150;

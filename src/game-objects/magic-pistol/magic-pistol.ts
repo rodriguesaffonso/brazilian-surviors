@@ -17,7 +17,8 @@ export class MagicPistol extends GameObject {
 }
 
 export function createMagicPistol(g: Game): MagicPistol {
+    const baseParms = g.upgradeManager.getBaseParams(GameObjectKind.MagicPistol);
     return new MagicPistol({ 
-        combat: new MagicPistolCombatComponent() 
+        combat: new MagicPistolCombatComponent({ cooldown: baseParms.cooldown }) 
     }, g);
 }

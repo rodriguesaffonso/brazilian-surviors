@@ -6,6 +6,7 @@ export enum SkillKind {
   Speed = 'SP',
   NumberProjectiles = 'NP',
   WeaponDamage = 'WD',
+  WeaponCooldown = 'WC',
   ProjectileSpeed = 'PS',
   ProjectilePiercing = 'PP',
   XpAmount = 'XP',

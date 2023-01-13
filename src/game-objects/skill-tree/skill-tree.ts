@@ -7,6 +7,7 @@ import { MaxHealthSkillPath } from "./paths/max-health";
 import { NumberProjectilesSkillPath } from "./paths/number-projectiles";
 import { ProjectilePiercingSkillPath } from "./paths/projectile-piercing";
 import { SpeedSkillPath } from "./paths/speed";
+import { WeaponCooldownSkillPath } from "./paths/weapon-cooldown";
 import { SkillTreeGraphicComponent } from "./skill-tree-graphic-component";
 
 export class SkillTree extends GameObject {
@@ -25,12 +26,13 @@ export class SkillTree extends GameObject {
 
       new NumberProjectilesSkillPath(),
       new ProjectilePiercingSkillPath(),
+      new WeaponCooldownSkillPath(),
 
       new MagnetRangeSkillPath(),
     ];
     this.activePaths = [];
     this.maxOffers = 3;
-    this.maxActivePaths = 4;
+    this.maxActivePaths = 5;
   }
 
   public getActivePaths(): SkillPath[] {
