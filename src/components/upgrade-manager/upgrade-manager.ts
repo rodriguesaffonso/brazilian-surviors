@@ -89,12 +89,12 @@ export class UpgradeManager {
     const offers = this.skillTree.offers();
     if (offers.length === 0) return;
     
-    const skillPath = offers[0];
-    this.game.skillTree.apply(skillPath, this.game);
     
+    const skillPath = offers[0];
     const nextUpgrade = skillPath.nextUpgrade();
     if (nextUpgrade) {
-      console.log(nextUpgrade.description());
+      this.game.pushNewSkillUpgrade({ path: skillPath, node: nextUpgrade });
     }
+    this.game.skillTree.apply(skillPath, this.game);
   }
 }

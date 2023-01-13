@@ -11,6 +11,13 @@ import { CommandParms } from "./components";
 import { UpgradeManager } from "./components/upgrade-manager/upgrade-manager";
 import { Timer } from "./utils/timer";
 import { createSkillTree, SkillTree } from "./game-objects/skill-tree/skill-tree";
+import { SkillNode, SkillPath } from "./game-objects/skill-tree/interfaces";
+import { SkillTreeGraphicComponent } from "./game-objects/skill-tree/skill-tree-graphic-component";
+
+interface SkillNotification {
+    path: SkillPath,
+    node: SkillNode
+}
 
 export class Game extends Observer {
     public ctx: CanvasRenderingContext2D;
@@ -21,6 +28,11 @@ export class Game extends Observer {
 
     public upgradeManager: UpgradeManager;
     public skillTree: SkillTree;
+    public skillNotifications: SkillNotification[];
+    public showingNotifications: boolean;
+    public notificationTimeout: number;
+    public skillTimeout: number;
+    public currentNotification: SkillNotification;
 
     public running: boolean;
     public paused: boolean;
@@ -94,6 +106,12 @@ export class Game extends Observer {
         this.killsToEndGame = 100;
         this.gemsCollected = 0;
         this.gameOverAfterMs = 6 * 60 * 1000; // Game last 6s and time upgrades happens every 1min for 5min
+
+        this.skillNotifications = [];
+        this.showingNotifications = false;
+        this.notificationTimeout = 0;
+        this.skillTimeout = 3000;
+        this.currentNotification = undefined;
 
         this.ctx.canvas.height = this.camera.canvasHeight;
         this.ctx.canvas.width = this.camera.canvasWidth;
@@ -178,7 +196,7 @@ export class Game extends Observer {
             }
 
             this.clock.afterLoop(now);
-            this.render();
+            this.renderHUD();
         }
 
         this.animationRequestId = window.requestAnimationFrame(this.renderLoop.bind(this));
@@ -196,7 +214,7 @@ export class Game extends Observer {
         this.removeFarObjects();
     }
 
-    private render(): void {
+    private renderHUD(): void {
         this.ctx.fillStyle = "white";
         const drawTime = () => {
             const totalTime = this.clock.getTotalElapsedTime();
@@ -248,9 +266,29 @@ export class Game extends Observer {
             this.ctx.fillText(`Gems: ${this.gemsCollected}`, 10, 40);
         }
 
+        const drawCurrentNotification = () => {
+            if (this.currentNotification) {
+                const posY = this.camera.canvasHeight - 10;
+                const component = (this.skillTree.graphicComponent as SkillTreeGraphicComponent);
+                
+                this.ctx.save();
+                this.ctx.fillStyle = "rgba(50, 50, 50, 0.8)"; // gray half transparent
+                this.ctx.fillRect(0, posY, this.camera.canvasWidth, this.camera.canvasHeight - posY - 27);
+                this.ctx.fill();
+
+                this.ctx.fillStyle = 'white';
+                this.ctx.font = "italic 14px serif";
+                this.ctx.fillText(this.currentNotification.node.description(), 30, posY);
+                this.ctx.restore();
+                
+                component.drawPathIcon(this.currentNotification.path, new Vector2D(15, posY - component.radius));
+            }
+        }
+
         drawTime();
         drawKills();
         drawGems();
+        drawCurrentNotification();
     }
 
     private tryCreateNewEnemies(timestamp: number): void {
@@ -318,6 +356,26 @@ export class Game extends Observer {
                 this.emit(Events.ItemCollected);
             });
         }
+    }
+
+    public pushNewSkillUpgrade(skill: SkillNotification): void {
+        this.skillNotifications.push(skill);
+        this.requestShowSkillNotification();
+    }
+
+    private requestShowSkillNotification(): void {
+        if (!this.currentNotification) {
+            this.showSkillUpgrade();
+        }
+    }
+
+    private showSkillUpgrade(): void {
+        if (this.skillNotifications.length === 0) {
+            this.currentNotification = undefined;
+            return;
+        }
+        this.currentNotification = this.skillNotifications.splice(0, 1)[0];
+        setTimeout(this.showSkillUpgrade.bind(this), 5000);
     }
 
     private clearDeadObjects(): void {

@@ -57,8 +57,6 @@ function init() {
     stopB.addEventListener("click", menuStopGame);
     pauseB.addEventListener("click", menuPauseGame);
     resumeB.addEventListener("click", menuResumeGame);
-
-    console.log(getCanvasSize());
 }
 
 init();
