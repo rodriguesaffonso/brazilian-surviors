@@ -37,6 +37,7 @@ export class Game extends Observer {
 
     public animationRequestId: number;
     public clock: Timer;
+    public gameOverAfterMs: number;
 
     private visibilityEventListener: () => void;
     private keyEventListener: (e: KeyboardEvent) => void;
@@ -92,24 +93,25 @@ export class Game extends Observer {
         this.kills = 0;
         this.killsToEndGame = 100;
         this.gemsCollected = 0;
+        this.gameOverAfterMs = 6 * 60 * 1000; // Game last 6s and time upgrades happens every 1min for 5min
 
         this.ctx.canvas.height = this.camera.canvasHeight;
         this.ctx.canvas.width = this.camera.canvasWidth;
 
         this.animationRequestId = window.requestAnimationFrame(this.renderLoop.bind(this));
-        
+
         window.addEventListener('visibilitychange', this.visibilityEventListener);
         window.addEventListener("keydown", this.keyEventListener);
 
         this.on(Events.ObjectDead, () => {
             // 
         })
-        .on(Events.NextTimestamp, () => {
-            this.upgradeManager.tryTriggerNextUpgrage(Events.NextTimestamp);
-        })
-        .on(Events.ItemCollected, () => {
-            this.upgradeManager.tryTriggerNextUpgrage(Events.ItemCollected);
-        });
+            .on(Events.NextTimestamp, () => {
+                this.upgradeManager.tryTriggerNextUpgrage(Events.NextTimestamp);
+            })
+            .on(Events.ItemCollected, () => {
+                this.upgradeManager.tryTriggerNextUpgrage(Events.ItemCollected);
+            });
     }
 
     public stopGame(): void {
@@ -184,7 +186,7 @@ export class Game extends Observer {
 
     private gameLoop(timestamp: number): void {
         const updateParams: CommandParms = { elapsedMs: this.clock.getElapsedLoopTime(timestamp), game: this };
-        
+
         this.tryCreateNewEnemies(timestamp);
 
         this.gameObjects.forEach((obj) => obj.update(updateParams));
@@ -197,11 +199,43 @@ export class Game extends Observer {
     private render(): void {
         this.ctx.fillStyle = "white";
         const drawTime = () => {
-            const min = Math.floor(this.clock.getTotalElapsedTime() / 1000 / 60);
-            const sec = Math.floor(this.clock.getTotalElapsedTime() / 1000 - min * 60);
+            const totalTime = this.clock.getTotalElapsedTime();
+            const min = Math.floor(totalTime / 1000 / 60);
+            const sec = Math.floor(totalTime / 1000 - min * 60);
+            const timeLeft = this.gameOverAfterMs - totalTime;
 
-            this.ctx.font = "16px serif";
-            this.ctx.fillText(`${min < 10 ? "0" : ""}${min}:${sec < 10 ? "0" : ""}${sec}`, this.camera.canvasWidth / 2 - 15, 20);
+            this.ctx.save();
+            if (timeLeft < 10 * 1000) { // Last 10s countdown
+                // Glowing countdown
+                const phase = timeLeft > 5 * 1000 ? 1000 : 500; // First 5s slow glow, last 5s fast glow
+                const ms = totalTime % phase;
+                const frames = [
+                    { color: "#FFFFFF", fontSize: '16', offset: 15 },
+
+                    { color: "#FBDDDD", fontSize: '17', offset: 16 },
+                    { color: "#F7BCBA", fontSize: '18', offset: 17 },
+                    { color: "#F29A98", fontSize: '19', offset: 18 },
+                    { color: "#EE7975", fontSize: '20', offset: 19 },
+
+                    { color: "#EA5753", fontSize: '21', offset: 20 },
+
+                    { color: "#EE7975", fontSize: '20', offset: 19 },
+                    { color: "#F29A98", fontSize: '19', offset: 18 },
+                    { color: "#F7BCBA", fontSize: '18', offset: 17 },
+                    { color: "#FBDDDD", fontSize: '17', offset: 16 },
+                ];
+                const frameIndex = Math.floor(ms * frames.length / phase);
+                const currentFrame = frames[frameIndex];
+
+                this.ctx.fillStyle = currentFrame.color;
+                this.ctx.font = `${currentFrame.fontSize}px serif`;
+                this.ctx.fillText(`${min < 10 ? "0" : ""}${min}:${sec < 10 ? "0" : ""}${sec}`, this.camera.canvasWidth / 2 - currentFrame.offset, 5 + currentFrame.offset);
+            } else {
+                this.ctx.fillStyle = 'white';
+                this.ctx.font = "16px serif";
+                this.ctx.fillText(`${min < 10 ? "0" : ""}${min}:${sec < 10 ? "0" : ""}${sec}`, this.camera.canvasWidth / 2 - 15, 20);
+            }
+            this.ctx.restore();
         }
 
         const drawKills = () => {
@@ -272,7 +306,7 @@ export class Game extends Observer {
     }
 
     private isGameEnded(): boolean {
-        return this.player.combatComponent.dead || this.clock.getTotalElapsedTime() > 10 * 60 * 1000;
+        return this.player.combatComponent.dead || this.clock.getTotalElapsedTime() > this.gameOverAfterMs;
     }
 
     public addToObjectsArray(obj: GameObject): void {
