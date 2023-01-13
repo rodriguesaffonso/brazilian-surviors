@@ -73,7 +73,7 @@ export class UpgradeManager {
         const elapsed = param;
         this.totalElapsedGameTime += elapsed;
         
-        if (this.totalElapsedGameTime >=  nextUpgrade.value) {
+        if (this.totalElapsedGameTime >= nextUpgrade.value) {
           nextUpgrade.cb(this);
           this.timeIndex++;
         }

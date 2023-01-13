@@ -9,6 +9,8 @@ export class MagicPistolBulletCombatComponent extends CombatComponent {
     public distToAttack: number;
     public piercingCount: number;
 
+    private enemiesAttacked: Set<GameObject>;
+
     constructor(params: CombatComponentParams) {
         super({
             duration: 2000,
@@ -17,6 +19,7 @@ export class MagicPistolBulletCombatComponent extends CombatComponent {
         this.durationTimeout = this.duration;
         this.distToAttack = 5;
         this.piercingCount = params.piercingCount;
+        this.enemiesAttacked = new Set();
     }
 
     public update(bullet: MagicPistolBullet, params: CommandParms): void {
@@ -32,6 +35,7 @@ export class MagicPistolBulletCombatComponent extends CombatComponent {
         if (this.canAttack(bullet, enemy)) {
             this.piercingCount--;
             enemy.combatComponent.takeHit(enemy, bullet.combatComponent.damage);
+            this.enemiesAttacked.add(enemy);
             
             if (this.piercingCount === 0) {
                 this.dead = true;
@@ -47,7 +51,7 @@ export class MagicPistolBulletCombatComponent extends CombatComponent {
 
     private getCloseEnemy(bullet: MagicPistolBullet, g: Game): GameObject {
         for (const enemy of g.gameObjects.filter(obj => obj.kind === GameObjectKind.Triangle)) {
-            if (this.canAttack(bullet, enemy)) {
+            if (this.canAttack(bullet, enemy) && !this.enemiesAttacked.has(enemy)) {
                 return enemy;
             }
         }
