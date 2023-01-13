@@ -32,7 +32,7 @@ export class SkillTree extends GameObject {
     ];
     this.activePaths = [];
     this.maxOffers = 3;
-    this.maxActivePaths = 5;
+    this.maxActivePaths = 6;
   }
 
   public getActivePaths(): SkillPath[] {

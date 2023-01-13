@@ -20,17 +20,21 @@ export class UpgradeManager {
 
   public game: Game;
   // Time upgrades
-  private totalElapsedGameTime: number;
   private timeDrivenUpgrades;
   private timeIndex: number;
+  private gemsToNextLevel;
+  private gemIncrease: number;
+  private gemBase: number;
 
   private skillTree: SkillTree;
 
   constructor(g: Game) {
     this.game = g;
-    this.totalElapsedGameTime = 0;
     this.timeDrivenUpgrades = TimeDrivenUpgrades.sort((a, b) => a.value - b.value);
     this.timeIndex = 0;
+    this.gemsToNextLevel = 5;
+    this.gemIncrease = 1;
+    this.gemBase = this.gemsToNextLevel;
 
     this.baseParamsByObjectKind = new Map([
       [GameObjectKind.Triangle, {
@@ -84,11 +88,11 @@ export class UpgradeManager {
   }
 
   private applyRandomSkillUpgrade(): void {
-    if (this.game.gemsCollected % 5 !== 0) return;
+    if (this.game.gemsCollected % this.gemsToNextLevel !== 0) return;
+    this.gemsToNextLevel += this.gemBase + this.gemIncrease++;
     
     const offers = this.skillTree.offers();
     if (offers.length === 0) return;
-    
     
     const skillPath = offers[0];
     const nextUpgrade = skillPath.nextUpgrade();
