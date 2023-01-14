@@ -153,19 +153,23 @@ export class Game extends Observer {
     public pauseGame(): void {
         const drawPopupSquare = () => {
             const borderSize = 5;
+            this.ctx.save();
             this.ctx.fillStyle = "rgba(50, 50, 50, 0.8)"; // gray half transparent
             this.ctx.fillRect(borderSize, borderSize, this.camera.canvasWidth - 2 * borderSize, this.camera.canvasHeight - 2 * borderSize);
             this.ctx.fill();
+            this.ctx.restore();
         }
-
+        
         const drawPauseIcon = () => {
             const barSize = 10;
+            this.ctx.save();
             this.ctx.fillStyle = "white";
             this.ctx.fillRect(this.camera.canvasWidth / 2 - 7 - barSize, 50, 10, 70);
             this.ctx.fillRect(this.camera.canvasWidth / 2 + 7, 50, 10, 70);
             this.ctx.fill();
+            this.ctx.restore();
         }
-
+        
         if (!this.paused) {
             drawPopupSquare();
             drawPauseIcon();
@@ -262,8 +266,10 @@ export class Game extends Observer {
         }
 
         const drawGems = () => {
+            this.ctx.save();
             this.ctx.font = "16px serif";
             this.ctx.fillText(`Gems: ${this.gemsCollected}`, 10, 40);
+            this.ctx.restore();
         }
 
         const drawCurrentNotification = () => {
