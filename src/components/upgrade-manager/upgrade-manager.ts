@@ -65,7 +65,7 @@ export class UpgradeManager {
     return this.baseParamsByObjectKind.get(kind);
   }
 
-  public updateBaseParams(kind: GameObjectKind, params: any) : void {
+  public updateBaseParams(kind: GameObjectKind, params: any): void {
     this.baseParamsByObjectKind.set(kind, params);
   }
 
@@ -75,12 +75,12 @@ export class UpgradeManager {
       case Events.NextTimestamp:
         if (this.timeIndex === this.timeDrivenUpgrades.length) return;
         nextUpgrade = this.timeDrivenUpgrades[this.timeIndex];
-        
+
         if (this.game.clock.getTotalElapsedTime() >= nextUpgrade.value) {
           nextUpgrade.cb(this.game);
           this.timeIndex++;
         }
-        
+
         break;
       case Events.ItemCollected:
         this.applyRandomSkillUpgrade();
@@ -90,14 +90,14 @@ export class UpgradeManager {
   private applyRandomSkillUpgrade(): void {
     if (this.game.gemsCollected % this.gemsToNextLevel !== 0) return;
     this.gemsToNextLevel += this.gemBase + this.gemIncrease++;
-    
+
     const offers = this.skillTree.offers();
     if (offers.length === 0) return;
-    
+
     const skillPath = offers[0];
     const nextUpgrade = skillPath.nextUpgrade();
     if (nextUpgrade) {
-      this.game.pushNewSkillUpgrade({ path: skillPath, node: nextUpgrade });
+      this.game.skillNotificationManager.add({ path: skillPath, node: nextUpgrade });
     }
     this.game.skillTree.apply(skillPath, this.game);
   }

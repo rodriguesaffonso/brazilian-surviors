@@ -28,11 +28,7 @@ export class Game extends Observer {
 
     public upgradeManager: UpgradeManager;
     public skillTree: SkillTree;
-    public skillNotifications: SkillNotification[];
-    public showingNotifications: boolean;
-    public notificationTimeout: number;
-    public skillTimeout: number;
-    public currentNotification: SkillNotification;
+    public skillNotificationManager: SkillNotificationManager;
 
     public running: boolean;
     public paused: boolean;
@@ -107,11 +103,7 @@ export class Game extends Observer {
         this.gemsCollected = 0;
         this.gameOverAfterMs = 6 * 60 * 1000; // Game last 6s and time upgrades happens every 1min for 5min
 
-        this.skillNotifications = [];
-        this.showingNotifications = false;
-        this.notificationTimeout = 0;
-        this.skillTimeout = 3000;
-        this.currentNotification = undefined;
+        this.skillNotificationManager = new SkillNotificationManager();
 
         this.ctx.canvas.height = this.camera.canvasHeight;
         this.ctx.canvas.width = this.camera.canvasWidth;
@@ -159,7 +151,7 @@ export class Game extends Observer {
             this.ctx.fill();
             this.ctx.restore();
         }
-        
+
         const drawPauseIcon = () => {
             const barSize = 10;
             this.ctx.save();
@@ -169,7 +161,7 @@ export class Game extends Observer {
             this.ctx.fill();
             this.ctx.restore();
         }
-        
+
         if (!this.paused) {
             drawPopupSquare();
             drawPauseIcon();
@@ -216,6 +208,8 @@ export class Game extends Observer {
 
         this.clearDeadObjects();
         this.removeFarObjects();
+
+        this.skillNotificationManager.update(updateParams);
     }
 
     private renderHUD(): void {
@@ -272,29 +266,9 @@ export class Game extends Observer {
             this.ctx.restore();
         }
 
-        const drawCurrentNotification = () => {
-            if (this.currentNotification) {
-                const posY = this.camera.canvasHeight - 10;
-                const component = (this.skillTree.graphicComponent as SkillTreeGraphicComponent);
-                
-                this.ctx.save();
-                this.ctx.fillStyle = "rgba(50, 50, 50, 0.8)"; // gray half transparent
-                this.ctx.fillRect(0, posY, this.camera.canvasWidth, this.camera.canvasHeight - posY - 27);
-                this.ctx.fill();
-
-                this.ctx.fillStyle = 'white';
-                this.ctx.font = "italic 14px serif";
-                this.ctx.fillText(this.currentNotification.node.description(), 30, posY);
-                this.ctx.restore();
-                
-                component.drawPathIcon(this.currentNotification.path, new Vector2D(15, posY - component.radius));
-            }
-        }
-
         drawTime();
         drawKills();
         drawGems();
-        drawCurrentNotification();
     }
 
     private tryCreateNewEnemies(timestamp: number): void {
@@ -364,26 +338,6 @@ export class Game extends Observer {
         }
     }
 
-    public pushNewSkillUpgrade(skill: SkillNotification): void {
-        this.skillNotifications.push(skill);
-        this.requestShowSkillNotification();
-    }
-
-    private requestShowSkillNotification(): void {
-        if (!this.currentNotification) {
-            this.showSkillUpgrade();
-        }
-    }
-
-    private showSkillUpgrade(): void {
-        if (this.skillNotifications.length === 0) {
-            this.currentNotification = undefined;
-            return;
-        }
-        this.currentNotification = this.skillNotifications.splice(0, 1)[0];
-        setTimeout(this.showSkillUpgrade.bind(this), 5000);
-    }
-
     private clearDeadObjects(): void {
         this.gameObjects.forEach((obj, index) => {
             if (obj.combatComponent?.dead) {
@@ -405,5 +359,70 @@ export class Game extends Observer {
                 }
             }
         })
+    }
+}
+
+
+class SkillNotificationManager {
+    private skillNotifications: SkillNotification[];
+    private currentNotification: SkillNotification;
+    private timeout: number;
+    private timeoutDefault: number;
+
+    constructor() {
+        this.skillNotifications = [];
+        this.currentNotification = undefined;
+        this.timeoutDefault = 5000;
+        this.timeout = this.timeoutDefault;
+    }
+
+    public add(notification: SkillNotification): void {
+        if (!this.currentNotification) {
+            this.currentNotification = notification;
+        } else {
+            this.skillNotifications.push(notification);
+        }
+    }
+
+    public update(params: CommandParms): void {
+        if (!this.currentNotification) return;
+
+        const { elapsedMs, game } = params;
+        this.timeout -= elapsedMs;
+
+        if (this.timeout > 0) {
+            this.drawCurrentNotification(game);
+        } else {
+            this.timeout = this.timeoutDefault;
+            this.currentNotification = undefined;
+
+            if (this.skillNotifications.length > 0) {
+                this.currentNotification = this.skillNotifications.splice(0, 1)[0];
+            }
+        }
+    }
+
+    private drawCurrentNotification(g: Game): void {
+        if (this.currentNotification) {
+            const posY = g.camera.canvasHeight - 10;
+            const component = (g.skillTree.graphicComponent as SkillTreeGraphicComponent);
+
+            g.ctx.save();
+            g.ctx.fillStyle = "rgba(50, 50, 50, 0.8)"; // gray half transparent
+            g.ctx.fillRect(0, posY, g.camera.canvasWidth, g.camera.canvasHeight - posY - 27);
+            g.ctx.fill();
+
+            g.ctx.fillStyle = 'white';
+            g.ctx.font = "italic 14px serif";
+            g.ctx.fillText(this.currentNotification.node.description(), 30, posY);
+            g.ctx.restore();
+
+            component.drawPathIcon(this.currentNotification.path, new Vector2D(15, posY - component.radius));
+
+            g.ctx.strokeStyle = 'white';
+            g.ctx.beginPath();
+            g.ctx.arc(g.camera.canvasWidth - 15, posY - component.radius, component.radius, - Math.PI / 2, 3 / 2 * Math.PI * (this.timeout / this.timeoutDefault));
+            g.ctx.stroke();
+        }
     }
 }
