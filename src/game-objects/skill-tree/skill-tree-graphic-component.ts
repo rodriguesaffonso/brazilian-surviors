@@ -27,15 +27,15 @@ export class SkillTreeGraphicComponent extends GraphicComponent {
     }
   }
 
-  public drawPathIcon(path: SkillPath, p: Vector2D): void {
-    this.ctx.strokeStyle = 'white';
-    this.ctx.beginPath();
-    this.ctx.arc(p.x, p.y, this.radius, 0, 2 * Math.PI);
-    this.ctx.stroke();
+  public drawPathIcon(path: SkillPath, p: Vector2D, ctx: CanvasRenderingContext2D = this.ctx): void {
+    ctx.strokeStyle = 'white';
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, this.radius, 0, 2 * Math.PI);
+    ctx.stroke();
 
-    this.ctx.fillStyle = path.nodeColor;
-    this.ctx.beginPath();
-    this.ctx.arc(p.x, p.y, this.radius, 0, 2 * Math.PI);
-    this.ctx.fill();
+    ctx.fillStyle = path.nodeColor;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, this.radius, 0, 2 * Math.PI);
+    ctx.fill();
   }
 }

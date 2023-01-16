@@ -22,7 +22,7 @@ export function getCanvasSize(): WindowSize {
   }
 
   return {
-    width: Math.min(CANVAS_SIZE, ws.width),
+    width: ws.width,
     height: Math.min(CANVAS_SIZE, ws.height)
   };
 }

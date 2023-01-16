@@ -1,8 +1,6 @@
 import { Game } from "./game";
-import { getCanvasSize } from "./utils";
 
 const canvasEl = document.querySelector("canvas"); 
-const ctx = canvasEl.getContext("2d");
 
 const startB = document.getElementById("startGameButton");
 const stopB = document.getElementById("stopGameButton");
@@ -14,7 +12,7 @@ function show(elements: HTMLElement[]) { elements.forEach(e => e.hidden = false)
 
 let game: Game;
 function menuStartGame() {
-    game = new Game(ctx);
+    game = new Game();
     game.startGame();
 
     show([pauseB, canvasEl]);

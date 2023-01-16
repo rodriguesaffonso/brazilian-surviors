@@ -13,6 +13,9 @@ import { Timer } from "./utils/timer";
 import { createSkillTree, SkillTree } from "./game-objects/skill-tree/skill-tree";
 import { SkillNode, SkillPath } from "./game-objects/skill-tree/interfaces";
 import { SkillTreeGraphicComponent } from "./game-objects/skill-tree/skill-tree-graphic-component";
+import { HudCanvas } from "./canvas/hud";
+import { GameCanvas } from "./canvas/game";
+import { Canvas } from "./canvas/canvas";
 
 interface SkillNotification {
     path: SkillPath,
@@ -20,8 +23,6 @@ interface SkillNotification {
 }
 
 export class Game extends Observer {
-    public ctx: CanvasRenderingContext2D;
-
     public player: Player;
     public camera: Camera;
     public world: World;
@@ -50,9 +51,11 @@ export class Game extends Observer {
     private visibilityEventListener: () => void;
     private keyEventListener: (e: KeyboardEvent) => void;
 
-    constructor(ctx: CanvasRenderingContext2D) {
+    private hudCanvas: HudCanvas;
+    private gameCanvas: GameCanvas;
+
+    constructor() {
         super();
-        this.ctx = ctx;
         this.clock = new Timer();
 
         this.visibilityEventListener = () => {
@@ -73,22 +76,23 @@ export class Game extends Observer {
     }
 
     public startGame(): void {
+        this.gameCanvas = GameCanvas.getCanvas();
+        this.hudCanvas = HudCanvas.getCanvas();
+
         this.skillTree = createSkillTree(this);
         this.upgradeManager = new UpgradeManager(this);
         this.clock.start();
 
         this.camera = createCamera();
-        this.world = createWorld(this.ctx, this.camera);
-        this.player = createPlayer(this.ctx, this.camera, this.upgradeManager);
-
-        const magicPistol = createMagicPistol(this);
+        this.world = createWorld(this.gameCanvas.ctx, this.camera);
+        this.player = createPlayer(this.gameCanvas.ctx, this.camera, this.upgradeManager);
 
         this.gameObjects.push(...[
             this.world,
             this.camera,
             this.skillTree,
             this.player,
-            magicPistol
+            createMagicPistol(this)
         ]);
 
         this.running = true;
@@ -103,19 +107,13 @@ export class Game extends Observer {
         this.gemsCollected = 0;
         this.gameOverAfterMs = 6 * 60 * 1000; // Game last 6s and time upgrades happens every 1min for 5min
 
-        this.skillNotificationManager = new SkillNotificationManager();
-
-        this.ctx.canvas.height = this.camera.canvasHeight;
-        this.ctx.canvas.width = this.camera.canvasWidth;
+        this.skillNotificationManager = new SkillNotificationManager(this.hudCanvas);
 
         this.animationRequestId = window.requestAnimationFrame(this.renderLoop.bind(this));
-
         window.addEventListener('visibilitychange', this.visibilityEventListener);
         window.addEventListener("keydown", this.keyEventListener);
 
-        this.on(Events.ObjectDead, () => {
-            // 
-        })
+        this
             .on(Events.NextTimestamp, () => {
                 this.upgradeManager.tryTriggerNextUpgrage(Events.NextTimestamp);
             })
@@ -126,8 +124,7 @@ export class Game extends Observer {
 
     public stopGame(): void {
         this.running = false;
-        this.ctx.canvas.height = 0;
-        this.ctx.canvas.width = 0;
+        this.closeCanvas();
 
         this.player.inputComponent.stop();
         window.cancelAnimationFrame(this.animationRequestId);
@@ -142,24 +139,32 @@ export class Game extends Observer {
         });
     }
 
+    private closeCanvas(): void {
+        GameCanvas.remove();
+        this.gameCanvas = undefined;
+
+        HudCanvas.remove();
+        this.hudCanvas = undefined;
+    }
+
     public pauseGame(): void {
         const drawPopupSquare = () => {
             const borderSize = 5;
-            this.ctx.save();
-            this.ctx.fillStyle = "rgba(50, 50, 50, 0.8)"; // gray half transparent
-            this.ctx.fillRect(borderSize, borderSize, this.camera.canvasWidth - 2 * borderSize, this.camera.canvasHeight - 2 * borderSize);
-            this.ctx.fill();
-            this.ctx.restore();
+            this.gameCanvas.ctx.save();
+            this.gameCanvas.ctx.fillStyle = "rgba(50, 50, 50, 0.8)"; // gray half transparent
+            this.gameCanvas.ctx.fillRect(borderSize, borderSize, this.camera.canvasWidth - 2 * borderSize, this.camera.canvasHeight - 2 * borderSize);
+            this.gameCanvas.ctx.fill();
+            this.gameCanvas.ctx.restore();
         }
 
         const drawPauseIcon = () => {
             const barSize = 10;
-            this.ctx.save();
-            this.ctx.fillStyle = "white";
-            this.ctx.fillRect(this.camera.canvasWidth / 2 - 7 - barSize, 50, 10, 70);
-            this.ctx.fillRect(this.camera.canvasWidth / 2 + 7, 50, 10, 70);
-            this.ctx.fill();
-            this.ctx.restore();
+            this.gameCanvas.ctx.save();
+            this.gameCanvas.ctx.fillStyle = "white";
+            this.gameCanvas.ctx.fillRect(this.camera.canvasWidth / 2 - 7 - barSize, 50, 10, 70);
+            this.gameCanvas.ctx.fillRect(this.camera.canvasWidth / 2 + 7, 50, 10, 70);
+            this.gameCanvas.ctx.fill();
+            this.gameCanvas.ctx.restore();
         }
 
         if (!this.paused) {
@@ -192,7 +197,7 @@ export class Game extends Observer {
             }
 
             this.clock.afterLoop(now);
-            this.renderHUD();
+            this.renderHUD({ elapsedMs: this.clock.getElapsedLoopTime(now), game: this });
         }
 
         this.animationRequestId = window.requestAnimationFrame(this.renderLoop.bind(this));
@@ -206,69 +211,13 @@ export class Game extends Observer {
         this.gameObjects.forEach((obj) => obj.update(updateParams));
         this.gameObjects.sort((a, b) => a.kind - b.kind);
 
+        this.skillNotificationManager.update(updateParams);
         this.clearDeadObjects();
         this.removeFarObjects();
-
-        this.skillNotificationManager.update(updateParams);
     }
 
-    private renderHUD(): void {
-        this.ctx.fillStyle = "white";
-        const drawTime = () => {
-            const totalTime = this.clock.getTotalElapsedTime();
-            const min = Math.floor(totalTime / 1000 / 60);
-            const sec = Math.floor(totalTime / 1000 - min * 60);
-            const timeLeft = this.gameOverAfterMs - totalTime;
-
-            this.ctx.save();
-            if (timeLeft < 10 * 1000) { // Last 10s countdown
-                // Glowing countdown
-                const phase = timeLeft > 5 * 1000 ? 1000 : 500; // First 5s slow glow, last 5s fast glow
-                const ms = totalTime % phase;
-                const frames = [
-                    { color: "#FFFFFF", fontSize: '16', offset: 15 },
-
-                    { color: "#FBDDDD", fontSize: '17', offset: 16 },
-                    { color: "#F7BCBA", fontSize: '18', offset: 17 },
-                    { color: "#F29A98", fontSize: '19', offset: 18 },
-                    { color: "#EE7975", fontSize: '20', offset: 19 },
-
-                    { color: "#EA5753", fontSize: '21', offset: 20 },
-
-                    { color: "#EE7975", fontSize: '20', offset: 19 },
-                    { color: "#F29A98", fontSize: '19', offset: 18 },
-                    { color: "#F7BCBA", fontSize: '18', offset: 17 },
-                    { color: "#FBDDDD", fontSize: '17', offset: 16 },
-                ];
-                const frameIndex = Math.floor(ms * frames.length / phase);
-                const currentFrame = frames[frameIndex];
-
-                this.ctx.fillStyle = currentFrame.color;
-                this.ctx.font = `${currentFrame.fontSize}px serif`;
-                this.ctx.fillText(`${min < 10 ? "0" : ""}${min}:${sec < 10 ? "0" : ""}${sec}`, this.camera.canvasWidth / 2 - currentFrame.offset, 5 + currentFrame.offset);
-            } else {
-                this.ctx.fillStyle = 'white';
-                this.ctx.font = "16px serif";
-                this.ctx.fillText(`${min < 10 ? "0" : ""}${min}:${sec < 10 ? "0" : ""}${sec}`, this.camera.canvasWidth / 2 - 15, 20);
-            }
-            this.ctx.restore();
-        }
-
-        const drawKills = () => {
-            this.ctx.font = "16px serif";
-            this.ctx.fillText(`Kills: ${this.kills}`, 10, 20);
-        }
-
-        const drawGems = () => {
-            this.ctx.save();
-            this.ctx.font = "16px serif";
-            this.ctx.fillText(`Gems: ${this.gemsCollected}`, 10, 40);
-            this.ctx.restore();
-        }
-
-        drawTime();
-        drawKills();
-        drawGems();
+    private renderHUD(command: CommandParms): void {
+        this.hudCanvas.update(command);
     }
 
     private tryCreateNewEnemies(timestamp: number): void {
@@ -315,7 +264,7 @@ export class Game extends Observer {
                 break;
         }
 
-        const obj = createTriangle(this, pos, this.ctx, this.upgradeManager);
+        const obj = createTriangle(this, pos, this.gameCanvas.ctx, this.upgradeManager);
         obj.on(Events.ObjectDead, () => {
             this.kills++;
             this.emit(Events.ObjectDead);
@@ -368,8 +317,10 @@ class SkillNotificationManager {
     private currentNotification: SkillNotification;
     private timeout: number;
     private timeoutDefault: number;
+    private canvas: Canvas;
 
-    constructor() {
+    constructor(canvas: Canvas) {
+        this.canvas = canvas;
         this.skillNotifications = [];
         this.currentNotification = undefined;
         this.timeoutDefault = 5000;
@@ -407,22 +358,22 @@ class SkillNotificationManager {
             const posY = g.camera.canvasHeight - 10;
             const component = (g.skillTree.graphicComponent as SkillTreeGraphicComponent);
 
-            g.ctx.save();
-            g.ctx.fillStyle = "rgba(50, 50, 50, 0.8)"; // gray half transparent
-            g.ctx.fillRect(0, posY, g.camera.canvasWidth, g.camera.canvasHeight - posY - 27);
-            g.ctx.fill();
+            this.canvas.ctx.save();
+            this.canvas.ctx.fillStyle = "rgba(50, 50, 50, 0.8)"; // gray half transparent
+            this.canvas.ctx.fillRect(0, posY, g.camera.canvasWidth, g.camera.canvasHeight - posY - 27);
+            this.canvas.ctx.fill();
 
-            g.ctx.fillStyle = 'white';
-            g.ctx.font = "italic 14px serif";
-            g.ctx.fillText(this.currentNotification.node.description(), 30, posY);
-            g.ctx.restore();
+            this.canvas.ctx.fillStyle = 'white';
+            this.canvas.ctx.font = "italic 14px serif";
+            this.canvas.ctx.fillText(this.currentNotification.node.description(), 30, posY);
+            this.canvas.ctx.restore();
 
-            component.drawPathIcon(this.currentNotification.path, new Vector2D(15, posY - component.radius));
+            component.drawPathIcon(this.currentNotification.path, new Vector2D(15, posY - component.radius), this.canvas.ctx);
 
-            g.ctx.strokeStyle = 'white';
-            g.ctx.beginPath();
-            g.ctx.arc(g.camera.canvasWidth - 15, posY - component.radius, component.radius, - Math.PI / 2, 3 / 2 * Math.PI * (this.timeout / this.timeoutDefault));
-            g.ctx.stroke();
+            this.canvas.ctx.strokeStyle = 'white';
+            this.canvas.ctx.beginPath();
+            this.canvas.ctx.arc(g.camera.canvasWidth - 15, posY - component.radius, component.radius, - Math.PI / 2, 3 / 2 * Math.PI * (this.timeout / this.timeoutDefault));
+            this.canvas.ctx.stroke();
         }
     }
 }

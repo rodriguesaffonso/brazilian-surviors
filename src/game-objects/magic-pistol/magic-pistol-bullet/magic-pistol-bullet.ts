@@ -1,3 +1,4 @@
+import { GameCanvas } from "../../../canvas/game";
 import { Game } from "../../../game";
 import { GameObject, GameObjectKind, ObjectComponents, Vector2D } from "../../../utils";
 import { Events } from "../../../utils/observer";
@@ -25,7 +26,7 @@ export function createMagicPistolBullet(pistol: MagicPistol, enemy: GameObject, 
     const bullet = new MagicPistolBullet({
         physics: new MagicPistolBulletPhysicsComponent({ position: g.player.getPosition() }),
         combat: new MagicPistolBulletCombatComponent({ piercingCount: baseParams.piercingCount }),
-        graphic: new MagicPistolBulletGraphicComponent(g.ctx)
+        graphic: new MagicPistolBulletGraphicComponent(GameCanvas.getCanvas().ctx)
     }, pistol, g);
 
     bullet.setBulletDirection(enemy);

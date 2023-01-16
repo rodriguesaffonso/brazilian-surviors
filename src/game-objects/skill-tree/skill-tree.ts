@@ -1,3 +1,4 @@
+import { GameCanvas } from "../../canvas/game";
 import { Game } from "../../game";
 import { GameObject, GameObjectKind, ObjectComponents, Vector2D } from "../../utils";
 import { SkillPath } from "./interfaces";
@@ -83,7 +84,7 @@ export class SkillTree extends GameObject {
   }
 
   public drawOnPause(g: Game): void {
-    const { ctx } = g;
+    const { ctx } = GameCanvas.getCanvas();
 
     const nodeRadius = 10;
 
@@ -159,6 +160,6 @@ export class SkillTree extends GameObject {
 
 export function createSkillTree(g: Game): SkillTree {
   return new SkillTree({
-    graphic: new SkillTreeGraphicComponent(g.ctx)
+    graphic: new SkillTreeGraphicComponent(GameCanvas.getCanvas().ctx)
   });
 }
