@@ -51,8 +51,8 @@ export class Game extends Observer {
     private visibilityEventListener: () => void;
     private keyEventListener: (e: KeyboardEvent) => void;
 
-    private hudCanvas: HudCanvas;
-    private gameCanvas: GameCanvas;
+    public hudCanvas: HudCanvas;
+    public gameCanvas: GameCanvas;
 
     constructor() {
         super();

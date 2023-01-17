@@ -23,8 +23,8 @@ export class UpgradeManager {
   private timeDrivenUpgrades;
   private timeIndex: number;
   private gemsToNextLevel;
-  private gemIncrease: number;
   private gemBase: number;
+  public level: number;
 
   private skillTree: SkillTree;
 
@@ -33,8 +33,8 @@ export class UpgradeManager {
     this.timeDrivenUpgrades = TimeDrivenUpgrades.sort((a, b) => a.value - b.value);
     this.timeIndex = 0;
     this.gemsToNextLevel = 5;
-    this.gemIncrease = 1;
     this.gemBase = this.gemsToNextLevel;
+    this.level = 1;
 
     this.baseParamsByObjectKind = new Map([
       [GameObjectKind.Triangle, {
@@ -69,6 +69,10 @@ export class UpgradeManager {
     this.baseParamsByObjectKind.set(kind, params);
   }
 
+  public nextXpUpgradeAt(): number {
+    return this.gemsToNextLevel;
+  }
+
   public tryTriggerNextUpgrage(event: Events): void {
     let nextUpgrade;
     switch (event) {
@@ -88,8 +92,8 @@ export class UpgradeManager {
   }
 
   private applyRandomSkillUpgrade(): void {
-    if (this.game.gemsCollected % this.gemsToNextLevel !== 0) return;
-    this.gemsToNextLevel += this.gemBase + this.gemIncrease++;
+    if (this.game.gemsCollected % this.totalGemsToLevel(this.level) !== 0) return;
+    this.level++;
 
     const offers = this.skillTree.offers();
     if (offers.length === 0) return;
@@ -100,5 +104,13 @@ export class UpgradeManager {
       this.game.skillNotificationManager.add({ path: skillPath, node: nextUpgrade });
     }
     this.game.skillTree.apply(skillPath, this.game);
+  }
+
+  public gemsToLevel(level: number): number {
+    return this.gemBase + level - 1;
+  }
+
+  public totalGemsToLevel(level: number): number {
+    return level * (2 * this.gemBase + level - 1) / 2;
   }
 }

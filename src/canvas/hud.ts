@@ -3,6 +3,14 @@ import { Canvas } from "./canvas";
 
 export class HudCanvas extends Canvas {
   private static canvas: HudCanvas;
+  public progressBar = {
+    margin: 2,
+    borderSize: 0,
+    height: 15,
+    totalHeight: function () {
+      return (this.margin + this.borderSize + this.height / 2) * 2;
+    }
+  }
 
   public static getCanvas(): HudCanvas {
     if (!this.canvas) {
@@ -24,6 +32,22 @@ export class HudCanvas extends Canvas {
   private render(params: CommandParms): void {
     const game = params.game;
     this.ctx.fillStyle = "white";
+
+    const drawLevelProgress = () => {
+      const currentLevel = game.upgradeManager.level;
+      const totalGemsToNextLevel = game.upgradeManager.totalGemsToLevel(currentLevel);
+      const levelPerc = (game.gemsCollected - game.upgradeManager.totalGemsToLevel(currentLevel - 1)) / game.upgradeManager.gemsToLevel(currentLevel);
+
+      const bckgBarColor = "#394D44";
+      const barColor = "#8DAA9D";
+      this.ctx.save();
+      this.ctx.fillStyle = bckgBarColor;
+      this.ctx.fillRect(this.progressBar.margin, this.progressBar.margin, this.width - this.progressBar.margin * 2, this.progressBar.height);
+      this.ctx.fillStyle = barColor;
+      this.ctx.fillRect(this.progressBar.margin, this.progressBar.margin, (this.width - this.progressBar.margin * 2) * levelPerc, this.progressBar.height);
+      this.ctx.restore();
+    }
+
     const drawTime = () => {
       const totalTime = game.clock.getTotalElapsedTime();
       const min = Math.floor(totalTime / 1000 / 60);
@@ -55,30 +79,31 @@ export class HudCanvas extends Canvas {
 
         this.ctx.fillStyle = currentFrame.color;
         this.ctx.font = `${currentFrame.fontSize}px serif`;
-        this.ctx.fillText(`${min < 10 ? "0" : ""}${min}:${sec < 10 ? "0" : ""}${sec}`, game.camera.canvasWidth / 2 - currentFrame.offset, 5 + currentFrame.offset);
+        this.ctx.fillText(`${min < 10 ? "0" : ""}${min}:${sec < 10 ? "0" : ""}${sec}`, game.camera.canvasWidth / 2 - currentFrame.offset, 5 + currentFrame.offset + this.progressBar.totalHeight());
       } else {
         this.ctx.fillStyle = 'white';
         this.ctx.font = "16px serif";
-        this.ctx.fillText(`${min < 10 ? "0" : ""}${min}:${sec < 10 ? "0" : ""}${sec}`, game.camera.canvasWidth / 2 - 15, 20);
+        this.ctx.fillText(`${min < 10 ? "0" : ""}${min}:${sec < 10 ? "0" : ""}${sec}`, game.camera.canvasWidth / 2 - 15, 20 + this.progressBar.totalHeight());
       }
       this.ctx.restore();
     }
 
     const drawKills = () => {
       this.ctx.font = "16px serif";
-      this.ctx.fillText(`Kills: ${game.kills}`, 10, 20);
+      this.ctx.fillText(`Kills: ${game.kills}`, 10, 20 + this.progressBar.totalHeight());
     }
 
     const drawGems = () => {
       this.ctx.save();
       this.ctx.font = "16px serif";
-      this.ctx.fillText(`Gems: ${game.gemsCollected}`, 10, 40);
+      this.ctx.fillText(`Gems: ${game.gemsCollected}`, 10, 40 + this.progressBar.totalHeight());
       this.ctx.restore();
     }
 
     drawTime();
     drawKills();
     drawGems();
+    drawLevelProgress();
     game.skillNotificationManager.update(params);
   }
 }

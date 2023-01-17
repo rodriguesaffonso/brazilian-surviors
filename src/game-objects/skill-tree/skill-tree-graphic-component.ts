@@ -20,9 +20,8 @@ export class SkillTreeGraphicComponent extends GraphicComponent {
     if (paths.length === 0) return;
 
     const cw = params.game.camera.canvasWidth;
-
     for (let i = 0; i < paths.length; i++) {
-      const position = new Vector2D(cw - (i * this.distBtwIcon + (2 * i + 1) * this.radius + this.margin), this.margin + this.radius);
+      const position = new Vector2D(cw - (i * this.distBtwIcon + (2 * i + 1) * this.radius + this.margin), this.margin + this.radius + params.game.hudCanvas.progressBar.totalHeight());
       this.drawPathIcon(paths[i], position);
     }
   }

@@ -2,10 +2,10 @@ import { CommandParms } from "../components";
 import { getCanvasSize } from "../utils";
 
 export abstract class Canvas {
-  private width: number;
-  private height: number;
+  protected width: number;
+  protected height: number;
   
-  private docElement: HTMLCanvasElement;
+  protected docElement: HTMLCanvasElement;
   public ctx: CanvasRenderingContext2D;
 
   constructor(docId: string) {
