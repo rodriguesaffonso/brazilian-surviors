@@ -3,7 +3,8 @@ export type ObserverEventCallback = (params?: any) => void;
 export enum Events {
   ObjectDead = 1,
   ItemCollected,
-  NextTimestamp
+  NextTimestamp,
+  DamageDone
 }
 
 export abstract class Observer {

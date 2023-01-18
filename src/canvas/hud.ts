@@ -35,7 +35,6 @@ export class HudCanvas extends Canvas {
 
     const drawLevelProgress = () => {
       const currentLevel = game.upgradeManager.level;
-      const totalGemsToNextLevel = game.upgradeManager.totalGemsToLevel(currentLevel);
       const levelPerc = (game.gemsCollected - game.upgradeManager.totalGemsToLevel(currentLevel - 1)) / game.upgradeManager.gemsToLevel(currentLevel);
 
       const bckgBarColor = "#394D44";

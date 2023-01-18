@@ -28,6 +28,7 @@ export abstract class CombatComponent implements CombatComponentParams, Componen
     public takeHit(obj: GameObject, damage: number): void {
         if (this.dead) { return; }
         this.hp -= damage
+        obj.emit(Events.DamageDone, { damage, position: obj.getPosition() });
         if (this.hp <= 0) {
             this.kill(obj);
         }

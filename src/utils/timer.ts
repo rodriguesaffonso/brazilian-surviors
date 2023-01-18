@@ -37,4 +37,8 @@ export class Timer {
   public resume(): void {
     this.lastTimestamp = Date.now() - this.intraElapsed;
   }
+
+  public now(): number {
+    return this.lastTimestamp;
+  }
 }

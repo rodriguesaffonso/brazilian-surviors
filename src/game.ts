@@ -3,23 +3,22 @@ import { createMagicPistol } from "./game-objects/magic-pistol";
 import { createPlayer, Player } from "./game-objects/player";
 import { createTriangle } from "./game-objects/triangle";
 import { createWorld, World } from "./game-objects/world";
-import { GameObject, GameObjectKind, Vector2D } from "./utils";
+import { GameObject, GameObjectKind, getCanvasSize, Vector2D } from "./utils";
 import { Events, Observer } from "./utils/observer";
 
-import { menuPauseGame, menuResumeGame, menuStopGame } from ".";
+import { menuLoadMainMenu, menuPauseGame, menuResumeGame, menuStartNewGame, menuStopGame } from ".";
 import { CommandParms } from "./components";
 import { UpgradeManager } from "./components/upgrade-manager/upgrade-manager";
 import { Timer } from "./utils/timer";
 import { createSkillTree, SkillTree } from "./game-objects/skill-tree/skill-tree";
-import { SkillNode, SkillPath } from "./game-objects/skill-tree/interfaces";
-import { SkillTreeGraphicComponent } from "./game-objects/skill-tree/skill-tree-graphic-component";
 import { HudCanvas } from "./canvas/hud";
 import { GameCanvas } from "./canvas/game";
-import { Canvas } from "./canvas/canvas";
+import { SkillNotificationManager } from "./canvas/elements/skill-notification";
 
-interface SkillNotification {
-    path: SkillPath,
-    node: SkillNode
+interface DamageLabel {
+    damage: number,
+    position: Vector2D,
+    time: number;
 }
 
 export class Game extends Observer {
@@ -43,6 +42,9 @@ export class Game extends Observer {
     public gemsCollected: number = 0;
     public killsToEndGame: number;
     public gameObjects: GameObject[] = [];
+
+    public damageDoneLabels: DamageLabel[];
+    public damageLabelTimeout: number;
 
     public animationRequestId: number;
     public clock: Timer;
@@ -75,9 +77,13 @@ export class Game extends Observer {
         }
     }
 
-    public startGame(): void {
+    private loadCanvas(): void {
         this.gameCanvas = GameCanvas.getCanvas();
         this.hudCanvas = HudCanvas.getCanvas();
+    }
+
+    public startGame(): void {
+        this.loadCanvas();
 
         this.skillTree = createSkillTree(this);
         this.upgradeManager = new UpgradeManager(this);
@@ -109,6 +115,9 @@ export class Game extends Observer {
 
         this.skillNotificationManager = new SkillNotificationManager(this.hudCanvas);
 
+        this.damageDoneLabels = [];
+        this.damageLabelTimeout = 300;
+
         this.animationRequestId = window.requestAnimationFrame(this.renderLoop.bind(this));
         window.addEventListener('visibilitychange', this.visibilityEventListener);
         window.addEventListener("keydown", this.keyEventListener);
@@ -124,19 +133,140 @@ export class Game extends Observer {
 
     public stopGame(): void {
         this.running = false;
-        this.closeCanvas();
-
         this.player.inputComponent.stop();
-        window.cancelAnimationFrame(this.animationRequestId);
-        window.removeEventListener('visibilitychange', this.visibilityEventListener);
-        window.removeEventListener('keydown', this.keyEventListener);
-        this.clear();
 
-        console.log({
-            duration: this.clock.getTotalElapsedTime(),
-            kills: this.kills,
-            gems: this.gemsCollected
+        let opac: number = 0;
+        let start: number;
+        const frames = 50;
+        const frameSize = 1000 / frames;
+        let opacStep: number = 1 / frames;
+        const fadeOutCanvas = (t: number) => {
+            if (!start) start = t;
+            const elapsed = t - start;
+            if (elapsed >= frameSize) {
+                start = t;
+                if (opac > 1) {
+                    window.removeEventListener('visibilitychange', this.visibilityEventListener);
+                    window.removeEventListener('keydown', this.keyEventListener);
+                    window.cancelAnimationFrame(this.animationRequestId);
+
+                    this.drawGameOverScreen();
+                    return;
+                }
+
+                const color = `rgba(32, 26, 35, ${opac})`
+                this.gameCanvas.ctx.fillStyle = color;
+                this.gameCanvas.ctx.fillRect(0, 0, this.camera.canvasWidth, this.camera.canvasHeight);
+                this.gameCanvas.ctx.fill();
+                this.hudCanvas.ctx.fillStyle = color;
+                this.hudCanvas.ctx.fillRect(0, 0, this.camera.canvasWidth, this.camera.canvasHeight);
+                this.hudCanvas.ctx.fill();
+                opac += opacStep;
+            }
+            this.animationRequestId = window.requestAnimationFrame(fadeOutCanvas.bind(this));
+        }
+
+        this.animationRequestId = window.requestAnimationFrame(fadeOutCanvas.bind(this));
+    }
+
+    public loadMainMenuScreen(): void {
+        this.loadCanvas();
+
+        const bckgColor = `rgba(32, 26, 35)`;
+        const { ctx } = this.gameCanvas;
+
+        ctx.fillStyle = bckgColor;
+        ctx.fillRect(0, 0, this.gameCanvas.width, this.gameCanvas.height);
+        ctx.fill();
+
+        this.animationRequestId = window.requestAnimationFrame(() => {});
+
+        const stack = document.getElementById("stack");
+
+        const elements: HTMLElement[] = [];
+        const removeElements = () => elements.forEach(el => stack.removeChild(el));
+
+        const fs1 = 24;
+        const label = document.createElement('div');
+        label.classList.add("pause-menu-option-button");
+        label.innerHTML = "Brazilian Survivors";
+        label.style.fontSize = `${fs1}px`;
+        label.style.top = `${(this.gameCanvas.height - fs1) / 2}px`;
+        stack.appendChild(label);
+        elements.push(label);
+
+        const fs2 = 14;
+        const play = document.createElement("button");
+        play.classList.add("pause-menu-option-button");
+        play.classList.add("pause-menu-button-with-radius");
+        play.innerHTML = "Play";
+        play.style.fontSize = `${fs2}px`;
+        play.style.top = `${(this.gameCanvas.height - fs2 + 120) / 2}px`;
+        play.addEventListener('click', (e) => {
+            console.log(e);
+            removeElements();
+
+            this.closeCanvas();
+            this.clear();
+
+            // Restart game
+            this.startGame();
         });
+        stack.appendChild(play);
+        elements.push(play);
+    }
+
+    private drawGameOverScreen(): void {
+        const stack = document.getElementById("stack");
+
+        const elements: HTMLElement[] = [];
+        const removeElements = () => elements.forEach(el => stack.removeChild(el));
+
+        const fs1 = 24;
+        const label = document.createElement('div');
+        label.classList.add("pause-menu-option-button");
+        label.innerHTML = "Game Over";
+        label.style.fontSize = `${fs1}px`;
+        label.style.top = `${(this.camera.canvasHeight - fs1) / 2}px`;
+        stack.appendChild(label);
+        elements.push(label);
+
+        const fs2 = 14;
+        const tryAgain = document.createElement("button");
+        tryAgain.classList.add("pause-menu-option-button");
+        tryAgain.classList.add("pause-menu-button-with-radius");
+        tryAgain.innerHTML = "Try Again";
+        tryAgain.style.fontSize = `${fs2}px`;
+        tryAgain.style.top = `${(this.camera.canvasHeight - fs2 + 120) / 2}px`;
+        tryAgain.addEventListener('click', (e) => {
+            removeElements();
+
+            this.closeCanvas();
+            this.clear();
+
+            // Restart game
+            menuStartNewGame();
+        });
+        stack.appendChild(tryAgain);
+        elements.push(tryAgain);
+
+        const fs3 = 14;
+        const quit = document.createElement("button");
+        quit.classList.add("pause-menu-option-button");
+        quit.classList.add("pause-menu-button-with-radius");
+        quit.innerHTML = "Quit";
+        quit.style.fontSize = `${fs3}px`;
+        quit.style.top = `${(this.camera.canvasHeight - fs3 + 200) / 2}px`;
+        quit.addEventListener('click', (e) => {
+            removeElements();
+
+            this.closeCanvas();
+            this.clear();
+
+            menuLoadMainMenu();
+        });
+        stack.appendChild(quit);
+        elements.push(quit);
     }
 
     private closeCanvas(): void {
@@ -210,10 +340,27 @@ export class Game extends Observer {
 
         this.gameObjects.forEach((obj) => obj.update(updateParams));
         this.gameObjects.sort((a, b) => a.kind - b.kind);
+        this.damageDoneLabels.forEach((damageLabel, index) => this.drawDamage(damageLabel, index));
 
         this.skillNotificationManager.update(updateParams);
         this.clearDeadObjects();
         this.removeFarObjects();
+    }
+
+    private drawDamage(params: DamageLabel, index: number): void {
+        const { time, damage, position } = params;
+        if (time + this.damageLabelTimeout < this.clock.now()) {
+            this.damageDoneLabels.splice(index, 1);
+            return;
+        }
+
+        const p = position.sub(this.camera.getCanvasLimits().minP);
+        const { ctx } = this.gameCanvas;
+        ctx.save();
+        ctx.fillStyle = 'white';
+        ctx.font = '12px serif';
+        ctx.fillText(damage.toString(), p.x, p.y);
+        ctx.restore();
     }
 
     private renderHUD(command: CommandParms): void {
@@ -268,7 +415,10 @@ export class Game extends Observer {
         obj.on(Events.ObjectDead, () => {
             this.kills++;
             this.emit(Events.ObjectDead);
-        });
+        })
+            .on(Events.DamageDone, (params) => {
+                this.damageDoneLabels.push({ ...params, time: this.clock.now() });
+            });
         return obj;
     }
 
@@ -308,72 +458,5 @@ export class Game extends Observer {
                 }
             }
         })
-    }
-}
-
-
-class SkillNotificationManager {
-    private skillNotifications: SkillNotification[];
-    private currentNotification: SkillNotification;
-    private timeout: number;
-    private timeoutDefault: number;
-    private canvas: Canvas;
-
-    constructor(canvas: Canvas) {
-        this.canvas = canvas;
-        this.skillNotifications = [];
-        this.currentNotification = undefined;
-        this.timeoutDefault = 5000;
-        this.timeout = this.timeoutDefault;
-    }
-
-    public add(notification: SkillNotification): void {
-        if (!this.currentNotification) {
-            this.currentNotification = notification;
-        } else {
-            this.skillNotifications.push(notification);
-        }
-    }
-
-    public update(params: CommandParms): void {
-        if (!this.currentNotification) return;
-
-        const { elapsedMs, game } = params;
-        this.timeout -= elapsedMs;
-
-        if (this.timeout > 0) {
-            this.drawCurrentNotification(game);
-        } else {
-            this.timeout = this.timeoutDefault;
-            this.currentNotification = undefined;
-
-            if (this.skillNotifications.length > 0) {
-                this.currentNotification = this.skillNotifications.splice(0, 1)[0];
-            }
-        }
-    }
-
-    private drawCurrentNotification(g: Game): void {
-        if (this.currentNotification) {
-            const posY = g.camera.canvasHeight - 10;
-            const component = (g.skillTree.graphicComponent as SkillTreeGraphicComponent);
-
-            this.canvas.ctx.save();
-            this.canvas.ctx.fillStyle = "rgba(50, 50, 50, 0.8)"; // gray half transparent
-            this.canvas.ctx.fillRect(0, posY, g.camera.canvasWidth, g.camera.canvasHeight - posY - 27);
-            this.canvas.ctx.fill();
-
-            this.canvas.ctx.fillStyle = 'white';
-            this.canvas.ctx.font = "italic 14px serif";
-            this.canvas.ctx.fillText(this.currentNotification.node.description(), 30, posY);
-            this.canvas.ctx.restore();
-
-            component.drawPathIcon(this.currentNotification.path, new Vector2D(15, posY - component.radius), this.canvas.ctx);
-
-            this.canvas.ctx.strokeStyle = 'white';
-            this.canvas.ctx.beginPath();
-            this.canvas.ctx.arc(g.camera.canvasWidth - 15, posY - component.radius, component.radius, - Math.PI / 2, 3 / 2 * Math.PI * (this.timeout / this.timeoutDefault));
-            this.canvas.ctx.stroke();
-        }
     }
 }

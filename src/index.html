@@ -4,37 +4,10 @@
 <head>
   <meta name="viewport" content="width=device-width">
   <title>Brazilian Survivors</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      background-color: #545f5f;
-      color: #FBF5F3;
-      overscroll-behavior: contain;
-    }
-
-    #stack {
-      position: relative;
-    }
-
-    #stack > canvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-    }
-  </style>
+  <link rel="stylesheet" href="index.css">
 </head>
 
 <body>
-  <h1 style="text-align: center">Brazilian Survivors</h1>
-  <br>
-  <button id="startGameButton">Start</button>
-  <button id="pauseGameButton">Pause [P]</button>
-  <button id="resumeGameButton">Resume [P]</button>
-  <button id="stopGameButton">Stop</button>
   <div id="stack">
     <canvas id="gameCanvas"></canvas>
     <canvas id="gameHud"></canvas>
