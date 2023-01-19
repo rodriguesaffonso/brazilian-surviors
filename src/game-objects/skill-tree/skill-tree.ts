@@ -9,6 +9,7 @@ import { NumberProjectilesSkillPath } from "./paths/number-projectiles";
 import { ProjectilePiercingSkillPath } from "./paths/projectile-piercing";
 import { SpeedSkillPath } from "./paths/speed";
 import { WeaponCooldownSkillPath } from "./paths/weapon-cooldown";
+import { WeaponDamageSkillPath } from "./paths/weapon-damage";
 import { SkillTreeGraphicComponent } from "./skill-tree-graphic-component";
 
 export class SkillTree extends GameObject {
@@ -28,6 +29,7 @@ export class SkillTree extends GameObject {
       new NumberProjectilesSkillPath(),
       new ProjectilePiercingSkillPath(),
       new WeaponCooldownSkillPath(),
+      new WeaponDamageSkillPath(),
 
       new MagnetRangeSkillPath(),
     ];

@@ -54,7 +54,8 @@ export class UpgradeManager {
         cooldown: 1200
       }],
       [GameObjectKind.MagicPistolBullet, {
-        piercingCount: 1
+        piercingCount: 1,
+        damage: 12
       }]
     ]);
 

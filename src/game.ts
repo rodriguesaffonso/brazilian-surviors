@@ -359,7 +359,7 @@ export class Game extends Observer {
         ctx.save();
         ctx.fillStyle = 'white';
         ctx.font = '12px serif';
-        ctx.fillText(damage.toString(), p.x, p.y);
+        ctx.fillText(Math.floor(damage).toString(), p.x, p.y);
         ctx.restore();
     }
 

@@ -34,11 +34,11 @@ export class WeaponCooldownSkillPath extends SkillPath {
   constructor() {
     super({
       path: [
-        new WeaponCooldownSkillNode(-0.5),
-        new WeaponCooldownSkillNode(-0.5),
-        new WeaponCooldownSkillNode(-0.5),
-        new WeaponCooldownSkillNode(-0.5),
-        new WeaponCooldownSkillNode(-0.5)
+        new WeaponCooldownSkillNode(-0.1),
+        new WeaponCooldownSkillNode(-0.1),
+        new WeaponCooldownSkillNode(-0.1),
+        new WeaponCooldownSkillNode(-0.1),
+        new WeaponCooldownSkillNode(-0.1)
       ],
       nodeColor: '#42d4f4'
     });

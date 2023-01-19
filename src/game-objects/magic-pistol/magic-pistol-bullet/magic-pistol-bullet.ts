@@ -25,7 +25,7 @@ export function createMagicPistolBullet(pistol: MagicPistol, enemy: GameObject, 
     const baseParams = g.upgradeManager.getBaseParams(GameObjectKind.MagicPistolBullet)
     const bullet = new MagicPistolBullet({
         physics: new MagicPistolBulletPhysicsComponent({ position: g.player.getPosition() }),
-        combat: new MagicPistolBulletCombatComponent({ piercingCount: baseParams.piercingCount }),
+        combat: new MagicPistolBulletCombatComponent({ piercingCount: baseParams.piercingCount, damage: baseParams.damage }),
         graphic: new MagicPistolBulletGraphicComponent(GameCanvas.getCanvas().ctx)
     }, pistol, g);
 

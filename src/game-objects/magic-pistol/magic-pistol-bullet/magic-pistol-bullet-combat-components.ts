@@ -14,7 +14,7 @@ export class MagicPistolBulletCombatComponent extends CombatComponent {
     constructor(params: CombatComponentParams) {
         super({
             duration: 2000,
-            damage: 12
+            damage: params.damage
         });
         this.durationTimeout = this.duration;
         this.distToAttack = 5;
