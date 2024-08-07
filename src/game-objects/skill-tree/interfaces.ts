@@ -34,12 +34,15 @@ export abstract class SkillNode {
 }
 
 export interface SkillPathParams {
-  path: SkillNode[],
-  nodeColor: string
+  name: string;
+  path: SkillNode[];
+  nodeColor: string;
 }
 export abstract class SkillPath {
   protected begin: SkillNode;
   protected current: SkillNode;
+  protected name: string;
+  protected description: string;
 
   public nodeColor: string;
   public static lockedNodeColor: '#7f7f7f';
@@ -57,6 +60,7 @@ export abstract class SkillPath {
     }
     this.current = this.begin;
     this.nodeColor = params.nodeColor;
+    this.name = params.name;
   }
 
   public visiblePath(): SkillNode[] {
@@ -96,5 +100,9 @@ export abstract class SkillPath {
     if (this.isComplete()) return undefined;
 
     return this.current;
+  }
+
+  public getName(): string {
+    return this.name;
   }
 }

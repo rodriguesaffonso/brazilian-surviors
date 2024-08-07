@@ -26,6 +26,7 @@ export class HealthRegenSkillNode extends SkillNode {
 export class HealthRegenSkillPath extends SkillPath {
   constructor() {
     super({
+      name: 'Health Regen',
       path: [
         new HealthRegenSkillNode(0.2),
         new HealthRegenSkillNode(0.2),
@@ -33,7 +34,7 @@ export class HealthRegenSkillPath extends SkillPath {
         new HealthRegenSkillNode(1),
         new HealthRegenSkillNode(2),
       ],
-      nodeColor: '#e6194B'
+      nodeColor: '#e6194B',
     });
   }
 }

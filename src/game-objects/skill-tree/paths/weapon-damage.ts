@@ -27,6 +27,7 @@ export class WeaponDamageSkillNode extends SkillNode {
 export class WeaponDamageSkillPath extends SkillPath {
   constructor() {
     super({
+      name: 'Stronger bullets',
       path: [
         new WeaponDamageSkillNode(0.15),
         new WeaponDamageSkillNode(0.15),

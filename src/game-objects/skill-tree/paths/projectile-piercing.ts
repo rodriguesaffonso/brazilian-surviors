@@ -27,6 +27,7 @@ export class ProjectilePiercingSkillNode extends SkillNode {
 export class ProjectilePiercingSkillPath extends SkillPath {
   constructor() {
     super({
+      name: 'Piercing Bullets',
       path: [
         new ProjectilePiercingSkillNode(1),
         new ProjectilePiercingSkillNode(1),

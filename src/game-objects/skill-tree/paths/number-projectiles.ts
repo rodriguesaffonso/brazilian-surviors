@@ -33,6 +33,7 @@ export class NumberProjectilesSkillNode extends SkillNode {
 export class NumberProjectilesSkillPath extends SkillPath {
   constructor() {
     super({
+      name: 'More Bullets',
       path: [
         new NumberProjectilesSkillNode(1),
         new NumberProjectilesSkillNode(1),

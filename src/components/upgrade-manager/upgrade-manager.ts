@@ -98,7 +98,8 @@ export class UpgradeManager {
 
     const offers = this.skillTree.offers();
     if (offers.length === 0) return;
-
+    const skillsName = offers.map(o => o.getName());
+    const skillInput = this.showPickUpgradePrompt(skillsName);
     const skillPath = offers[0];
     const nextUpgrade = skillPath.nextUpgrade();
     if (nextUpgrade) {
@@ -113,5 +114,10 @@ export class UpgradeManager {
 
   public totalGemsToLevel(level: number): number {
     return level * (2 * this.gemBase + level - 1) / 2;
+  }
+
+  private showPickUpgradePrompt(skillsName: string[]): string {
+    const skillInput = prompt(['Pick an upgrade', ...skillsName].join('\n'));
+    return skillsName.indexOf(skillInput) != -1 ? skillInput : this.showPickUpgradePrompt(skillsName);
   }
 }

@@ -25,6 +25,7 @@ export class SpeedSkillNode extends SkillNode {
 export class SpeedSkillPath extends SkillPath {
   constructor() {
     super({
+      name: 'Move Speed',
       path: [
         new SpeedSkillNode(0.1),
         new SpeedSkillNode(0.1),

@@ -26,6 +26,7 @@ export class MaxHealthSkillNode extends SkillNode {
 export class MaxHealthSkillPath extends SkillPath {
   constructor() {
     super({
+      name: 'Max Health',
       path: [
         new MaxHealthSkillNode(0.1),
         new MaxHealthSkillNode(0.1),

@@ -44,13 +44,13 @@ export class SkillTree extends GameObject {
 
   public offers(): SkillPath[] {    
     if (this.activePaths.length === this.maxActivePaths) {
-      return this.capRandonOffers(this.activePaths);
+      return this.capRandomOffers(this.activePaths);
     } 
 
-    return this.capRandonOffers(this.paths);
+    return this.capRandomOffers(this.paths);
   }
 
-  private capRandonOffers(paths: SkillPath[]): SkillPath[] {
+  private capRandomOffers(paths: SkillPath[]): SkillPath[] {
     const possibleOffers = [];
 
     for (const path of paths) {

@@ -33,6 +33,7 @@ export class MagnetRangeSkillNode extends SkillNode {
 export class MagnetRangeSkillPath extends SkillPath {
   constructor() {
     super({
+      name: 'Magnet Range',
       path: [
         new MagnetRangeSkillNode(0.15),
         new MagnetRangeSkillNode(0.15),

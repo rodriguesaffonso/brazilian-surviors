@@ -33,6 +33,7 @@ export class WeaponCooldownSkillNode extends SkillNode {
 export class WeaponCooldownSkillPath extends SkillPath {
   constructor() {
     super({
+      name: 'Reload Speed',
       path: [
         new WeaponCooldownSkillNode(-0.1),
         new WeaponCooldownSkillNode(-0.1),
