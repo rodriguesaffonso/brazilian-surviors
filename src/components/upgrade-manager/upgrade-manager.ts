@@ -98,9 +98,13 @@ export class UpgradeManager {
 
     const offers = this.skillTree.offers();
     if (offers.length === 0) return;
+    
     const skillsName = offers.map(o => o.getName());
-    const skillInput = this.showPickUpgradePrompt(skillsName);
-    const skillPath = offers[0];
+    const skillIndex = this.showPickUpgradePrompt(skillsName);
+    this.game.player.inputComponent.reset();
+    this.game.camera.inputComponent.reset();
+
+    const skillPath = offers[skillIndex];
     const nextUpgrade = skillPath.nextUpgrade();
     if (nextUpgrade) {
       this.game.skillNotificationManager.add({ path: skillPath, node: nextUpgrade });
@@ -116,8 +120,9 @@ export class UpgradeManager {
     return level * (2 * this.gemBase + level - 1) / 2;
   }
 
-  private showPickUpgradePrompt(skillsName: string[]): string {
-    const skillInput = prompt(['Pick an upgrade', ...skillsName].join('\n'));
-    return skillsName.indexOf(skillInput) != -1 ? skillInput : this.showPickUpgradePrompt(skillsName);
+  private showPickUpgradePrompt(skillsName: string[]): number {
+    const skillInput = prompt(['Pick an upgrade', ...skillsName.map((s, i) => `${i}. ${s}`)].join('\n'));
+    const index = parseInt(skillInput);
+    return (index != undefined && index >= 0 && index < skillsName.length) ? index : this.showPickUpgradePrompt(skillsName);
   }
 }

@@ -17,6 +17,10 @@ export class PlayerInputComponent extends InputComponent {
     constructor(physics: PlayerPhysicsComponent) {
         super();
         this.physicsComponent = physics;
+        this.reset();
+    }
+
+    public reset(): void {
         this.nextVelocityDirection = Vector2D.zero();
         this.start();
     }
