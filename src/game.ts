@@ -315,7 +315,8 @@ export class Game extends Observer {
         }
     }
 
-    private renderLoop(): void {
+    private renderLoop(t: number): void {
+        console.log(t);
         const now = this.clock.beforeLoop();
         if (now) {
             this.emit(Events.NextTimestamp, this.clock.getElapsedLoopTime(now));

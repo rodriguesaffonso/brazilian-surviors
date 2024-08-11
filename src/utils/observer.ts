@@ -1,10 +1,33 @@
 export type ObserverEventCallback = (params?: any) => void;
 
+export enum IEvents {
+
+};
+
 export enum Events {
   ObjectDead = 1,
   ItemCollected,
   NextTimestamp,
-  DamageDone
+  DamageDone,
+
+  Timer_Started,
+  Timer_TimeoutFinished,
+  KeyboardInputComponent_Enabled,
+  KeyboardInputComponent_Disabled,
+
+  PlayerInputComponent_MovingDirectionUpdate,
+  PlayerInputComponent_MovingUpPressed,
+  PlayerInputComponent_MovingUpReleased,
+  PlayerInputComponent_MovingDownPressed,
+  PlayerInputComponent_MovingDownReleased,
+  PlayerInputComponent_MovingRightPressed,
+  PlayerInputComponent_MovingRightReleased,
+  PlayerInputComponent_MovingLeftPressed,
+  PlayerInputComponent_MovingLeftReleased,
+
+  CollisionComponent_Collision,
+  PlayerCollisionComponent_Collision,
+  EnemyCollisionComponent_CollidingWithPlayer,
 }
 
 export abstract class Observer {
