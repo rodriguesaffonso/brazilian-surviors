@@ -1,7 +1,6 @@
-import { Events, Observer } from "../../utils";
+import { Events } from "../../utils";
 import { GameObject } from "../game-objects/GameObject";
-import { Component } from "./Component";
-import { IComponentUpdateParams } from "./IComponentUpdateParams";
+import { Component, IComponentUpdateParams } from "./Component";
 import { Shape } from "./Shapes";
 
 export interface CollisionComponentParams {
@@ -13,7 +12,7 @@ export interface CollisionEventParams {
     other: GameObject,
 }
 
-export abstract class CollisionComponent extends Observer implements Component {
+export abstract class CollisionComponent extends Component {
     protected shape: Shape;
     constructor(params: CollisionComponentParams) {
         super();

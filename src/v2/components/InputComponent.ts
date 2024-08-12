@@ -1,10 +1,8 @@
-import { Observer } from "../../utils";
 import { GameObject } from "../game-objects/GameObject";
-import { Component } from "./Component";
-import { IComponentUpdateParams } from "./IComponentUpdateParams";
+import { Component, IComponentUpdateParams } from "./Component";
 
 
-export abstract class InputComponent extends Observer implements Component {
+export abstract class InputComponent extends Component {
     public update(_?: GameObject, params?: IComponentUpdateParams): void {
         throw Error('NYI');
     }

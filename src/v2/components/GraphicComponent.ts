@@ -1,13 +1,11 @@
-import { Observer } from "../../utils";
 import { GameObject } from "../game-objects/GameObject";
-import { Component } from "./Component";
-import { IComponentUpdateParams } from "./IComponentUpdateParams";
+import { Component, IComponentUpdateParams } from "./Component";
 
 export interface GraphicComponentParams {
     ctx: CanvasRenderingContext2D;
 }
 
-export abstract class GraphicComponent extends Observer implements Component  {    
+export abstract class GraphicComponent extends Component  {    
     protected ctx: CanvasRenderingContext2D;
     constructor(params: GraphicComponentParams) {
         super();

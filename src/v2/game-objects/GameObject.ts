@@ -1,8 +1,8 @@
 import { Observer } from "../../utils";
 import { CollisionComponent } from "../components/CollisionComponent";
 import { CombatComponent } from "../components/CombatComponent";
+import { IComponentUpdateParams } from "../components/Component";
 import { GraphicComponent } from "../components/GraphicComponent";
-import { IComponentUpdateParams } from "../components/IComponentUpdateParams";
 import { InputComponent } from "../components/InputComponent";
 import { ObjectComponents } from "../components/ObjectComponents";
 import { PhysicComponent } from "../components/PhysicComponent";

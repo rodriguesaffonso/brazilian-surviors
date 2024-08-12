@@ -1,5 +1,4 @@
-import { Vector2D } from "../../../utils";
-import { IComponentUpdateParams } from "../../components/IComponentUpdateParams";
+import { IComponentUpdateParams } from "../../components/Component";
 import { PhysicComponent } from "../../components/PhysicComponent";
 import { GameObject } from "../GameObject";
 import { PlayerInputComponent } from "./PlayerInputComponent";

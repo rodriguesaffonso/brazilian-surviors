@@ -1,5 +1,5 @@
-import { GraphicComponent, GraphicComponentParams } from "../../components/GraphicComponent";
-import { IComponentUpdateParams } from "../../components/IComponentUpdateParams";
+import { IComponentUpdateParams } from "../../components/Component";
+import { GraphicComponent } from "../../components/GraphicComponent";
 import { GameObject } from "../GameObject";
 import { PlayerShape } from "./PlayerShape";
 

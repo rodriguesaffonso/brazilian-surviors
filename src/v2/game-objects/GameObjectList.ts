@@ -1,4 +1,4 @@
-import { IComponentUpdateParams } from "../components/IComponentUpdateParams";
+import { IComponentUpdateParams } from "../components/Component";
 import { GameObject } from "./GameObject";
 import { IGameObjectList } from "./IGameObjectList";
 

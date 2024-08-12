@@ -1,9 +1,9 @@
 import { ITimer } from "./ITimer";
 import { Events } from "../../utils";
 import { IClock } from "../clock/IClock";
-import { IComponentUpdateParams } from "../components/IComponentUpdateParams";
 import { GameObject } from "../game-objects/GameObject";
 import { GameObjectKind } from "../game-objects/GameObjectKind";
+import { IComponentUpdateParams } from "../components/Component";
 
 export enum TimerState {
     Idle,

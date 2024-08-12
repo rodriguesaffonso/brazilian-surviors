@@ -1,6 +1,6 @@
 import { getCanvasSize } from "../../../utils";
+import { IComponentUpdateParams } from "../../components/Component";
 import { GraphicComponent } from "../../components/GraphicComponent";
-import { IComponentUpdateParams } from "../../components/IComponentUpdateParams";
 import { GameObject } from "../GameObject";
 
 export class WorldGraphicComponent extends GraphicComponent {

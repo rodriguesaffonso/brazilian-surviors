@@ -1,7 +1,6 @@
 import { Observer, Vector2D } from "../../utils";
 import { GameObject } from "../game-objects/GameObject";
-import { Component } from "./Component";
-import { IComponentUpdateParams } from "./IComponentUpdateParams";
+import { Component, IComponentUpdateParams } from "./Component";
 
 export interface PhysicComponentParams {
     velocity?: Vector2D;
@@ -9,7 +8,7 @@ export interface PhysicComponentParams {
     speed?: number;
 }
 
-export abstract class PhysicComponent extends Observer implements Component  {    
+export abstract class PhysicComponent extends Component  {    
     protected speed: number;
     protected velocity: Vector2D;
     protected position: Vector2D;

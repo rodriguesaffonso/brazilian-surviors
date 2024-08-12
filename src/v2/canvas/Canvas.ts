@@ -1,7 +1,7 @@
 
 import { getCanvasSize } from "../../utils";
+import { IComponentUpdateParams } from "../components/Component";
 import { IComponentRunner } from "../components/IComponentRunner";
-import { IComponentUpdateParams } from "../components/IComponentUpdateParams";
 
 
 export abstract class Canvas implements IComponentRunner {

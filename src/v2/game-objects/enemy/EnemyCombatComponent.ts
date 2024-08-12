@@ -1,6 +1,6 @@
 import { Events } from "../../../utils";
 import { CombatComponent } from "../../components/CombatComponent";
-import { IComponentUpdateParams } from "../../components/IComponentUpdateParams";
+import { IComponentUpdateParams } from "../../components/Component";
 import { IGame } from "../../game/IGame";
 import { Timer } from "../../timer/Timer";
 import { GameObject } from "../GameObject";
