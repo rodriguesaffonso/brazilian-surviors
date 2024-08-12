@@ -2,7 +2,7 @@ import { Vector2D } from "../../../../utils";
 import { IComponentUpdateParams } from "../../../components/Component";
 import { PhysicComponent } from "../../../components/PhysicComponent";
 import { PlayerShape } from "../../player/PlayerShape";
-import { SpinnigBall } from "./SpinningBall";
+import { SpinningBall } from "./SpinningBall";
 import { SpinningBallShape } from "./SpinningBallShape";
 
 export class SpinningBallPhysicComponent extends PhysicComponent {
@@ -11,7 +11,7 @@ export class SpinningBallPhysicComponent extends PhysicComponent {
         super({});
         this.thetaSpeed = 5;
     }
-    update(weapon: SpinnigBall, params?: IComponentUpdateParams): void {
+    update(weapon: SpinningBall, params?: IComponentUpdateParams): void {
         const playerShape = new PlayerShape();
         const weaponShape = new SpinningBallShape();
         const radius = (playerShape.getRadius() + weaponShape.getRadius()) * 4;

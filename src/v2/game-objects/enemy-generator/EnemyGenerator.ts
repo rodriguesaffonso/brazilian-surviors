@@ -10,20 +10,30 @@ export class EnemyGenerator extends GameObject {
     private game: IGame;
     private generateCooldown: number = 5000;
     private enemy: Enemy;
+    private generateEnemyTimer: Timer;
     constructor(game: IGame) {
         super({}, GameObjectKind.EnemyGenerator);
         this.game = game;
         this.generateEnemy();
     }
     private generateEnemy(): void {
-        const generateEnemyTimer = new Timer(this.game.clock, this.generateCooldown);
-        generateEnemyTimer.on(Events.Timer_TimeoutFinished, () => {
-            this.game.removeGameObject(this.enemy);
-            this.generateEnemy();
+        this.generateEnemyTimer = new Timer(this.game.clock, this.generateCooldown);
+        this.generateEnemyTimer.on(Events.Timer_TimeoutFinished, () => {
+            if (this.game.objects.contains(this.enemy)) {
+                this.game.removeGameObject(this.enemy);
+                this.generateEnemy();
+            }
         });
-        this.game.queueTimer(generateEnemyTimer);
+        this.game.queueTimer(this.generateEnemyTimer);
 
         this.enemy = Enemy.create(this.game.canvas.ctx, { physic: new EnemyPhysicComponent({ position: this.enemyPosition() }) });
+        this.enemy.healthComponent.on(Events.HealthComponent_Dead, () => {
+            if (this.game.objects.contains(this.enemy)) {
+                this.game.removeGameObject(this.enemy);
+                this.game.cancelTimer(this.generateEnemyTimer);
+                this.generateEnemy();
+            }
+        });
         this.game.addGameObject(this.enemy);
     }
     private enemyPosition(): Vector2D {

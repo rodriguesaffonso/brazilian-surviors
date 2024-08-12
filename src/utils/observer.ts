@@ -30,6 +30,7 @@ export enum Events {
   CollisionComponent_Collision,
   PlayerCollisionComponent_Collision,
   EnemyCollisionComponent_CollidingWithPlayer,
+  SpinningBallCollisionComponent_CollidingWithEnemy,
 
   HealthComponent_DamageTaken,
   HealthComponent_HealthRegen,

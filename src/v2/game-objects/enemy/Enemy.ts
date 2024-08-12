@@ -4,6 +4,7 @@ import { GameObjectKind } from "../GameObjectKind";
 import { EnemyCollisionComponent } from "./EnemyCollisionComponent";
 import { EnemyCombatComponent } from "./EnemyCombatComponent";
 import { EnemyGraphicComponent } from "./EnemyGraphicComponent";
+import { EnemyHealthComponent } from "./EnemyHealthComponent";
 import { EnemyPhysicComponent } from "./EnemyPhysicComponent";
 
 export class Enemy extends GameObject {
@@ -14,13 +15,15 @@ export class Enemy extends GameObject {
     public static create(ctx: CanvasRenderingContext2D, components?: ObjectComponents): Enemy {
         const physicComp = components.physic ?? new EnemyPhysicComponent({});
         const graphComp = components.graphic ?? new EnemyGraphicComponent({ physicComponent: physicComp, ctx });
-        const colliComp = components.collision ??new EnemyCollisionComponent();
-        const combatComp = components.combat ??new EnemyCombatComponent(colliComp);
+        const colliComp = components.collision ?? new EnemyCollisionComponent();
+        const combatComp = components.combat ?? new EnemyCombatComponent(colliComp);
+        const healthComp = components.health ?? new EnemyHealthComponent({});
         return new Enemy({
             physic: physicComp,
             graphic: graphComp,
             collision: colliComp,
             combat: combatComp,
+            health: healthComp,
         });
     }
 }

@@ -12,7 +12,7 @@ export class EnemyCollisionComponent extends CollisionComponent {
             if (params.other.kind === GameObjectKind.Player) {
                 this.emit(Events.EnemyCollisionComponent_CollidingWithPlayer, params.other);
             }
-        })
+        });
     }
     collide(enemy: GameObject, other: GameObject): boolean {
         return new CircleCollider().collideFromGameObjects(enemy, other);
