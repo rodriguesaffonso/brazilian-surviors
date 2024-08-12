@@ -9,7 +9,7 @@ export class EnemyCollisionComponent extends CollisionComponent {
     constructor() {
         super({ shape: new EnemyShape() });
         this.on(Events.CollisionComponent_Collision, (params: CollisionEventParams) => {
-            if (params.other.kind() === GameObjectKind.Player) {
+            if (params.other.kind === GameObjectKind.Player) {
                 this.emit(Events.EnemyCollisionComponent_CollidingWithPlayer, params.other);
             }
         })

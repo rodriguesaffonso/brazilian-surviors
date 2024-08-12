@@ -8,7 +8,7 @@ export class PlayerPhysicComponent extends PhysicComponent {
         super({ speed: 200 });
     }
     update(player: GameObject, params?: IComponentUpdateParams): void {
-        const inputComp = player.inputComponent();
+        const inputComp = player.inputComponent ;
         if (inputComp === undefined) {
             throw Error('Missing player input component');
         }

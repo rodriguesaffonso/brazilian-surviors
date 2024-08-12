@@ -28,7 +28,7 @@ export abstract class CollisionComponent extends Component {
             if (otherObject === obj) {
                 continue;
             }
-            const otherCollisionComponent = otherObject.collisionComponent();
+            const otherCollisionComponent = otherObject.collisionComponent;
             if (otherCollisionComponent === undefined) {
                 continue;
             }

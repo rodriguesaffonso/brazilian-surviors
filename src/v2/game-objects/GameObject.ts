@@ -3,41 +3,38 @@ import { CollisionComponent } from "../components/CollisionComponent";
 import { CombatComponent } from "../components/CombatComponent";
 import { IComponentUpdateParams } from "../components/Component";
 import { GraphicComponent } from "../components/GraphicComponent";
+import { HealthComponent } from "../components/HealthComponent";
 import { InputComponent } from "../components/InputComponent";
 import { ObjectComponents } from "../components/ObjectComponents";
 import { PhysicComponent } from "../components/PhysicComponent";
 import { GameObjectKind } from "./GameObjectKind";
 
 export abstract class GameObject extends Observer {
-    private _kind: GameObjectKind;
-    private _inputComponent: InputComponent;
-    private _physicComponent: PhysicComponent;
-    private _graphicComponent: GraphicComponent;
-    private _collisionComponent: CollisionComponent;
-    public _combatComponent: CombatComponent;
+    public readonly kind: GameObjectKind;
+    public readonly inputComponent: InputComponent;
+    public readonly physicComponent: PhysicComponent;
+    public readonly graphicComponent: GraphicComponent;
+    public readonly collisionComponent: CollisionComponent;
+    public readonly combatComponent: CombatComponent;
+    public readonly healthComponent: HealthComponent;
     // constructor(components: ObjectComponents, kind: GameObjectKind) {
     constructor(components: ObjectComponents, kind: GameObjectKind) {
         super();
-        this._kind = kind;
-        this._inputComponent = components.input;
-        this._physicComponent = components.physic;
-        this._graphicComponent = components.graphic;
-        this._collisionComponent = components.collision;
-        this._combatComponent = components.combat;
+        this.kind = kind;
+        this.inputComponent = components.input;
+        this.physicComponent = components.physic;
+        this.graphicComponent = components.graphic;
+        this.collisionComponent = components.collision;
+        this.combatComponent = components.combat;
+        this.healthComponent = components.health;
     }
-    public kind(): GameObjectKind { return this._kind; }
 
     public update(params: IComponentUpdateParams): void {
-        this._inputComponent?.update(this, params);
-        this._physicComponent?.update(this, params);
-        this._graphicComponent?.update(this, params);
-        this._collisionComponent?.update(this, params);
-        this._combatComponent?.update(this, params);
+        this.inputComponent?.update(this, params);
+        this.physicComponent?.update(this, params);
+        this.graphicComponent?.update(this, params);
+        this.collisionComponent?.update(this, params);
+        this.combatComponent?.update(this, params);
+        this.healthComponent?.update(this, params);
     }
-
-    public inputComponent(): InputComponent { return this._inputComponent; }
-    public physicComponent(): PhysicComponent { return this._physicComponent; }
-    public graphicComponent(): GraphicComponent { return this._graphicComponent; }
-    public collisionComponent(): CollisionComponent { return this._collisionComponent; }
-    public combatComponent(): CombatComponent { return this._collisionComponent; }
 }

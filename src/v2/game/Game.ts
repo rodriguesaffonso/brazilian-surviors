@@ -33,6 +33,12 @@ export class Game implements IGame {
         this._objects.add(timer);
         timer.start();
     }
+    cancelTimer(timer: Timer): void {
+        timer.cancel();
+        if (this._objects.contains(timer)) {
+            this._objects.remove(timer);
+        } 
+    }
 
     public get clock() { return this._clock; }
     public get objects() { return this._objects; }

@@ -18,7 +18,7 @@ export class GameObjectList implements IGameObjectList {
         }
     }
     add(object: GameObject): void {
-        if (this.find(object) !== -1) {
+        if (this.contains(object)) {
             throw Error('Object already exists in GameObjectList');
         }
         this.objectsArray.push(object);
@@ -27,16 +27,19 @@ export class GameObjectList implements IGameObjectList {
     remove(object: GameObject): void {
         const index = this.find(object);
         if (index === -1) {
-            console.log('Object already exists in GameObjectList');
+            console.log('Object already removed in GameObjectList');
             return;
         }
         this.objectsArray.splice(index, 1);
         this.dirty = true;
     }
+    contains(object: GameObject): boolean {
+        return this.find(object) !== -1;
+    }
     private find(object: GameObject): number {
         return this.objectsArray.indexOf(object);
     }
     private compare(a: GameObject, b: GameObject): number {
-        return a.kind() < b.kind() ? -1 : 1;
+        return a.kind < b.kind ? -1 : 1;
     }
 }

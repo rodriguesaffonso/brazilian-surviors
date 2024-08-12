@@ -12,6 +12,8 @@ export enum Events {
 
   Timer_Started,
   Timer_TimeoutFinished,
+  Timer_Cancelled,
+
   KeyboardInputComponent_Enabled,
   KeyboardInputComponent_Disabled,
 
@@ -28,6 +30,12 @@ export enum Events {
   CollisionComponent_Collision,
   PlayerCollisionComponent_Collision,
   EnemyCollisionComponent_CollidingWithPlayer,
+
+  HealthComponent_DamageTaken,
+  HealthComponent_HealthRegen,
+  HealthComponent_HealthFull,
+  HealthComponent_Dead,
+  PlayerHealthComponent_AutoHealthRegen,
 }
 
 export abstract class Observer {

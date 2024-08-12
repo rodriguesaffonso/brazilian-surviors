@@ -8,6 +8,7 @@ import { KeyboardInputComponent } from "./v2/components/KeyboardInputComponent";
 import { Player } from "./v2/game-objects/player/Player";
 import { World } from "./v2/game-objects/world/World";
 import { EnemyGenerator } from "./v2/game-objects/enemy-generator/EnemyGenerator";
+import { SpinnigBall } from "./v2/game-objects/weapon/spinning-ball/SpinningBall";
 
 function createGame(): IGame {
     const clock = new Clock();
@@ -31,8 +32,10 @@ function init() {
     game.addGameObject(world);
     
     const keyboardInputComponent = new KeyboardInputComponent();
-    const player = Player.create(game.canvas.ctx, keyboardInputComponent);
+    const player = Player.create(game.canvas.ctx, keyboardInputComponent, game);
     game.addGameObject(player);
+    const weapon = SpinnigBall.create(game.canvas.ctx, player);
+    game.addGameObject(weapon);
 
     // const enemy = Enemy.create(game.canvas.ctx);
     // game.addGameObject(enemy);

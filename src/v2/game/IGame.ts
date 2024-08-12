@@ -6,4 +6,5 @@ export interface IGame extends IGameParams {
     addGameObject(obj: GameObject): void;
     removeGameObject(obj: GameObject): void;
     queueTimer(timer: Timer): void;
+    cancelTimer(timer: Timer): void;
 }

@@ -12,8 +12,8 @@ export class CircleCollider {
         return me.getRadius() + other.getRadius() > dist;
     }
     private getCircle(obj: GameObject): CircleShape {
-        const shape = obj.collisionComponent().getShape() as CircleShape;
-        shape.setCenter(obj.physicComponent().getPosition());
+        const shape = obj.collisionComponent.getShape() as CircleShape;
+        shape.setCenter(obj.physicComponent.getPosition());
         return shape;
     }
 }

@@ -17,6 +17,7 @@ export class EnemyCombatComponent extends CombatComponent {
     private state: EnemyCombatState;
     private attackCooldownMs: number = 1000;
     private game: IGame;
+    private attackDamage: number = 10;
     constructor(collision: EnemyCollisionComponent) {
         super();
         this.state = EnemyCombatState.Idle;
@@ -29,13 +30,14 @@ export class EnemyCombatComponent extends CombatComponent {
             this.game = params.game;
         }
     }
-    private tryAttack(target: GameObject): void {
+    private tryAttack(player: GameObject): void {
         if (this.state === EnemyCombatState.AttackOnCooldown) {
             console.log('Enemy attack on cooldown');
             return;
         }
 
         console.log('Attacking player!');
+        player.healthComponent.takeDamage(this.attackDamage);
         this.startAttackCooldown();
     }
     private startAttackCooldown() {

@@ -34,6 +34,13 @@ export class Timer extends GameObject implements ITimer {
         return this;
     }
 
+    public cancel(): Timer {
+        this.state = TimerState.Idle;
+        this.startedAt = undefined;
+        this.emit(Events.Timer_Cancelled);
+        return this;
+    }
+
     public update(_: IComponentUpdateParams) {
         if (this.state === TimerState.Idle) {
             throw Error('Timer must be started before run.');
