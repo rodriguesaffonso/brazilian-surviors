@@ -5,6 +5,6 @@ export class EnemyPhysicComponent extends PhysicComponent {
     constructor(params: PhysicComponentParams) {
         super(params);
         const ws = getCanvasSize();
-        this.position = new Vector2D(ws.width / 2, ws.height / 2);
+        this.position = params.position ?? new Vector2D(ws.width / 2, ws.height / 2);
     }
 }

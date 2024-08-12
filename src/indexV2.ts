@@ -7,7 +7,7 @@ import { Game } from "./v2/game/Game";
 import { KeyboardInputComponent } from "./v2/components/KeyboardInputComponent";
 import { Player } from "./v2/game-objects/player/Player";
 import { World } from "./v2/game-objects/world/World";
-import { Enemy } from "./v2/game-objects/enemy/Enemy";
+import { EnemyGenerator } from "./v2/game-objects/enemy-generator/EnemyGenerator";
 
 function createGame(): IGame {
     const clock = new Clock();
@@ -28,14 +28,17 @@ function init() {
     const game = createGame();
 
     const world = World.create(game.canvas.ctx);
-    game.objects.add(world);
+    game.addGameObject(world);
     
     const keyboardInputComponent = new KeyboardInputComponent();
     const player = Player.create(game.canvas.ctx, keyboardInputComponent);
-    game.objects.add(player);
+    game.addGameObject(player);
 
-    const enemy = Enemy.create(game.canvas.ctx);
-    game.objects.add(enemy);
+    // const enemy = Enemy.create(game.canvas.ctx);
+    // game.addGameObject(enemy);
+
+    const generator = new EnemyGenerator(game);
+    game.addGameObject(generator);
         
     keyboardInputComponent.enable();
     game.render.start();

@@ -11,11 +11,11 @@ export class Enemy extends GameObject {
         super(components, GameObjectKind.Enemy);
     }
 
-    public static create(ctx: CanvasRenderingContext2D): Enemy {
-        const physicComp = new EnemyPhysicComponent({});
-        const graphComp = new EnemyGraphicComponent({ physicComponent: physicComp, ctx });
-        const colliComp = new EnemyCollisionComponent();
-        const combatComp = new EnemyCombatComponent(colliComp);
+    public static create(ctx: CanvasRenderingContext2D, components?: ObjectComponents): Enemy {
+        const physicComp = components.physic ?? new EnemyPhysicComponent({});
+        const graphComp = components.graphic ?? new EnemyGraphicComponent({ physicComponent: physicComp, ctx });
+        const colliComp = components.collision ??new EnemyCollisionComponent();
+        const combatComp = components.combat ??new EnemyCombatComponent(colliComp);
         return new Enemy({
             physic: physicComp,
             graphic: graphComp,

@@ -7,4 +7,6 @@ export const enum GameObjectKind {
 
     Player,
     Enemy,
+
+    EnemyGenerator
 }
