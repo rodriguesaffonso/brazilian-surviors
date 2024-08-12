@@ -3,11 +3,16 @@ import { GameObject } from "./GameObject";
 import { IGameObjectList } from "./IGameObjectList";
 
 export class GameObjectList implements IGameObjectList {
+    private objectsArray: GameObject[] = [];
+    private dirty: boolean = false;
     list(): GameObject[] {
         return this.objectsArray;
     }
-    private objectsArray: GameObject[] = [];
     update(params: IComponentUpdateParams): void {
+        if (this.dirty) {
+            this.objectsArray.sort(this.compare);
+            this.dirty = false;
+        }
         for (const object of this.objectsArray) {
             object.update(params)
         }
@@ -17,6 +22,7 @@ export class GameObjectList implements IGameObjectList {
             throw Error('Object already exists in GameObjectList');
         }
         this.objectsArray.push(object);
+        this.dirty = true;
     }
     remove(object: GameObject): void {
         const index = this.find(object);
@@ -25,8 +31,12 @@ export class GameObjectList implements IGameObjectList {
             return;
         }
         this.objectsArray.splice(index, 1);
+        this.dirty = true;
     }
     private find(object: GameObject): number {
         return this.objectsArray.indexOf(object);
+    }
+    private compare(a: GameObject, b: GameObject): number {
+        return a.kind() < b.kind() ? -1 : 1;
     }
 }

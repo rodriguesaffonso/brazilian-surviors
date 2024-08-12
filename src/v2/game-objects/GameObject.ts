@@ -6,24 +6,26 @@ import { IComponentUpdateParams } from "../components/IComponentUpdateParams";
 import { InputComponent } from "../components/InputComponent";
 import { ObjectComponents } from "../components/ObjectComponents";
 import { PhysicComponent } from "../components/PhysicComponent";
+import { GameObjectKind } from "./GameObjectKind";
 
 export abstract class GameObject extends Observer {
-    // public kind: GameObjectKind;
+    private _kind: GameObjectKind;
     private _inputComponent: InputComponent;
     private _physicComponent: PhysicComponent;
     private _graphicComponent: GraphicComponent;
     private _collisionComponent: CollisionComponent;
     public _combatComponent: CombatComponent;
     // constructor(components: ObjectComponents, kind: GameObjectKind) {
-    constructor(components: ObjectComponents) {
+    constructor(components: ObjectComponents, kind: GameObjectKind) {
         super();
-        // this.kind = kind;
+        this._kind = kind;
         this._inputComponent = components.input;
         this._physicComponent = components.physic;
         this._graphicComponent = components.graphic;
         this._collisionComponent = components.collision;
         this._combatComponent = components.combat;
     }
+    public kind(): GameObjectKind { return this._kind; }
 
     public update(params: IComponentUpdateParams): void {
         this._inputComponent?.update(this, params);

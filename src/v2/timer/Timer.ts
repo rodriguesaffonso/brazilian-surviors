@@ -1,9 +1,15 @@
 import { ITimer } from "./ITimer";
-import { TimerState } from "./TimerState";
 import { Events } from "../../utils";
 import { IClock } from "../clock/IClock";
 import { IComponentUpdateParams } from "../components/IComponentUpdateParams";
 import { GameObject } from "../game-objects/GameObject";
+import { GameObjectKind } from "../game-objects/GameObjectKind";
+
+export enum TimerState {
+    Idle,
+    Running,
+    Finished
+}
 
 export class Timer extends GameObject implements ITimer {
     private timeoutMs: number;
@@ -12,7 +18,7 @@ export class Timer extends GameObject implements ITimer {
     private state: TimerState;
 
     constructor(clock: IClock, timeoutMs: number) {
-        super({});
+        super({}, GameObjectKind.Timer);
         this.clock = clock;
         this.timeoutMs = timeoutMs;
         this.state = TimerState.Idle;

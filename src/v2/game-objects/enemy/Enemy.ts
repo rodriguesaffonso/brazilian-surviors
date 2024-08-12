@@ -1,5 +1,6 @@
 import { ObjectComponents } from "../../components/ObjectComponents";
 import { GameObject } from "../GameObject";
+import { GameObjectKind } from "../GameObjectKind";
 import { EnemyCollisionComponent } from "./EnemyCollisionComponent";
 import { EnemyCombatComponent } from "./EnemyCombatComponent";
 import { EnemyGraphicComponent } from "./EnemyGraphicComponent";
@@ -7,7 +8,7 @@ import { EnemyPhysicComponent } from "./EnemyPhysicComponent";
 
 export class Enemy extends GameObject {
     private constructor(components: ObjectComponents) {
-        super(components);
+        super(components, GameObjectKind.Enemy);
     }
 
     public static create(ctx: CanvasRenderingContext2D): Enemy {
