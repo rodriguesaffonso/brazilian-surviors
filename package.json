@@ -3,23 +3,29 @@
   "version": "1.0.0",
   "private": true,
   "license": "MIT",
-  "dependencies": {},
   "devDependencies": {
-    "npm-watch": "^0.11.0",
+    "@types/jest": "^29.5.12",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "npm-watch": "^0.12.0",
+    "ts-jest": "^29.2.4",
     "ts-loader": "^9.4.2",
-    "typescript": "^4.9.4",
+    "typescript": "^4.9.5",
     "webpack": "^5.75.0",
     "webpack-cli": "^5.0.1"
   },
   "watch": {
     "dev": {
-      "patterns": ["src"],
+      "patterns": [
+        "src"
+      ],
       "extensions": "ts, html, css"
     }
   },
   "scripts": {
     "dev": "npx webpack",
     "build": "npx webpack",
+    "test": "jest",
     "watch": "npm-watch dev"
   }
 }
